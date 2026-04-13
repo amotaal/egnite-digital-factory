@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biscuit Filling Recipe</title>
+    <style>
+        /* --- GLOBAL VARIABLES & RESET --- */
+        :root {
+            --bg-cream: #FCFAF4;
+            --gold-primary: #B78D4B;
+            --gold-light: #EBD4A4;
+            --text-dark: #1A1A1A;
+            --font-main: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #E8E8E8; /* Darker background to make the card pop */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: var(--font-main);
+            color: var(--text-dark);
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .recipe-card {
+            background-color: var(--bg-cream);
+            width: 100%;
+            max-width: 1200px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #EAE1D0;
+        }
+
+        /* --- HEADER --- */
+        .header {
+            text-align: center;
+            padding: 30px 20px 20px 20px;
+        }
+
+        .header h1 {
+            color: var(--gold-primary);
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        /* --- THREE-COLUMN LAYOUT --- */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 30px;
+            padding: 10px 40px 40px 40px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        /* --- LEFT COLUMN: INGREDIENTS --- */
+        .ingredients-col {
+            padding-top: 10px;
+        }
+
+        .ingredient-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.3;
+        }
+
+        .icon-placeholder {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .total-weight {
+            border-top: 1px solid #D3C5B0;
+            padding-top: 20px;
+            margin-top: 10px;
+        }
+
+        /* --- CENTER COLUMN: IMAGE & DOSAGE --- */
+        .center-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .recipe-image {
+            width: 100%;
+            border-radius: 15px;
+            border: 3px solid var(--gold-primary);
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            background-color: #333; /* Placeholder background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        /* Add your actual image path in the src below */
+        .recipe-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .dosage-info {
+            width: 100%;
+            text-align: center;
+        }
+
+        .dosage-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .dosage-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border: 2px solid var(--gold-primary);
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #F8F1E3;
+        }
+
+        .dosage-header {
+            background-color: #F0E2C8;
+            padding: 8px;
+            font-weight: 600;
+            border-bottom: 2px solid var(--gold-primary);
+        }
+        
+        .dosage-header:first-child {
+            border-right: 2px solid var(--gold-primary);
+        }
+
+        .dosage-cell {
+            padding: 15px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        
+        .dosage-cell:first-child {
+            border-right: 2px solid var(--gold-primary);
+        }
+
+        .dosage-text-group p:first-child {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* --- RIGHT COLUMN: INSTRUCTIONS --- */
+        .instructions-col {
+            padding-top: 10px;
+        }
+
+        .instruction-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .step-graphic {
+            position: relative;
+            width: 55px;
+            height: 55px;
+            border: 2px solid var(--gold-primary);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #FDFBF4;
+            flex-shrink: 0;
+            font-size: 1.5rem;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            background-color: var(--gold-primary);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .instruction-text {
+            font-size: 1.1rem;
+            line-height: 1.3;
+        }
+
+        /* --- FOOTER --- */
+        .footer {
+            background-color: var(--gold-light);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-tagline {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .social-circle {
+            width: 24px;
+            height: 24px;
+            background-color: var(--text-dark);
+            color: var(--gold-light);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 900px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .center-col {
+                order: -1; /* Puts image at the top on mobile */
+            }
+            .footer {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="recipe-card">
+        
+        <header class="header">
+            <h1>Hamada Bel Ganzabeel</h1>
+            <p>Preparation Time: 11 minutes</p>
+        </header>
+
+        <div class="content-grid">
+            
+            <div class="ingredients-col">
+                <h2 class="section-title">Ingredients</h2>
+                
+                <div class="ingredient-item">
+                    <div class="icon-placeholder">🧈</div>
+                    <div>Butter: 1 stick (100g)</div>
+                </div>
+                
+                <div class="ingredient-item">
+                    <div class="icon-placeholder">🍯</div>
+                    <div>Ghee (samneh):<br>½ cup (100g)</div>
+                </div>
+                
+                <div class="ingredient-item">
+                    <div class="icon-placeholder">🍚</div>
+                    <div>Powder Sugar:<br>2 cups (290g)</div>
+                </div>
+                
+                <div class="ingredient-item">
+                    <div class="icon-placeholder">🥛</div>
+                    <div>Water:<br>5 tsp (25g)</div>
+                </div>
+                
+                <div class="ingredient-item">
+                    <div class="icon-placeholder">🧪</div>
+                    <div>Flavor (Essence):<br>¼ tsp (1.25g)</div>
+                </div>
+                
+                <div class="ingredient-item total-weight">
+                    <div class="icon-placeholder">⚖️</div>
+                    <div>Total weight:<br>516.25g</div>
+                </div>
+            </div>
+
+            <div class="center-col">
+                <div class="recipe-image">
+                    [ Image Placeholder ]
+                </div>
+                
+                <div class="dosage-info">
+                    <h2 class="dosage-title">DOSAGE INFORMATION</h2>
+                    <div class="dosage-table">
+                        <div class="dosage-header">ESSENCE</div>
+                        <div class="dosage-header">EMULSION</div>
+                        
+                        <div class="dosage-cell">
+                            <div class="icon-placeholder" style="width: 30px;">🧪</div>
+                            <div class="dosage-text-group">
+                                <p>1.25g (¼ tsp)</p>
+                                <p>Dosage range<br>0.25% - 0.30%</p>
+                            </div>
+                        </div>
+                        
+                        <div class="dosage-cell">
+                            <div class="icon-placeholder" style="width: 30px;">🧴</div>
+                            <div class="dosage-text-group">
+                                <p>1.75g (½ tsp)</p>
+                                <p>Dosage range<br>0.35% - 0.50%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions-col">
+                <h2 class="section-title">Step-By-Step Instructions</h2>
+                
+                <div class="instruction-item">
+                    <div class="step-graphic">
+                        <div class="step-number">1</div>
+                        🥣
+                    </div>
+                    <div class="instruction-text">1. Mix butter, ghee, and water</div>
+                </div>
+                
+                <div class="instruction-item">
+                    <div class="step-graphic">
+                        <div class="step-number">2</div>
+                        🧂
+                    </div>
+                    <div class="instruction-text">2. Gradually add powdered sugar</div>
+                </div>
+                
+                <div class="instruction-item">
+                    <div class="step-graphic">
+                        <div class="step-number">3</div>
+                        🩸
+                    </div>
+                    <div class="instruction-text">3. Add Egnite Essence and color drops</div>
+                </div>
+                
+                <div class="instruction-item">
+                    <div class="step-graphic">
+                        <div class="step-number">4</div>
+                        🧑‍🍳
+                    </div>
+                    <div class="instruction-text">4. Mix for 1-2 minutes</div>
+                </div>
+                
+                <div class="instruction-item">
+                    <div class="step-graphic">
+                        <div class="step-number">5</div>
+                        🥄
+                    </div>
+                    <div class="instruction-text">5. Use as needed</div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="footer">
+            <div class="footer-tagline">Creativity with Confidence</div>
+            <div class="footer-logo">Egnite</div>
+            <div class="footer-links">
+                egniteflavors.com
+                <div class="social-icons">
+                    <div class="social-circle">🌐</div>
+                    <div class="social-circle">f</div>
+                    <div class="social-circle">X</div>
+                    <div class="social-circle">♪</div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+</body>
+</html>
