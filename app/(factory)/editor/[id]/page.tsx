@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { resolveSession, SESSION_COOKIE } from "@/lib/auth";
 import { getDocument } from "@/lib/storage";
 import { EditorShell } from "@/components/editor/editor-shell";
+import { EditorErrorBoundary } from "@/components/ui/error-boundary";
 
 export async function generateMetadata({
   params,
@@ -32,5 +33,9 @@ export default async function EditorPage({
   const doc = await getDocument(id);
   if (!doc) notFound();
 
-  return <EditorShell initialDocument={doc} />;
+  return (
+    <EditorErrorBoundary>
+      <EditorShell initialDocument={doc} />
+    </EditorErrorBoundary>
+  );
 }

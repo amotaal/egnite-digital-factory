@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Download, X, FileImage, FileText, Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEditorStore } from "@/lib/store/editor";
@@ -20,22 +20,44 @@ const TEMPLATE_DIMS: Record<string, { width: number; height: number }> = {
   "extended-recipe": A4_PORTRAIT,
 };
 
+/** Wait for all <img> elements inside a container to finish loading. */
+async function waitForImages(el: HTMLElement): Promise<void> {
+  const imgs = Array.from(el.querySelectorAll("img")) as HTMLImageElement[];
+  await Promise.all(
+    imgs.map(
+      (img) =>
+        img.complete
+          ? Promise.resolve()
+          : new Promise<void>((resolve) => {
+              img.onload = () => resolve();
+              img.onerror = () => resolve(); // don't block on broken images
+            })
+    )
+  );
+}
+
 async function exportPng(
   element: HTMLElement,
   filename: string,
   pixelRatio = 3
 ): Promise<void> {
+  await waitForImages(element);
   const { toPng } = await import("html-to-image");
   const dataUrl = await toPng(element, {
     pixelRatio,
     quality: 1,
     cacheBust: true,
-    skipFonts: false,
+    // skipFonts avoids the CORS SecurityError thrown when html-to-image tries
+    // to read cross-origin Google Fonts stylesheet rules.  Fonts are already
+    // rendered by the browser so the exported PNG looks correct.
+    skipFonts: true,
   });
-  const link = document.createElement("a");
+  const link = globalThis.document.createElement("a");
   link.download = `${filename}.png`;
   link.href = dataUrl;
+  globalThis.document.body.appendChild(link);
   link.click();
+  globalThis.document.body.removeChild(link);
 }
 
 async function exportPdf(
@@ -43,10 +65,16 @@ async function exportPdf(
   filename: string,
   dims: { width: number; height: number }
 ): Promise<void> {
+  await waitForImages(element);
   const { toPng } = await import("html-to-image");
   const { jsPDF } = await import("jspdf");
 
-  const dataUrl = await toPng(element, { pixelRatio: 3, quality: 1, cacheBust: true });
+  const dataUrl = await toPng(element, {
+    pixelRatio: 3,
+    quality: 1,
+    cacheBust: true,
+    skipFonts: true,
+  });
 
   // A4 in mm: 210 × 297 (portrait) or 297 × 210 (landscape)
   const isLandscape = dims.width > dims.height;
@@ -63,7 +91,7 @@ async function exportPdf(
 }
 
 function exportHtml(doc: FactoryDocument, element: HTMLElement, filename: string): void {
-  const lang = doc.fields && (doc.fields as {language?: string}).language === 'ar' ? 'ar' : 'en';
+  const lang = doc.fields && (doc.fields as { language?: string }).language === "ar" ? "ar" : "en";
   const html = `<!DOCTYPE html>
 <html lang="${lang}">
 <head>
@@ -89,7 +117,10 @@ ${element.outerHTML}
   const anchor = globalThis.document.createElement("a") as HTMLAnchorElement;
   anchor.download = `${filename}.html`;
   anchor.href = url;
+  // Must be in DOM for Firefox compatibility
+  globalThis.document.body.appendChild(anchor);
   anchor.click();
+  globalThis.document.body.removeChild(anchor);
   URL.revokeObjectURL(url);
 }
 
@@ -113,7 +144,7 @@ export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
       else if (fmt === "html") exportHtml(document as FactoryDocument, el, safeName);
     } catch (err) {
       console.error("Export error:", err);
-      alert("Export failed. Check console for details.");
+      alert("Export failed. Check the browser console for details.");
     } finally {
       setProgress(null);
       setExporting(false);

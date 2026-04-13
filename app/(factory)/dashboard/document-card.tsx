@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Edit2, Trash2, Download } from "lucide-react";
+import { Edit2, Trash2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { FactoryDocument } from "@/lib/types";
@@ -23,16 +23,38 @@ const TEMPLATE_LABELS: Record<string, string> = {
 export function DocumentCard({ document }: { document: FactoryDocument }) {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!confirm(`Delete "${document.name}"? This cannot be undone.`)) return;
     setDeleting(true);
     try {
-      await fetch(`/api/documents/${document.id}`, { method: "DELETE" });
-      router.refresh();
+      const res = await fetch(`/api/documents/${document.id}`, { method: "DELETE" });
+      if (res.ok) router.refresh();
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const handleDuplicate = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDuplicating(true);
+    try {
+      const res = await fetch("/api/documents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          templateType: document.templateType,
+          name: `${document.name} (Copy)`,
+          fields: document.fields,
+        }),
+      });
+      if (res.ok) {
+        router.refresh();
+      }
+    } finally {
+      setDuplicating(false);
     }
   };
 
@@ -86,6 +108,16 @@ export function DocumentCard({ document }: { document: FactoryDocument }) {
         >
           <Edit2 size={12} />
           Edit
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="px-2 text-ink-muted hover:text-ink"
+          loading={duplicating}
+          title="Duplicate"
+          onClick={handleDuplicate}
+        >
+          <Copy size={13} />
         </Button>
         <Button
           variant="ghost"

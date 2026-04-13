@@ -4,6 +4,7 @@ import type { FactoryDocument } from "@/lib/types";
 import { RecipeCard } from "@/components/templates/recipe-card";
 import { InfographicCard } from "@/components/templates/infographic-card";
 import { BeverageCard } from "@/components/templates/beverage-card";
+import { ExtendedRecipe } from "@/components/templates/extended-recipe";
 import { A4_PORTRAIT, A4_LANDSCAPE } from "@/lib/data/templates";
 
 interface CanvasPreviewProps {
@@ -32,6 +33,9 @@ function TemplateRenderer({
   if (document.templateType === "beverage-card") {
     return <BeverageCard fields={merged as never} />;
   }
+  if (document.templateType === "extended-recipe") {
+    return <ExtendedRecipe fields={merged as never} />;
+  }
   return (
     <div className="flex items-center justify-center h-full text-ink-muted">
       Template not available
@@ -54,25 +58,38 @@ export function CanvasPreview({ document, lang, exportRef }: CanvasPreviewProps)
 
   useEffect(() => {
     const updateScale = () => {
-      if (containerRef.current) {
-        const available = containerRef.current.offsetWidth - 32;
-        setScale(Math.min(1, available / dims.width));
-      }
+      if (!containerRef.current) return;
+      const availW = containerRef.current.offsetWidth - 32;
+      const availH = containerRef.current.offsetHeight - 32;
+
+      const scaleByW = availW / dims.width;
+      // For landscape templates, also cap by height so they never require vertical
+      // scrolling (they're short enough to fit). Portrait templates are allowed to
+      // be taller than the viewport — overflow-auto handles the scroll.
+      const scaleByH =
+        dims.width > dims.height && availH > 0 ? availH / dims.height : Infinity;
+
+      setScale(Math.min(1, scaleByW, scaleByH));
     };
+
     updateScale();
     const ro = new ResizeObserver(updateScale);
     if (containerRef.current) ro.observe(containerRef.current);
     return () => ro.disconnect();
-  }, [dims.width]);
+  }, [dims.width, dims.height]);
 
   return (
-    <div ref={containerRef} className="flex-1 flex flex-col items-center bg-zinc-200/60 overflow-auto p-4">
+    <div
+      ref={containerRef}
+      className="flex-1 flex flex-col items-center bg-zinc-200/60 overflow-auto p-4"
+    >
       {/* Scaled preview */}
       <div
         style={{
           width: dims.width * scale,
           height: dims.height * scale,
           flexShrink: 0,
+          overflow: "hidden", // clip the transform-scaled child to the correct box
           boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
         }}
       >
