@@ -1,0 +1,184 @@
+{
+  "id": "7f9e80c6-a15f-409b-b773-2cda43318ca4",
+  "name": "Lemon Cake",
+  "templateType": "recipe-card",
+  "fields": {
+    "language": "en",
+    "logoText": "EGNITE",
+    "heroImage": "/samples/lemon_cake.png",
+    "title": {
+      "en": "Lemon Cake",
+      "ar": "كيكة الليمون"
+    },
+    "subtitle": {
+      "en": "A bright, zesty cake featuring a tender crumb enriched with lemon flavor, soaked",
+      "ar": "كيكة منعشة بنكهة الليمون الزاهية، نقية وطازجة، منقوعة في شراب ليمون حلو ومغطاة ب"
+    },
+    "prepTime": "15 mins",
+    "cookTime": "30 mins",
+    "servings": "12–16 pieces",
+    "difficulty": "Hard",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "🌾",
+        "label": {
+          "en": "Flour",
+          "ar": "دقيق"
+        },
+        "amount": "250g"
+      },
+      {
+        "id": "i2",
+        "icon": "🍚",
+        "label": {
+          "en": "Sugar",
+          "ar": "سكر"
+        },
+        "amount": "200g"
+      },
+      {
+        "id": "i3",
+        "icon": "🧈",
+        "label": {
+          "en": "Butter",
+          "ar": "زبدة"
+        },
+        "amount": "150g"
+      },
+      {
+        "id": "i4",
+        "icon": "🥚",
+        "label": {
+          "en": "Eggs",
+          "ar": "بيض"
+        },
+        "amount": "3 large"
+      },
+      {
+        "id": "i5",
+        "icon": "🥛",
+        "label": {
+          "en": "Buttermilk",
+          "ar": "لبن زبادي"
+        },
+        "amount": "120ml"
+      },
+      {
+        "id": "i6",
+        "icon": "🧪",
+        "label": {
+          "en": "Lemon Essence",
+          "ar": "جوهر الليمون"
+        },
+        "amount": "¾ tsp (3.75g)"
+      }
+    ],
+    "instructions": [
+      {
+        "id": "s1",
+        "icon": "🥣",
+        "text": {
+          "en": "Cream butter and sugar until light. Add eggs one by one.",
+          "ar": "اخفق الزبدة والسكر حتى يصبح خفيفاً. أضف البيض واحدة واحدة."
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🧪",
+        "text": {
+          "en": "Add Lemon Essence and mix well.",
+          "ar": "أضف جوهر الليمون وامزج جيداً."
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🌾",
+        "text": {
+          "en": "Alternate flour and buttermilk, fold gently.",
+          "ar": "أضف الدقيق واللبن بالتناوب برفق."
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "🫙",
+        "text": {
+          "en": "Bake in greased tin at 175°C for 30–35 minutes.",
+          "ar": "اخبز في قالب مدهون على 175°م لمدة 30-35 دقيقة."
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🍋",
+        "text": {
+          "en": "While hot, pour lemon syrup over. Cool completely.",
+          "ar": "وهي ساخنة، صب شراب الليمون فوقها. بردها كاملاً."
+        }
+      }
+    ],
+    "sections": [
+      {
+        "id": "sec1",
+        "title": {
+          "en": "Lemon Cream Cheese Frosting",
+          "ar": "فروستنج كريم تشيز بالليمون"
+        },
+        "type": "ingredients",
+        "items": [
+          {
+            "id": "f1",
+            "icon": "🧀",
+            "label": {
+              "en": "Cream Cheese",
+              "ar": "جبنة كريم تشيز"
+            },
+            "amount": "200g"
+          },
+          {
+            "id": "f2",
+            "icon": "🧈",
+            "label": {
+              "en": "Butter (softened)",
+              "ar": "زبدة طرية"
+            },
+            "amount": "100g"
+          },
+          {
+            "id": "f3",
+            "icon": "🍚",
+            "label": {
+              "en": "Icing Sugar",
+              "ar": "سكر ناعم"
+            },
+            "amount": "300g"
+          },
+          {
+            "id": "f4",
+            "icon": "🧪",
+            "label": {
+              "en": "Lemon Essence",
+              "ar": "جوهر الليمون"
+            },
+            "amount": "¼ tsp (1.25g)"
+          }
+        ]
+      }
+    ],
+    "badgeText": {
+      "en": "ENJOY EVERY BITE",
+      "ar": "استمتع بكل قضمة"
+    },
+    "tagline": {
+      "en": "Creativity with Confidence",
+      "ar": "إبداع بثقة"
+    },
+    "products": [
+      "Lemon Flavor"
+    ],
+    "primaryColor": "#B78D4B",
+    "backgroundColor": "#FCFAF4"
+  },
+  "createdAt": "2026-04-13T09:27:58.296Z",
+  "updatedAt": "2026-04-13T09:27:58.296Z",
+  "createdBy": "1"
+}

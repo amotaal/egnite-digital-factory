@@ -1,0 +1,167 @@
+{
+  "id": "1386df08-9026-46f2-a17a-919ad5caf8ca",
+  "name": "Coffee Bean Cookies",
+  "templateType": "recipe-card",
+  "fields": {
+    "language": "en",
+    "logoText": "EGNITE",
+    "heroImage": "/samples/coffeebean_cookies.png",
+    "title": {
+      "en": "Coffee Bean Cookies",
+      "ar": "كوكيز حبة القهوة"
+    },
+    "subtitle": {
+      "en": "Bite-sized treats shaped like real coffee beans with deep, aromatic cocoa flavor",
+      "ar": "حلويات صغيرة على شكل حبة قهوة حقيقية، بنكهة الكاكاو العميقة مع الهيل الدافئ، مغم"
+    },
+    "prepTime": "15 mins",
+    "cookTime": "30 mins",
+    "servings": "12–16 pieces",
+    "difficulty": "Medium",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "🌾",
+        "label": {
+          "en": "Flour",
+          "ar": "دقيق"
+        },
+        "amount": "200g"
+      },
+      {
+        "id": "i2",
+        "icon": "🍫",
+        "label": {
+          "en": "Cocoa Powder",
+          "ar": "كاكاو بودرة"
+        },
+        "amount": "30g"
+      },
+      {
+        "id": "i3",
+        "icon": "🧈",
+        "label": {
+          "en": "Butter",
+          "ar": "زبدة"
+        },
+        "amount": "115g"
+      },
+      {
+        "id": "i4",
+        "icon": "🍚",
+        "label": {
+          "en": "Icing Sugar",
+          "ar": "سكر ناعم"
+        },
+        "amount": "80g"
+      },
+      {
+        "id": "i5",
+        "icon": "🥚",
+        "label": {
+          "en": "Egg Yolk",
+          "ar": "صفار بيض"
+        },
+        "amount": "1"
+      },
+      {
+        "id": "i6",
+        "icon": "🧪",
+        "label": {
+          "en": "Cardamom Essence",
+          "ar": "جوهر الهيل"
+        },
+        "amount": "¼ tsp (1.25g)"
+      }
+    ],
+    "instructions": [
+      {
+        "id": "s1",
+        "icon": "🥣",
+        "text": {
+          "en": "Cream butter and sugar, then add egg yolk.",
+          "ar": "اخفق الزبدة والسكر ثم أضف صفار البيض."
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🌾",
+        "text": {
+          "en": "Mix in flour and cocoa powder.",
+          "ar": "أضف الدقيق ومسحوق الكاكاو."
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🧪",
+        "text": {
+          "en": "Add Cardamom Essence and knead to a smooth dough.",
+          "ar": "أضف جوهر الهيل وعجن حتى يصبح ناعماً."
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "☕",
+        "text": {
+          "en": "Shape into coffee beans with a knife indent.",
+          "ar": "شكّل على شكل حبة قهوة وضع خطاً بالسكين."
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🫙",
+        "text": {
+          "en": "Bake at 170°C for 12–15 minutes.",
+          "ar": "اخبز على 170°م لمدة 12-15 دقيقة."
+        }
+      }
+    ],
+    "sections": [
+      {
+        "id": "sec1",
+        "title": {
+          "en": "Coffee Chocolate Coating",
+          "ar": "طبقة الشوكولاتة بالقهوة"
+        },
+        "type": "ingredients",
+        "items": [
+          {
+            "id": "c1",
+            "icon": "🍫",
+            "label": {
+              "en": "Dark Chocolate",
+              "ar": "شوكولاتة داكنة"
+            },
+            "amount": "150g"
+          },
+          {
+            "id": "c2",
+            "icon": "🧪",
+            "label": {
+              "en": "Coffee Essence",
+              "ar": "جوهر القهوة"
+            },
+            "amount": "¼ tsp (1.25g)"
+          }
+        ]
+      }
+    ],
+    "badgeText": {
+      "en": "ENJOY EVERY BITE",
+      "ar": "استمتع بكل قضمة"
+    },
+    "tagline": {
+      "en": "Creativity with Confidence",
+      "ar": "إبداع بثقة"
+    },
+    "products": [
+      "Cardamom",
+      "Coffee"
+    ],
+    "primaryColor": "#B78D4B",
+    "backgroundColor": "#FCFAF4"
+  },
+  "createdAt": "2026-04-13T09:27:58.295Z",
+  "updatedAt": "2026-04-13T09:27:58.295Z",
+  "createdBy": "1"
+}

@@ -1,0 +1,147 @@
+{
+  "id": "368aa2b8-8669-47bc-b9dc-88f5f7e732fc",
+  "name": "Hazelnut Chocolate Cookies",
+  "templateType": "recipe-card",
+  "fields": {
+    "language": "en",
+    "logoText": "EGNITE",
+    "heroImage": "/samples/hazelnut_chocolate_cookies.png",
+    "title": {
+      "en": "Hazelnut Chocolate Cookies",
+      "ar": "كوكيز الهيزلنت بالشوكولاتة"
+    },
+    "subtitle": {
+      "en": "Classic chocolate chip cookies with deep, nutty roasted hazelnut aroma — golden ",
+      "ar": "كوكيز شوكولاتة كلاسيكية برائحة الهيزلنت المحمص العميقة — حواف ذهبية، وسط طري، ون"
+    },
+    "prepTime": "15 mins",
+    "cookTime": "30 mins",
+    "servings": "12–16 pieces",
+    "difficulty": "Easy",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "🌾",
+        "label": {
+          "en": "Flour",
+          "ar": "دقيق"
+        },
+        "amount": "220g"
+      },
+      {
+        "id": "i2",
+        "icon": "🧈",
+        "label": {
+          "en": "Butter (softened)",
+          "ar": "زبدة طرية"
+        },
+        "amount": "170g"
+      },
+      {
+        "id": "i3",
+        "icon": "🍚",
+        "label": {
+          "en": "Brown Sugar",
+          "ar": "سكر بني"
+        },
+        "amount": "130g"
+      },
+      {
+        "id": "i4",
+        "icon": "🍚",
+        "label": {
+          "en": "Caster Sugar",
+          "ar": "سكر ناعم"
+        },
+        "amount": "65g"
+      },
+      {
+        "id": "i5",
+        "icon": "🥚",
+        "label": {
+          "en": "Eggs",
+          "ar": "بيض"
+        },
+        "amount": "1 large + 1 yolk"
+      },
+      {
+        "id": "i6",
+        "icon": "🍫",
+        "label": {
+          "en": "Chocolate Chips",
+          "ar": "قطع شوكولاتة"
+        },
+        "amount": "150g"
+      },
+      {
+        "id": "i7",
+        "icon": "🧪",
+        "label": {
+          "en": "Roasted Hazelnut Essence",
+          "ar": "جوهر الهيزلنت المحمص"
+        },
+        "amount": "½ tsp (2.5g)"
+      }
+    ],
+    "instructions": [
+      {
+        "id": "s1",
+        "icon": "🥣",
+        "text": {
+          "en": "Beat butter and both sugars until creamy.",
+          "ar": "اخفق الزبدة والسكرين حتى يصبح كريمي."
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🥚",
+        "text": {
+          "en": "Beat in eggs and Roasted Hazelnut Essence.",
+          "ar": "أضف البيض وجوهر الهيزلنت المحمص مع الخفق."
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🌾",
+        "text": {
+          "en": "Stir in flour until just combined.",
+          "ar": "أضف الدقيق وامزج حتى يتجانس."
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "🍫",
+        "text": {
+          "en": "Fold in chocolate chips.",
+          "ar": "أضف قطع الشوكولاتة برفق."
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🫙",
+        "text": {
+          "en": "Bake at 180°C for 10–12 minutes. Cool on tray.",
+          "ar": "اخبز على 180°م لمدة 10-12 دقيقة. برّد على الصينية."
+        }
+      }
+    ],
+    "sections": [],
+    "badgeText": {
+      "en": "ENJOY EVERY BITE",
+      "ar": "استمتع بكل قضمة"
+    },
+    "tagline": {
+      "en": "Creativity with Confidence",
+      "ar": "إبداع بثقة"
+    },
+    "products": [
+      "Roasted Hazelnut",
+      "Brown Color"
+    ],
+    "primaryColor": "#B78D4B",
+    "backgroundColor": "#FCFAF4"
+  },
+  "createdAt": "2026-04-13T09:27:58.297Z",
+  "updatedAt": "2026-04-13T09:27:58.297Z",
+  "createdBy": "1"
+}

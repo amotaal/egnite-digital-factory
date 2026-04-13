@@ -1,0 +1,156 @@
+{
+  "id": "8ae06b4b-5105-4e2d-885e-2d1f201e4f7d",
+  "name": "Strawberry Shortcake Cups",
+  "templateType": "recipe-card",
+  "fields": {
+    "language": "en",
+    "logoText": "EGNITE",
+    "heroImage": "/samples/strawberry_shortcake_2_pages.png",
+    "title": {
+      "en": "Strawberry Shortcake Cups",
+      "ar": "كوباية ستروبيري شورت كيك"
+    },
+    "subtitle": {
+      "en": "Light and airy dessert cups featuring layers of soft vanilla cake soaked in a sw",
+      "ar": "كوبايات حلوى خفيفة وهوائية بطبقات من كيكة الفانيليا الطرية مع شراب الفراولة وموس"
+    },
+    "prepTime": "15 mins",
+    "cookTime": "30 mins",
+    "servings": "12–16 pieces",
+    "difficulty": "Hard",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "🥚",
+        "label": {
+          "en": "Eggs",
+          "ar": "بيض"
+        },
+        "amount": "3 large"
+      },
+      {
+        "id": "i2",
+        "icon": "🍚",
+        "label": {
+          "en": "Sugar",
+          "ar": "سكر"
+        },
+        "amount": "150g (¾ cup)"
+      },
+      {
+        "id": "i3",
+        "icon": "🌾",
+        "label": {
+          "en": "Flour",
+          "ar": "دقيق"
+        },
+        "amount": "120g (1 cup)"
+      },
+      {
+        "id": "i4",
+        "icon": "🧈",
+        "label": {
+          "en": "Butter (melted)",
+          "ar": "زبدة مذابة"
+        },
+        "amount": "60g"
+      },
+      {
+        "id": "i5",
+        "icon": "🧪",
+        "label": {
+          "en": "Vanilla Essence",
+          "ar": "جوهر الفانيليا"
+        },
+        "amount": "½ tsp (2.5g)"
+      },
+      {
+        "id": "i6",
+        "icon": "🍓",
+        "label": {
+          "en": "Strawberry Essence",
+          "ar": "جوهر الفراولة"
+        },
+        "amount": "½ tsp (2.5g)"
+      },
+      {
+        "id": "i7",
+        "icon": "🥛",
+        "label": {
+          "en": "Heavy Cream",
+          "ar": "كريم للخفق"
+        },
+        "amount": "300ml"
+      }
+    ],
+    "instructions": [
+      {
+        "id": "s1",
+        "icon": "🥣",
+        "text": {
+          "en": "Whisk eggs and sugar until pale and thick, about 5 minutes.",
+          "ar": "اخفق البيض والسكر حتى يصبح فاتح اللون وكثيف لمدة 5 دقائق."
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🌾",
+        "text": {
+          "en": "Fold in sifted flour gently, then add melted butter.",
+          "ar": "أضف الدقيق المنخول برفق ثم أضف الزبدة المذابة."
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🧪",
+        "text": {
+          "en": "Add Vanilla Essence and mix until just combined.",
+          "ar": "أضف جوهر الفانيليا وامزج حتى يتجانس."
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "🫙",
+        "text": {
+          "en": "Pour into greased cups and bake at 180°C for 18–20 min.",
+          "ar": "صب في كوبايات مدهونة واخبز على 180°م لمدة 18-20 دقيقة."
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🍓",
+        "text": {
+          "en": "Make syrup: heat strawberries with sugar and Strawberry Essence.",
+          "ar": "اصنع الشراب: سخّن الفراولة مع السكر وجوهر الفراولة."
+        }
+      },
+      {
+        "id": "s6",
+        "icon": "🍦",
+        "text": {
+          "en": "Soak cooled cakes with syrup, top with whipped cream.",
+          "ar": "بلل الكيك المبرد بالشراب وأضف الكريم المخفوق فوقه."
+        }
+      }
+    ],
+    "sections": [],
+    "badgeText": {
+      "en": "ENJOY EVERY BITE",
+      "ar": "استمتع بكل قضمة"
+    },
+    "tagline": {
+      "en": "Creativity with Confidence",
+      "ar": "إبداع بثقة"
+    },
+    "products": [
+      "Vanilla",
+      "Strawberry",
+      "Strawberry Emulsion"
+    ],
+    "primaryColor": "#B78D4B",
+    "backgroundColor": "#FCFAF4"
+  },
+  "createdAt": "2026-04-13T09:27:58.290Z",
+  "updatedAt": "2026-04-13T09:27:58.290Z",
+  "createdBy": "1"
+}
