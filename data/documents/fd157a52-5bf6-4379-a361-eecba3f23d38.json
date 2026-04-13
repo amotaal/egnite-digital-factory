@@ -1,0 +1,148 @@
+{
+  "id": "fd157a52-5bf6-4379-a361-eecba3f23d38",
+  "name": "Creamy Pinwheel Cookies",
+  "templateType": "recipe-card",
+  "fields": {
+    "language": "en",
+    "logoText": "EGNITE",
+    "heroImage": "/samples/creamy_pinwheel_cookies.png",
+    "title": {
+      "en": "Creamy Pinwheel Cookies",
+      "ar": "كوكيز دوامة الكريم"
+    },
+    "subtitle": {
+      "en": "Eye-catching swirl cookies featuring velvety Bavarian cream and warm spiced lotu",
+      "ar": "كوكيز دوامة لافتة للنظر بنكهة البافاريان كريم المخملية ونكهة اللوتس الحارة — نوس"
+    },
+    "prepTime": "15 mins",
+    "cookTime": "30 mins",
+    "servings": "12–16 pieces",
+    "difficulty": "Medium",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "🌾",
+        "label": {
+          "en": "Flour",
+          "ar": "دقيق"
+        },
+        "amount": "280g"
+      },
+      {
+        "id": "i2",
+        "icon": "🧈",
+        "label": {
+          "en": "Butter (softened)",
+          "ar": "زبدة طرية"
+        },
+        "amount": "170g"
+      },
+      {
+        "id": "i3",
+        "icon": "🍚",
+        "label": {
+          "en": "Icing Sugar",
+          "ar": "سكر ناعم"
+        },
+        "amount": "90g"
+      },
+      {
+        "id": "i4",
+        "icon": "🥚",
+        "label": {
+          "en": "Egg",
+          "ar": "بيض"
+        },
+        "amount": "1 large"
+      },
+      {
+        "id": "i5",
+        "icon": "🧪",
+        "label": {
+          "en": "Bavarian Cream Essence",
+          "ar": "جوهر البافاريان كريم"
+        },
+        "amount": "½ tsp (2.5g)"
+      },
+      {
+        "id": "i6",
+        "icon": "🧪",
+        "label": {
+          "en": "Lotus Essence",
+          "ar": "جوهر اللوتس"
+        },
+        "amount": "½ tsp (2.5g)"
+      },
+      {
+        "id": "i7",
+        "icon": "🟫",
+        "label": {
+          "en": "Brown Food Color",
+          "ar": "لون بني غذائي"
+        },
+        "amount": "3 drops"
+      }
+    ],
+    "instructions": [
+      {
+        "id": "s1",
+        "icon": "🥣",
+        "text": {
+          "en": "Cream butter and sugar. Beat in egg.",
+          "ar": "اخفق الزبدة والسكر. أضف البيض."
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🌾",
+        "text": {
+          "en": "Divide dough in half. Mix Bavarian Cream into one half.",
+          "ar": "قسّم العجين لنصفين. أضف البافاريان كريم لأحد النصفين."
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🟫",
+        "text": {
+          "en": "Add Lotus Essence and Brown Color to the second half.",
+          "ar": "أضف جوهر اللوتس واللون البني للنصف الثاني."
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "🌀",
+        "text": {
+          "en": "Roll both doughs, stack, roll up into a log, chill 1 hour.",
+          "ar": "افرد العجينتين، ضعهما فوق بعض، لفّهما لفّة واحدة وبرّد ساعة."
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🔪",
+        "text": {
+          "en": "Slice and bake at 175°C for 12–14 minutes.",
+          "ar": "شرّح واخبز على 175°م لمدة 12-14 دقيقة."
+        }
+      }
+    ],
+    "sections": [],
+    "badgeText": {
+      "en": "ENJOY EVERY BITE",
+      "ar": "استمتع بكل قضمة"
+    },
+    "tagline": {
+      "en": "Creativity with Confidence",
+      "ar": "إبداع بثقة"
+    },
+    "products": [
+      "Lotus",
+      "Bavarian Cream",
+      "Brown Color"
+    ],
+    "primaryColor": "#B78D4B",
+    "backgroundColor": "#FCFAF4"
+  },
+  "createdAt": "2026-04-13T09:27:58.300Z",
+  "updatedAt": "2026-04-13T09:27:58.300Z",
+  "createdBy": "1"
+}

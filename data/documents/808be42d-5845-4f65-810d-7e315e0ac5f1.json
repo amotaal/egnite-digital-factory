@@ -1,0 +1,138 @@
+{
+  "id": "808be42d-5845-4f65-810d-7e315e0ac5f1",
+  "name": "Bubblegum Fudge Bites",
+  "templateType": "recipe-card",
+  "fields": {
+    "language": "en",
+    "logoText": "EGNITE",
+    "heroImage": "/samples/bubblegum_fudgebites.png",
+    "title": {
+      "en": "Bubblegum Fudge Bites",
+      "ar": "لوح فج بالببلغم"
+    },
+    "subtitle": {
+      "en": "Vibrant pink no-bake treats bringing nostalgic bubblegum sweetness to life — cre",
+      "ar": "حلويات وردية لا تحتاج للخبز، تجسّد طعم الببلغم النوستالجي — شوكولاتة بيضاء كريمي"
+    },
+    "prepTime": "15 mins",
+    "cookTime": "30 mins",
+    "servings": "12–16 pieces",
+    "difficulty": "Medium",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "🍫",
+        "label": {
+          "en": "White Chocolate",
+          "ar": "شوكولاتة بيضاء"
+        },
+        "amount": "300g"
+      },
+      {
+        "id": "i2",
+        "icon": "🥛",
+        "label": {
+          "en": "Condensed Milk",
+          "ar": "حليب مكثف"
+        },
+        "amount": "100g"
+      },
+      {
+        "id": "i3",
+        "icon": "🧈",
+        "label": {
+          "en": "Butter",
+          "ar": "زبدة"
+        },
+        "amount": "30g"
+      },
+      {
+        "id": "i4",
+        "icon": "☁️",
+        "label": {
+          "en": "Mini Marshmallows",
+          "ar": "مارشميلو صغير"
+        },
+        "amount": "80g"
+      },
+      {
+        "id": "i5",
+        "icon": "🧪",
+        "label": {
+          "en": "Bubble Gum Essence",
+          "ar": "جوهر الببلغم"
+        },
+        "amount": "½ tsp (2.5g)"
+      },
+      {
+        "id": "i6",
+        "icon": "🩷",
+        "label": {
+          "en": "Pink Food Color",
+          "ar": "لون وردي غذائي"
+        },
+        "amount": "3–5 drops"
+      }
+    ],
+    "instructions": [
+      {
+        "id": "s1",
+        "icon": "🫕",
+        "text": {
+          "en": "Melt white chocolate, butter, and condensed milk over low heat.",
+          "ar": "أذب الشوكولاتة البيضاء والزبدة والحليب المكثف على نار هادئة."
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🧪",
+        "text": {
+          "en": "Remove from heat, add Bubble Gum Essence and Pink Color.",
+          "ar": "أبعد عن النار، أضف جوهر الببلغم واللون الوردي."
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "☁️",
+        "text": {
+          "en": "Stir in mini marshmallows.",
+          "ar": "أضف المارشميلو الصغير وامزج."
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "🧊",
+        "text": {
+          "en": "Pour into lined tin and refrigerate 2 hours.",
+          "ar": "صب في قالب مبطن وبرد في الثلاجة ساعتين."
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🔪",
+        "text": {
+          "en": "Cut into squares and serve.",
+          "ar": "قطّع إلى مكعبات وقدّم."
+        }
+      }
+    ],
+    "sections": [],
+    "badgeText": {
+      "en": "ENJOY EVERY BITE",
+      "ar": "استمتع بكل قضمة"
+    },
+    "tagline": {
+      "en": "Creativity with Confidence",
+      "ar": "إبداع بثقة"
+    },
+    "products": [
+      "Bubble Gum",
+      "Pink Color"
+    ],
+    "primaryColor": "#B78D4B",
+    "backgroundColor": "#FCFAF4"
+  },
+  "createdAt": "2026-04-13T09:27:58.299Z",
+  "updatedAt": "2026-04-13T09:27:58.299Z",
+  "createdBy": "1"
+}

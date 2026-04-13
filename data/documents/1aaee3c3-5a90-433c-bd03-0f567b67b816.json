@@ -1,0 +1,195 @@
+{
+  "id": "1aaee3c3-5a90-433c-bd03-0f567b67b816",
+  "name": "Wildberry Cupcakes",
+  "templateType": "recipe-card",
+  "fields": {
+    "language": "en",
+    "logoText": "EGNITE",
+    "heroImage": "/samples/wildberry_cupcakes.png",
+    "title": {
+      "en": "Wildberry Cupcakes",
+      "ar": "كاب كيك التوت البري"
+    },
+    "subtitle": {
+      "en": "Fluffy cupcakes with a creamy vanilla bean ice cream base, crowned with sky-blue",
+      "ar": "كاب كيك هش بقاعدة كريم آيس كريم الفانيليا، مزيّن بكريم زبدة أزرق فاتح مليء بنكهة"
+    },
+    "prepTime": "15 mins",
+    "cookTime": "30 mins",
+    "servings": "12–16 pieces",
+    "difficulty": "Easy",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "🌾",
+        "label": {
+          "en": "Flour",
+          "ar": "دقيق"
+        },
+        "amount": "180g"
+      },
+      {
+        "id": "i2",
+        "icon": "🍚",
+        "label": {
+          "en": "Sugar",
+          "ar": "سكر"
+        },
+        "amount": "150g"
+      },
+      {
+        "id": "i3",
+        "icon": "🧈",
+        "label": {
+          "en": "Butter (softened)",
+          "ar": "زبدة طرية"
+        },
+        "amount": "115g"
+      },
+      {
+        "id": "i4",
+        "icon": "🥚",
+        "label": {
+          "en": "Eggs",
+          "ar": "بيض"
+        },
+        "amount": "2 large"
+      },
+      {
+        "id": "i5",
+        "icon": "🥛",
+        "label": {
+          "en": "Milk",
+          "ar": "حليب"
+        },
+        "amount": "120ml"
+      },
+      {
+        "id": "i6",
+        "icon": "🧪",
+        "label": {
+          "en": "Vanilla Bean Ice Cream Essence",
+          "ar": "جوهر آيس كريم الفانيليا"
+        },
+        "amount": "½ tsp (2.5g)"
+      }
+    ],
+    "instructions": [
+      {
+        "id": "s1",
+        "icon": "🥣",
+        "text": {
+          "en": "Cream butter and sugar until light and fluffy.",
+          "ar": "اخفق الزبدة والسكر حتى يصبح خفيفاً وهشاً."
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🥚",
+        "text": {
+          "en": "Add eggs one at a time, beating well.",
+          "ar": "أضف البيض حبة حبة مع الخفق الجيد."
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🧪",
+        "text": {
+          "en": "Add Vanilla Bean Ice Cream Essence.",
+          "ar": "أضف جوهر آيس كريم الفانيليا."
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "🌾",
+        "text": {
+          "en": "Alternate flour and milk, folding gently.",
+          "ar": "أضف الدقيق والحليب بالتناوب برفق."
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🫙",
+        "text": {
+          "en": "Bake 180°C for 18–20 minutes.",
+          "ar": "اخبز على 180°م لمدة 18-20 دقيقة."
+        }
+      }
+    ],
+    "sections": [
+      {
+        "id": "sec1",
+        "title": {
+          "en": "Wild Berry Buttercream",
+          "ar": "كريم زبدة التوت البري"
+        },
+        "type": "ingredients",
+        "items": [
+          {
+            "id": "b1",
+            "icon": "🧈",
+            "label": {
+              "en": "Butter (softened)",
+              "ar": "زبدة طرية"
+            },
+            "amount": "250g"
+          },
+          {
+            "id": "b2",
+            "icon": "🍚",
+            "label": {
+              "en": "Icing Sugar",
+              "ar": "سكر ناعم"
+            },
+            "amount": "400g"
+          },
+          {
+            "id": "b3",
+            "icon": "🧪",
+            "label": {
+              "en": "Wild Berries Essence",
+              "ar": "جوهر التوت البري"
+            },
+            "amount": "½ tsp (2.5g)"
+          },
+          {
+            "id": "b4",
+            "icon": "💙",
+            "label": {
+              "en": "Blue Food Color",
+              "ar": "لون أزرق غذائي"
+            },
+            "amount": "3–4 drops"
+          },
+          {
+            "id": "b5",
+            "icon": "🥛",
+            "label": {
+              "en": "Milk",
+              "ar": "حليب"
+            },
+            "amount": "2 tbsp"
+          }
+        ]
+      }
+    ],
+    "badgeText": {
+      "en": "ENJOY EVERY BITE",
+      "ar": "استمتع بكل قضمة"
+    },
+    "tagline": {
+      "en": "Creativity with Confidence",
+      "ar": "إبداع بثقة"
+    },
+    "products": [
+      "Wild Berries",
+      "Vanilla Bean Ice Cream",
+      "Blue Color"
+    ],
+    "primaryColor": "#B78D4B",
+    "backgroundColor": "#FCFAF4"
+  },
+  "createdAt": "2026-04-13T09:27:58.294Z",
+  "updatedAt": "2026-04-13T09:27:58.294Z",
+  "createdBy": "1"
+}

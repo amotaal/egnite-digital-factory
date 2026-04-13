@@ -1,0 +1,164 @@
+{
+  "id": "722c3b48-cdbd-4f0a-9482-3caa6bfd8fc9",
+  "name": "Mixed Berries Cake",
+  "templateType": "recipe-card",
+  "fields": {
+    "language": "en",
+    "logoText": "EGNITE",
+    "heroImage": "/samples/mixedberries_cake.png",
+    "title": {
+      "en": "Mixed Berries Cake",
+      "ar": "كيكة التوت المشكل"
+    },
+    "subtitle": {
+      "en": "Charming home-style cake with a beautiful pink marble swirl and juicy frozen ber",
+      "ar": "كيكة منزلية ساحرة بتأثير الرخام الوردي وحبات التوت المجمدة — خفيفة ومثيرة للنظر."
+    },
+    "prepTime": "15 mins",
+    "cookTime": "30 mins",
+    "servings": "12–16 pieces",
+    "difficulty": "Medium",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "🌾",
+        "label": {
+          "en": "Flour",
+          "ar": "دقيق"
+        },
+        "amount": "240g"
+      },
+      {
+        "id": "i2",
+        "icon": "🍚",
+        "label": {
+          "en": "Sugar",
+          "ar": "سكر"
+        },
+        "amount": "180g"
+      },
+      {
+        "id": "i3",
+        "icon": "🧈",
+        "label": {
+          "en": "Butter",
+          "ar": "زبدة"
+        },
+        "amount": "130g"
+      },
+      {
+        "id": "i4",
+        "icon": "🥚",
+        "label": {
+          "en": "Eggs",
+          "ar": "بيض"
+        },
+        "amount": "3"
+      },
+      {
+        "id": "i5",
+        "icon": "🥛",
+        "label": {
+          "en": "Yogurt",
+          "ar": "زبادي"
+        },
+        "amount": "120g"
+      },
+      {
+        "id": "i6",
+        "icon": "🫐",
+        "label": {
+          "en": "Frozen Mixed Berries",
+          "ar": "توت مشكل مجمد"
+        },
+        "amount": "150g"
+      },
+      {
+        "id": "i7",
+        "icon": "🧪",
+        "label": {
+          "en": "Mixed Berries Essence",
+          "ar": "جوهر التوت المشكل"
+        },
+        "amount": "½ tsp (2.5g)"
+      },
+      {
+        "id": "i8",
+        "icon": "🩷",
+        "label": {
+          "en": "Pink Food Color",
+          "ar": "لون وردي غذائي"
+        },
+        "amount": "4 drops"
+      }
+    ],
+    "instructions": [
+      {
+        "id": "s1",
+        "icon": "🥣",
+        "text": {
+          "en": "Cream butter and sugar. Beat in eggs.",
+          "ar": "اخفق الزبدة والسكر. أضف البيض."
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🧪",
+        "text": {
+          "en": "Add Mixed Berries Essence.",
+          "ar": "أضف جوهر التوت المشكل."
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🌾",
+        "text": {
+          "en": "Fold in flour alternating with yogurt.",
+          "ar": "أضف الدقيق بالتناوب مع الزبادي."
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "🩷",
+        "text": {
+          "en": "Split batter: mix Pink Color into half.",
+          "ar": "قسّم العجين: أضف اللون الوردي لنصفه."
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🫐",
+        "text": {
+          "en": "Marble the two batters, fold in frozen berries.",
+          "ar": "ادمج العجينتين بحركة دوامة، أضف التوت المجمد."
+        }
+      },
+      {
+        "id": "s6",
+        "icon": "🫙",
+        "text": {
+          "en": "Bake at 175°C for 40–45 minutes.",
+          "ar": "اخبز على 175°م لمدة 40-45 دقيقة."
+        }
+      }
+    ],
+    "sections": [],
+    "badgeText": {
+      "en": "ENJOY EVERY BITE",
+      "ar": "استمتع بكل قضمة"
+    },
+    "tagline": {
+      "en": "Creativity with Confidence",
+      "ar": "إبداع بثقة"
+    },
+    "products": [
+      "Mixed Berries",
+      "Pink Color"
+    ],
+    "primaryColor": "#B78D4B",
+    "backgroundColor": "#FCFAF4"
+  },
+  "createdAt": "2026-04-13T09:27:58.301Z",
+  "updatedAt": "2026-04-13T09:27:58.301Z",
+  "createdBy": "1"
+}
