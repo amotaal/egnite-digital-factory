@@ -1,8 +1,7 @@
 "use client";
 import React, { useRef } from "react";
 import {
-  Plus, Trash2, GripVertical, Image as ImageIcon,
-  ChevronDown, ChevronUp, Upload
+  Plus, Trash2, GripVertical, ChevronDown, ChevronUp, Upload,
 } from "lucide-react";
 import { v4 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
@@ -10,23 +9,15 @@ import { Input, Textarea } from "@/components/ui/input";
 import { useEditorStore } from "@/lib/store/editor";
 import type {
   RecipeCardFields, InfographicCardFields, BeverageCardFields,
-  IngredientItem, InstructionStep
+  IngredientItem, InstructionStep, DocumentSection,
 } from "@/lib/types";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function SectionHeader({ title }: { title: string }) {
-  return (
-    <div className="text-[10px] font-black uppercase tracking-widest text-gold border-b border-gold-light pb-1 mb-3 mt-4">
-      {title}
-    </div>
-  );
-}
-
 function BilingualField({
   label, en, ar,
   onChangeEn, onChangeAr,
-  multiline = false
+  multiline = false,
 }: {
   label: string;
   en: string;
@@ -59,7 +50,7 @@ function BilingualField({
 }
 
 function ImageUploadField({
-  label, value, onChange
+  label, value, onChange,
 }: {
   label: string;
   value: string;
@@ -122,24 +113,18 @@ function ImageUploadField({
 }
 
 function IngredientsEditor({
-  items, onChange
+  items, onChange,
 }: {
   items: IngredientItem[];
   onChange: (items: IngredientItem[]) => void;
 }) {
-  const updateItem = (id: string, patch: Partial<IngredientItem>) => {
+  const updateItem = (id: string, patch: Partial<IngredientItem>) =>
     onChange(items.map((it) => (it.id === id ? { ...it, ...patch } : it)));
-  };
   const removeItem = (id: string) => onChange(items.filter((it) => it.id !== id));
   const addItem = () =>
     onChange([
       ...items,
-      {
-        id: uuid(),
-        icon: "🧪",
-        label: { en: "Ingredient", ar: "مكوّن" },
-        amount: "100g",
-      },
+      { id: uuid(), icon: "🧪", label: { en: "Ingredient", ar: "مكوّن" }, amount: "100g" },
     ]);
 
   return (
@@ -198,17 +183,14 @@ function IngredientsEditor({
 }
 
 function StepsEditor({
-  items,
-  onChange,
-  addLabel = "Add Step",
+  items, onChange, addLabel = "Add Step",
 }: {
   items: InstructionStep[];
   onChange: (items: InstructionStep[]) => void;
   addLabel?: string;
 }) {
-  const updateItem = (id: string, patch: Partial<InstructionStep>) => {
+  const updateItem = (id: string, patch: Partial<InstructionStep>) =>
     onChange(items.map((it) => (it.id === id ? { ...it, ...patch } : it)));
-  };
   const removeItem = (id: string) => onChange(items.filter((it) => it.id !== id));
   const addItem = () =>
     onChange([
@@ -264,6 +246,159 @@ function StepsEditor({
   );
 }
 
+// ─── Sections Editor ──────────────────────────────────────────────────────────
+
+function SectionsEditor({
+  sections, onChange,
+}: {
+  sections: DocumentSection[];
+  onChange: (sections: DocumentSection[]) => void;
+}) {
+  const [openId, setOpenId] = React.useState<string | null>(null);
+
+  const addSection = () => {
+    const newSec: DocumentSection = {
+      id: uuid(),
+      title: { en: "New Section", ar: "قسم جديد" },
+      type: "ingredients",
+      items: [],
+    };
+    onChange([...sections, newSec]);
+    setOpenId(newSec.id);
+  };
+
+  const removeSection = (id: string) => {
+    onChange(sections.filter((s) => s.id !== id));
+    if (openId === id) setOpenId(null);
+  };
+
+  const updateSection = (id: string, patch: Partial<DocumentSection>) =>
+    onChange(sections.map((s) => (s.id === id ? { ...s, ...patch } : s)));
+
+  return (
+    <div className="flex flex-col gap-2">
+      {sections.map((sec) => (
+        <div key={sec.id} className="border border-gold-light/50 rounded-lg overflow-hidden">
+          {/* Section header row */}
+          <div className="flex items-center bg-cream-dark px-3 py-2 gap-2">
+            <button
+              className="flex-1 text-sm font-semibold text-ink text-start truncate"
+              onClick={() => setOpenId((v) => (v === sec.id ? null : sec.id))}
+            >
+              {sec.title.en || "Untitled Section"}
+            </button>
+            {openId === sec.id ? (
+              <ChevronUp size={13} className="text-ink-muted shrink-0" />
+            ) : (
+              <ChevronDown size={13} className="text-ink-muted shrink-0" />
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => removeSection(sec.id)}
+              className="p-1 text-red-500 hover:text-red-700 shrink-0"
+            >
+              <Trash2 size={13} />
+            </Button>
+          </div>
+
+          {openId === sec.id && (
+            <div className="p-3 flex flex-col gap-3">
+              <BilingualField
+                label="Section Title"
+                en={sec.title.en}
+                ar={sec.title.ar}
+                onChangeEn={(v) => updateSection(sec.id, { title: { ...sec.title, en: v } })}
+                onChangeAr={(v) => updateSection(sec.id, { title: { ...sec.title, ar: v } })}
+              />
+
+              {/* Type toggle */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => updateSection(sec.id, { type: "ingredients", items: [] })}
+                  className={`flex-1 px-2 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                    sec.type === "ingredients"
+                      ? "bg-gold text-white border-gold"
+                      : "border-gold-light text-ink-muted hover:bg-cream"
+                  }`}
+                >
+                  Ingredients
+                </button>
+                <button
+                  onClick={() => updateSection(sec.id, { type: "instructions", items: [] })}
+                  className={`flex-1 px-2 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                    sec.type === "instructions"
+                      ? "bg-gold text-white border-gold"
+                      : "border-gold-light text-ink-muted hover:bg-cream"
+                  }`}
+                >
+                  Steps
+                </button>
+              </div>
+
+              {sec.type === "ingredients" ? (
+                <IngredientsEditor
+                  items={sec.items as IngredientItem[]}
+                  onChange={(items) => updateSection(sec.id, { items })}
+                />
+              ) : (
+                <StepsEditor
+                  items={sec.items as InstructionStep[]}
+                  onChange={(items) => updateSection(sec.id, { items })}
+                />
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+      <Button variant="outline" size="sm" onClick={addSection} className="w-full gap-1.5">
+        <Plus size={14} /> Add Section
+      </Button>
+    </div>
+  );
+}
+
+// ─── Shared Color Picker ───────────────────────────────────────────────────────
+
+function ColorPickers({
+  primaryColor, backgroundColor,
+  onChangePrimary, onChangeBg,
+}: {
+  primaryColor: string;
+  backgroundColor: string;
+  onChangePrimary: (v: string) => void;
+  onChangeBg: (v: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-3">
+        <label className="text-xs font-medium text-ink flex-1">Accent Color</label>
+        <div className="flex items-center gap-2">
+          <input
+            type="color"
+            value={primaryColor}
+            onChange={(e) => onChangePrimary(e.target.value)}
+            className="w-8 h-8 rounded cursor-pointer border border-gold-light"
+          />
+          <span className="text-xs text-ink-muted font-mono">{primaryColor}</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <label className="text-xs font-medium text-ink flex-1">Background Color</label>
+        <div className="flex items-center gap-2">
+          <input
+            type="color"
+            value={backgroundColor}
+            onChange={(e) => onChangeBg(e.target.value)}
+            className="w-8 h-8 rounded cursor-pointer border border-gold-light"
+          />
+          <span className="text-xs text-ink-muted font-mono">{backgroundColor}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Recipe Card Panel ────────────────────────────────────────────────────────
 
 function RecipeCardPanel({ fields }: { fields: RecipeCardFields }) {
@@ -271,11 +406,6 @@ function RecipeCardPanel({ fields }: { fields: RecipeCardFields }) {
   const [openSection, setOpenSection] = React.useState<string | null>("title");
 
   const toggle = (s: string) => setOpenSection((v) => (v === s ? null : s));
-
-  const f = (path: string) => ({
-    onClick: () => toggle(path),
-    open: openSection === path,
-  });
 
   function Collapsible({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
     const open = openSection === id;
@@ -321,7 +451,7 @@ function RecipeCardPanel({ fields }: { fields: RecipeCardFields }) {
         />
       </Collapsible>
 
-      <Collapsible id="meta" label="Prep Time / Cook Time / Yield">
+      <Collapsible id="meta" label="Prep · Cook · Yield">
         <Input label="Prep Time" value={fields.prepTime} onChange={(e) => updateFields({ prepTime: e.target.value })} />
         <Input label="Cook Time" value={fields.cookTime} onChange={(e) => updateFields({ cookTime: e.target.value })} />
         <Input label="Yield / Servings" value={fields.servings} onChange={(e) => updateFields({ servings: e.target.value })} />
@@ -339,6 +469,16 @@ function RecipeCardPanel({ fields }: { fields: RecipeCardFields }) {
         <StepsEditor
           items={fields.instructions}
           onChange={(items) => updateFields({ instructions: items })}
+        />
+      </Collapsible>
+
+      <Collapsible id="sections" label={`Extra Sections (${fields.sections.length})`}>
+        <p className="text-xs text-ink-muted">
+          Add sub-sections like "Chocolate Coating" or "Frosting" below the main recipe body.
+        </p>
+        <SectionsEditor
+          sections={fields.sections}
+          onChange={(sections) => updateFields({ sections })}
         />
       </Collapsible>
 
@@ -360,24 +500,12 @@ function RecipeCardPanel({ fields }: { fields: RecipeCardFields }) {
       </Collapsible>
 
       <Collapsible id="theme" label="Colors">
-        <div className="flex items-center gap-3">
-          <label className="text-xs font-medium text-ink flex-1">Accent Color</label>
-          <input
-            type="color"
-            value={fields.primaryColor}
-            onChange={(e) => updateFields({ primaryColor: e.target.value })}
-            className="w-10 h-8 rounded cursor-pointer border border-gold-light"
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          <label className="text-xs font-medium text-ink flex-1">Background Color</label>
-          <input
-            type="color"
-            value={fields.backgroundColor}
-            onChange={(e) => updateFields({ backgroundColor: e.target.value })}
-            className="w-10 h-8 rounded cursor-pointer border border-gold-light"
-          />
-        </div>
+        <ColorPickers
+          primaryColor={fields.primaryColor}
+          backgroundColor={fields.backgroundColor}
+          onChangePrimary={(v) => updateFields({ primaryColor: v })}
+          onChangeBg={(v) => updateFields({ backgroundColor: v })}
+        />
       </Collapsible>
     </div>
   );
@@ -393,7 +521,10 @@ function InfographicPanel({ fields }: { fields: InfographicCardFields }) {
   function C({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
     return (
       <div className="border border-gold-light/50 rounded-lg overflow-hidden">
-        <button className="w-full flex items-center justify-between px-3 py-2.5 bg-cream-dark hover:bg-gold-light/30 transition-colors text-sm font-semibold text-ink" onClick={() => toggle(id)}>
+        <button
+          className="w-full flex items-center justify-between px-3 py-2.5 bg-cream-dark hover:bg-gold-light/30 transition-colors text-sm font-semibold text-ink"
+          onClick={() => toggle(id)}
+        >
           {label}
           {open === id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </button>
@@ -433,6 +564,19 @@ function InfographicPanel({ fields }: { fields: InfographicCardFields }) {
       <C id="steps" label={`Instructions (${fields.instructions.length} steps)`}>
         <StepsEditor items={fields.instructions} onChange={(items) => updateFields({ instructions: items })} />
       </C>
+      <C id="footer" label="Footer Tagline">
+        <BilingualField label="Tagline" en={fields.footerTagline.en} ar={fields.footerTagline.ar}
+          onChangeEn={(v) => updateFields({ footerTagline: { ...fields.footerTagline, en: v } })}
+          onChangeAr={(v) => updateFields({ footerTagline: { ...fields.footerTagline, ar: v } })} />
+      </C>
+      <C id="theme" label="Colors">
+        <ColorPickers
+          primaryColor={fields.primaryColor}
+          backgroundColor={fields.backgroundColor}
+          onChangePrimary={(v) => updateFields({ primaryColor: v })}
+          onChangeBg={(v) => updateFields({ backgroundColor: v })}
+        />
+      </C>
     </div>
   );
 }
@@ -447,7 +591,10 @@ function BeveragePanel({ fields }: { fields: BeverageCardFields }) {
   function C({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
     return (
       <div className="border border-gold-light/50 rounded-lg overflow-hidden">
-        <button className="w-full flex items-center justify-between px-3 py-2.5 bg-cream-dark hover:bg-gold-light/30 transition-colors text-sm font-semibold text-ink" onClick={() => toggle(id)}>
+        <button
+          className="w-full flex items-center justify-between px-3 py-2.5 bg-cream-dark hover:bg-gold-light/30 transition-colors text-sm font-semibold text-ink"
+          onClick={() => toggle(id)}
+        >
           {label}
           {open === id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </button>
@@ -485,6 +632,19 @@ function BeveragePanel({ fields }: { fields: BeverageCardFields }) {
           onChangeAr={(v) => updateFields({ storageNote: { ...fields.storageNote, ar: v } })}
           multiline />
       </C>
+      <C id="footer" label="Footer Tagline">
+        <BilingualField label="Tagline" en={fields.footerTagline.en} ar={fields.footerTagline.ar}
+          onChangeEn={(v) => updateFields({ footerTagline: { ...fields.footerTagline, en: v } })}
+          onChangeAr={(v) => updateFields({ footerTagline: { ...fields.footerTagline, ar: v } })} />
+      </C>
+      <C id="theme" label="Colors">
+        <ColorPickers
+          primaryColor={fields.primaryColor}
+          backgroundColor={fields.backgroundColor}
+          onChangePrimary={(v) => updateFields({ primaryColor: v })}
+          onChangeBg={(v) => updateFields({ backgroundColor: v })}
+        />
+      </C>
     </div>
   );
 }
@@ -499,7 +659,7 @@ export function FieldPanel() {
 
   return (
     <div className="h-full overflow-y-auto p-3 flex flex-col gap-1">
-      {document.templateType === "recipe-card" && (
+      {(document.templateType === "recipe-card" || document.templateType === "extended-recipe") && (
         <RecipeCardPanel fields={fields as RecipeCardFields} />
       )}
       {document.templateType === "infographic-card" && (

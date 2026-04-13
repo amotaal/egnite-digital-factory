@@ -7,13 +7,13 @@ const PUBLIC_PATHS = ["/login", "/api/auth/login"];
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Let public paths through
+  // Let public paths through unconditionally.
+  // Do NOT redirect cookie-holders away from /login here — the factory layout
+  // is the authoritative session validator. Redirecting based on cookie existence
+  // alone causes an infinite loop when the session is expired or the sessions
+  // file was cleared (cookie exists → proxy sends to /dashboard → layout finds
+  // expired session → sends back to /login → repeat forever).
   if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
-    // Redirect logged-in users away from /login
-    const token = request.cookies.get(SESSION_COOKIE)?.value;
-    if (token && pathname === "/login") {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
     return NextResponse.next();
   }
 

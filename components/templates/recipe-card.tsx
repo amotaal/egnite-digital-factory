@@ -122,18 +122,25 @@ export function RecipeCard({ fields, previewLang }: RecipeCardProps) {
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         ) : (
+          /* Branded placeholder — gold diagonal stripe pattern */
           <div
             style={{
               width: "100%",
               height: "100%",
+              background: `repeating-linear-gradient(45deg, ${accentLight}40 0, ${accentLight}40 10px, transparent 0, transparent 50%)`,
+              backgroundSize: "20px 20px",
+              backgroundColor: "#f0e8d8",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 48,
-              opacity: 0.3,
+              flexDirection: "column",
+              gap: 8,
             }}
           >
-            🍽️
+            <span style={{ fontSize: 40, opacity: 0.35 }}>🍽️</span>
+            <span style={{ fontSize: 11, color: accentColor, fontWeight: 700, opacity: 0.6, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              Add Hero Image
+            </span>
           </div>
         )}
         {/* Gold overlay bar at bottom */}

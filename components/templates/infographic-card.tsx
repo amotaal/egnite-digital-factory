@@ -157,7 +157,16 @@ export function InfographicCard({ fields }: { fields: InfographicCardFields }) {
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
             ) : (
-              <span style={{ fontSize: 48, opacity: 0.3 }}>🍽️</span>
+              <div style={{
+                width: "100%", height: "100%",
+                background: `repeating-linear-gradient(45deg, ${accent}20 0, ${accent}20 8px, transparent 0, transparent 40%)`,
+                backgroundSize: "16px 16px",
+                backgroundColor: "#f0e8d8",
+                display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 6,
+              }}>
+                <span style={{ fontSize: 36, opacity: 0.35 }}>🍽️</span>
+                <span style={{ fontSize: 10, color: accent, fontWeight: 700, opacity: 0.6, letterSpacing: "0.08em", textTransform: "uppercase" }}>Add Image</span>
+              </div>
             )}
           </div>
 

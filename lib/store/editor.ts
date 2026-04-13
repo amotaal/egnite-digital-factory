@@ -13,6 +13,7 @@ interface EditorState {
 
   // Actions
   setDocument: (doc: FactoryDocument) => void;
+  setDocumentName: (name: string) => void;
   updateFields: (partial: Record<string, unknown>) => void;
   setSelectedField: (field: string | null) => void;
   setLang: (lang: "en" | "ar" | "bilingual") => void;
@@ -32,6 +33,12 @@ export const useEditorStore = create<EditorState>((set, get) => ({
 
   setDocument: (doc) =>
     set({ document: doc, isDirty: false, lang: (doc.fields as { language?: string }).language as "en" | "ar" | "bilingual" ?? "en" }),
+
+  setDocumentName: (name) => {
+    const { document } = get();
+    if (!document) return;
+    set({ document: { ...document, name }, isDirty: true });
+  },
 
   updateFields: (partial) => {
     const { document } = get();

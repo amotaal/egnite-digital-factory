@@ -3,6 +3,7 @@ import type {
   RecipeCardFields,
   InfographicCardFields,
   BeverageCardFields,
+  DocumentSection,
 } from "../types";
 
 // ─── A4 dimensions at 96dpi ───────────────────────────────────────────────────
@@ -93,6 +94,23 @@ const defaultBeverageFields: BeverageCardFields = {
   backgroundColor: "#FCFAF4",
 };
 
+// ─── Extended Recipe default fields ──────────────────────────────────────────
+
+const defaultExtendedRecipeFields: RecipeCardFields = {
+  ...defaultRecipeFields,
+  sections: [
+    {
+      id: "ext-sec-1",
+      title: { en: "Chocolate Coating", ar: "طبقة الشوكولاتة" },
+      type: "ingredients",
+      items: [
+        { id: "e1", icon: "🍫", label: { en: "Dark Chocolate", ar: "شوكولاتة داكنة" }, amount: "200g" },
+        { id: "e2", icon: "🧈", label: { en: "Coconut Oil", ar: "زيت جوز الهند" }, amount: "1 tbsp" },
+      ],
+    } as DocumentSection,
+  ],
+};
+
 // ─── Template Definitions ─────────────────────────────────────────────────────
 
 export const TEMPLATES: TemplateDefinition[] = [
@@ -128,6 +146,17 @@ export const TEMPLATES: TemplateDefinition[] = [
     thumbnail: "/templates/beverage-card-thumb.png",
     dimensions: A4_LANDSCAPE,
     defaultFields: defaultBeverageFields,
+  },
+  {
+    id: "extended-recipe",
+    name: { en: "Extended Recipe", ar: "وصفة موسّعة" },
+    description: {
+      en: "A4 portrait with a larger hero, full-width section blocks for sub-recipes (coating, frosting, filling) and a bold colour-bar header. Great for multi-component confections.",
+      ar: "بطاقة A4 عمودية بصورة رئيسية أكبر وأقسام كاملة العرض للوصفات الفرعية (طبقات، حشوات). مثالية للحلويات متعددة المكونات.",
+    },
+    thumbnail: "/templates/extended-recipe-thumb.png",
+    dimensions: A4_PORTRAIT,
+    defaultFields: defaultExtendedRecipeFields,
   },
 ];
 
