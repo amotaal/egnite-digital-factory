@@ -29,10 +29,23 @@ export async function PUT(
   const user = await resolveSession(token);
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await request.json();
-  const updated = await updateDocument(id, body);
-  if (!updated) return Response.json({ error: "Not found" }, { status: 404 });
-  return Response.json({ document: updated });
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "Invalid JSON body", code: "BAD_JSON" }, { status: 400 });
+  }
+  if (!body || typeof body !== "object") {
+    return Response.json({ error: "Request body required", code: "BAD_REQUEST" }, { status: 400 });
+  }
+  try {
+    const updated = await updateDocument(id, body as Record<string, unknown>);
+    if (!updated) return Response.json({ error: "Not found" }, { status: 404 });
+    return Response.json({ document: updated });
+  } catch (err) {
+    console.error("Document update error:", err);
+    return Response.json({ error: "Failed to update document", code: "INTERNAL" }, { status: 500 });
+  }
 }
 
 export async function DELETE(

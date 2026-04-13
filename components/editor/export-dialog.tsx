@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Download, X, FileImage, FileText, Code2 } from "lucide-react";
 import { useEditorStore } from "@/lib/store/editor";
 import { A4_PORTRAIT, A4_LANDSCAPE } from "@/lib/data/templates";
@@ -129,6 +129,15 @@ export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
   const [progress, setProgress] = useState<ExportFormat | null>(null);
   const toast = useToast();
 
+  // Escape to close (don't close mid-export)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !progress) onClose();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose, progress]);
+
   if (!document) return null;
 
   const dims = TEMPLATE_DIMS[document.templateType] ?? A4_PORTRAIT;
@@ -175,15 +184,29 @@ export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-2xl border border-gold-light/50 w-full max-w-md overflow-hidden">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Export document"
+      onClick={() => !progress && onClose()}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl border border-gold-light/50 w-full max-w-md overflow-hidden animate-slide-up"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="bg-gold px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 text-white">
             <Download size={18} />
             <span className="font-bold text-base">Export Document</span>
           </div>
-          <button onClick={onClose} className="text-white/80 hover:text-white">
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-white/80 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 rounded"
+            aria-label="Close export dialog"
+          >
             <X size={18} />
           </button>
         </div>

@@ -25,6 +25,7 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
   const [showExport, setShowExport] = useState(false);
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const [nameInput, setNameInput] = useState(initialDocument.name);
 
   const {
@@ -44,16 +45,31 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [document?.id]);
 
-  // Collapse the AR panel by default on narrow screens
+  // Collapse sidebars + switch to overlay mode on narrow screens
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 1280) setRightOpen(false);
-      if (window.innerWidth < 1024) setLeftOpen(false);
+      const w = window.innerWidth;
+      setIsMobile(w < 768);
+      if (w < 1280) setRightOpen(false);
+      if (w < 1024) setLeftOpen(false);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // On mobile, pressing Escape closes any open sidebar overlay
+  useEffect(() => {
+    if (!isMobile) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (rightOpen) setRightOpen(false);
+        else if (leftOpen) setLeftOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isMobile, leftOpen, rightOpen]);
 
   // Warn before closing/refreshing the tab with unsaved changes
   useEffect(() => {
@@ -233,11 +249,27 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
       </div>
 
       {/* ── Main layout: EN | Canvas | AR ──────────────────────────────── */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Mobile backdrop */}
+        {isMobile && (leftOpen || rightOpen) && (
+          <div
+            className="absolute inset-0 z-30 bg-black/40 animate-fade-in"
+            onClick={() => {
+              setLeftOpen(false);
+              setRightOpen(false);
+            }}
+            aria-hidden="true"
+          />
+        )}
+
         {/* Left sidebar: English editor */}
         {leftOpen && (
           <aside
-            className="w-72 shrink-0 bg-white border-e border-gold-light/50 flex flex-col overflow-hidden"
+            className={`${
+              isMobile
+                ? "absolute inset-y-0 start-0 z-40 w-[85%] max-w-sm shadow-xl animate-slide-in-right"
+                : "w-72 shrink-0"
+            } bg-white border-e border-gold-light/50 flex flex-col overflow-hidden`}
             aria-label="English content editor"
           >
             <div className="px-3 py-2 border-b border-gold-light/30 bg-cream flex items-center justify-between">
@@ -256,7 +288,11 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
         {/* Right sidebar: Arabic editor */}
         {rightOpen && (
           <aside
-            className="w-72 shrink-0 bg-white border-s border-gold-light/50 flex flex-col overflow-hidden"
+            className={`${
+              isMobile
+                ? "absolute inset-y-0 end-0 z-40 w-[85%] max-w-sm shadow-xl animate-slide-in-right"
+                : "w-72 shrink-0"
+            } bg-white border-s border-gold-light/50 flex flex-col overflow-hidden`}
             aria-label="Arabic content editor"
             dir="rtl"
           >

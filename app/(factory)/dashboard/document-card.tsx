@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Edit2, Trash2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/components/ui/toast";
 import type { FactoryDocument } from "@/lib/types";
 
 const TEMPLATE_ICONS: Record<string, string> = {
@@ -22,6 +23,7 @@ const TEMPLATE_LABELS: Record<string, string> = {
 
 export function DocumentCard({ document }: { document: FactoryDocument }) {
   const router = useRouter();
+  const toast = useToast();
   const [deleting, setDeleting] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
 
@@ -31,7 +33,15 @@ export function DocumentCard({ document }: { document: FactoryDocument }) {
     setDeleting(true);
     try {
       const res = await fetch(`/api/documents/${document.id}`, { method: "DELETE" });
-      if (res.ok) router.refresh();
+      if (res.ok) {
+        toast.success(`Deleted "${document.name}"`);
+        router.refresh();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error ?? "Delete failed");
+      }
+    } catch {
+      toast.error("Network error");
     } finally {
       setDeleting(false);
     }
@@ -51,8 +61,14 @@ export function DocumentCard({ document }: { document: FactoryDocument }) {
         }),
       });
       if (res.ok) {
+        toast.success(`Duplicated "${document.name}"`);
         router.refresh();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error ?? "Duplicate failed");
       }
+    } catch {
+      toast.error("Network error");
     } finally {
       setDuplicating(false);
     }

@@ -34,28 +34,52 @@ interface Session {
 }
 type SessionStore = Record<string, Session>;
 
-// In-memory cache so we're not hitting the disk on every request
-let _cache: SessionStore | null = null;
+// In-memory cache so we're not hitting the disk on every request.
+// Stored on globalThis so Next.js HMR and React Server Component module
+// re-evaluation don't wipe it between requests in dev.
+interface EfSessionGlobals {
+  cache: SessionStore | null;
+  writeQueue: Promise<void>;
+}
+const globalKey = "__efSessions" as const;
+function getGlobals(): EfSessionGlobals {
+  const g = globalThis as unknown as Record<string, EfSessionGlobals | undefined>;
+  if (!g[globalKey]) {
+    g[globalKey] = { cache: null, writeQueue: Promise.resolve() };
+  }
+  return g[globalKey]!;
+}
 
 async function loadSessions(): Promise<SessionStore> {
-  if (_cache !== null) return _cache;
+  const globals = getGlobals();
+  if (globals.cache !== null) return globals.cache;
+  let store: SessionStore;
   try {
     const raw = await fs.readFile(SESSIONS_FILE, "utf-8");
-    _cache = JSON.parse(raw) as SessionStore;
+    store = JSON.parse(raw) as SessionStore;
   } catch {
-    _cache = {};
+    store = {};
   }
   // Prune expired sessions on load
   const now = Date.now();
-  for (const token of Object.keys(_cache)) {
-    if (_cache[token].expiresAt < now) delete _cache[token];
+  for (const token of Object.keys(store)) {
+    if (store[token].expiresAt < now) delete store[token];
   }
-  return _cache;
+  globals.cache = store;
+  return store;
 }
 
 async function persistSessions(store: SessionStore): Promise<void> {
-  await fs.mkdir(path.dirname(SESSIONS_FILE), { recursive: true });
-  await fs.writeFile(SESSIONS_FILE, JSON.stringify(store, null, 2));
+  const globals = getGlobals();
+  // Serialize writes so concurrent createSession/deleteSession calls don't
+  // clobber each other on disk.
+  globals.writeQueue = globals.writeQueue
+    .catch(() => undefined)
+    .then(async () => {
+      await fs.mkdir(path.dirname(SESSIONS_FILE), { recursive: true });
+      await fs.writeFile(SESSIONS_FILE, JSON.stringify(store, null, 2));
+    });
+  await globals.writeQueue;
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
@@ -82,7 +106,7 @@ export async function createSession(userId: string): Promise<string> {
   const store = await loadSessions();
   const token = randomUUID();
   store[token] = { userId, expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000 };
-  _cache = store;
+  getGlobals().cache = store;
   await persistSessions(store);
   return token;
 }
@@ -93,7 +117,7 @@ export async function resolveSession(token: string): Promise<User | null> {
   if (!session) return null;
   if (session.expiresAt < Date.now()) {
     delete store[token];
-    _cache = store;
+    getGlobals().cache = store;
     await persistSessions(store);
     return null;
   }
@@ -103,7 +127,7 @@ export async function resolveSession(token: string): Promise<User | null> {
 export async function deleteSession(token: string): Promise<void> {
   const store = await loadSessions();
   delete store[token];
-  _cache = store;
+  getGlobals().cache = store;
   await persistSessions(store);
 }
 
