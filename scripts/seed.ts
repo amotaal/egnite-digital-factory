@@ -22,7 +22,7 @@ async function main() {
   const defaultFields = recipeTemplate.defaultFields as RecipeCardFields;
 
   let created = 0;
-  let skipped = 0;
+  const skipped = 0;
 
   for (const recipe of RECIPES) {
     const docId = randomUUID();

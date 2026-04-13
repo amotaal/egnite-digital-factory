@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { resolveSession, SESSION_COOKIE } from "@/lib/auth";
 import { AppHeader } from "@/components/layout/app-header";
+import { ToastProvider } from "@/components/ui/toast";
 
 export default async function FactoryLayout({
   children,
@@ -16,9 +17,11 @@ export default async function FactoryLayout({
   if (!user) redirect("/login");
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F5F3EE]">
-      <AppHeader user={user} />
-      {children}
-    </div>
+    <ToastProvider>
+      <div className="flex flex-col min-h-screen bg-[#F5F3EE]">
+        <AppHeader user={user} />
+        {children}
+      </div>
+    </ToastProvider>
   );
 }

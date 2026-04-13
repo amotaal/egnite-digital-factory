@@ -12,9 +12,14 @@ export function AppHeader({ user }: AppHeaderProps) {
   const router = useRouter();
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
-    router.refresh();
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // Ignore network errors on logout — we still want to redirect
+    }
+    // Hard navigation — bypasses Router Cache so the new login page doesn't
+    // reuse stale authenticated RSC payloads from the previous session.
+    window.location.href = "/login";
   };
 
   return (

@@ -85,21 +85,21 @@ export function RecipeCard({ fields, previewLang }: RecipeCardProps) {
           backgroundColor: CREAM,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ color: accentColor, fontSize: 18 }}>✦</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ color: accentColor, fontSize: 22 }}>✦</span>
           <span
             style={{
-              fontWeight: 900,
-              fontSize: 20,
-              letterSpacing: "0.15em",
+              fontWeight: 800,
+              fontSize: 22,
+              letterSpacing: "-0.5px",
               color: accentColor,
-              fontFamily: "'Inter', 'Segoe UI', Arial, sans-serif",
+              fontFamily: "'Playfair Display', Georgia, serif",
             }}
           >
-            EGNITE
+            Egnite
           </span>
         </div>
-        <div style={{ fontSize: 10, color: "#888", textAlign: "end" }}>
+        <div style={{ fontSize: 11, color: "#888", textAlign: "end", fontWeight: 500 }}>
           <span>egniteflavors.com</span>
         </div>
       </div>
@@ -161,14 +161,24 @@ export function RecipeCard({ fields, previewLang }: RecipeCardProps) {
         {/* Bilingual: show both */}
         {isBilingual ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-              <h1 style={{ fontSize: 26, fontWeight: 900, color: accentColor, margin: 0, letterSpacing: "-0.01em" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
+              <h1
+                style={{
+                  fontSize: 30,
+                  fontWeight: 800,
+                  color: accentColor,
+                  margin: 0,
+                  letterSpacing: "-0.01em",
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  lineHeight: 1.1,
+                }}
+              >
                 {title.en}
               </h1>
               <h1
                 style={{
-                  fontSize: 22,
-                  fontWeight: 900,
+                  fontSize: 26,
+                  fontWeight: 800,
                   color: accentColor,
                   margin: 0,
                   fontFamily: "'Cairo', sans-serif",
@@ -178,15 +188,27 @@ export function RecipeCard({ fields, previewLang }: RecipeCardProps) {
                 {title.ar}
               </h1>
             </div>
-            <p style={{ fontSize: 12, color: "#666", margin: 0 }}>{subtitle.en}</p>
+            <p style={{ fontSize: 13, color: "#666", margin: 0 }}>{subtitle.en}</p>
           </div>
         ) : (
           <>
-            <h1 style={{ fontSize: 28, fontWeight: 900, color: accentColor, margin: 0, letterSpacing: "-0.01em" }}>
+            <h1
+              style={{
+                fontSize: 34,
+                fontWeight: 800,
+                color: accentColor,
+                margin: 0,
+                letterSpacing: "-0.01em",
+                fontFamily: isRtl
+                  ? "'Cairo', 'Segoe UI', Arial, sans-serif"
+                  : "'Playfair Display', Georgia, serif",
+                lineHeight: 1.1,
+              }}
+            >
               {t(title, lang)}
             </h1>
             {subtitle && (
-              <p style={{ fontSize: 12, color: "#666", margin: "4px 0 0" }}>
+              <p style={{ fontSize: 13, color: "#666", margin: "6px 0 0", fontStyle: "italic" }}>
                 {t(subtitle, lang)}
               </p>
             )}

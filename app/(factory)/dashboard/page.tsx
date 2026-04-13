@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { resolveSession, SESSION_COOKIE } from "@/lib/auth";
 import { getAllDocuments } from "@/lib/storage";
 import { TEMPLATES } from "@/lib/data/templates";

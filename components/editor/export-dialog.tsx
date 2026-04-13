@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { Download, X, FileImage, FileText, Code2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useEditorStore } from "@/lib/store/editor";
 import { A4_PORTRAIT, A4_LANDSCAPE } from "@/lib/data/templates";
 import type { FactoryDocument } from "@/lib/types";

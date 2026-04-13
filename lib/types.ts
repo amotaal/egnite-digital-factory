@@ -191,6 +191,25 @@ export type EssenceCategory =
   | "Tobacco"
   | "Enhancers";
 
+// ─── Assets (Digital Asset Management) ────────────────────────────────────────
+
+export type AssetCategory = "image" | "icon" | "pattern" | "logo" | "other";
+
+export interface Asset {
+  id: string;
+  name: LocaleString;
+  category: AssetCategory;
+  tags: string[];
+  /** URL to the full asset (image file or remote URL) */
+  url: string;
+  /** Optional shorthand icon/emoji used inline in templates */
+  icon?: string;
+  thumbnailUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+}
+
 // ─── Recipes (source data) ────────────────────────────────────────────────────
 
 export interface RecipeSource {

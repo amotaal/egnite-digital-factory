@@ -1,51 +1,65 @@
 "use client";
 import React, { useRef } from "react";
 import {
-  Plus, Trash2, GripVertical, ChevronDown, ChevronUp, Upload,
+  Plus, Trash2, GripVertical, ChevronDown, ChevronUp, Upload, Image as ImageIcon,
 } from "lucide-react";
 import { v4 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { useEditorStore } from "@/lib/store/editor";
+import { AssetPickerModal } from "./asset-picker";
 import type {
   RecipeCardFields, InfographicCardFields, BeverageCardFields,
   IngredientItem, InstructionStep, DocumentSection,
 } from "@/lib/types";
 
+// ─── Per-language config ──────────────────────────────────────────────────────
+
+export type PanelLang = "en" | "ar";
+
+interface LangConfig {
+  code: PanelLang;
+  dir: "ltr" | "rtl";
+  placeholder: { label: string; amount: string; instruction: string };
+  textClass: string;
+}
+
+const LANG_CONFIG: Record<PanelLang, LangConfig> = {
+  en: {
+    code: "en",
+    dir: "ltr",
+    placeholder: { label: "English label", amount: "100g (1 stick)", instruction: "Instruction in English…" },
+    textClass: "",
+  },
+  ar: {
+    code: "ar",
+    dir: "rtl",
+    placeholder: { label: "التسمية بالعربية", amount: "١٠٠ جم", instruction: "التعليمات بالعربية…" },
+    textClass: "text-right font-arabic",
+  },
+};
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function BilingualField({
-  label, en, ar,
-  onChangeEn, onChangeAr,
-  multiline = false,
+function SingleLangField({
+  label, value, onChange, config, multiline = false,
 }: {
   label: string;
-  en: string;
-  ar: string;
-  onChangeEn: (v: string) => void;
-  onChangeAr: (v: string) => void;
+  value: string;
+  onChange: (v: string) => void;
+  config: LangConfig;
   multiline?: boolean;
 }) {
   const FieldComp = multiline ? Textarea : Input;
   return (
-    <div className="flex flex-col gap-2">
-      <div className="text-[11px] font-semibold text-ink">{label}</div>
-      <FieldComp
-        label="EN"
-        value={en}
-        onChange={(e) => onChangeEn(e.target.value)}
-        placeholder="English"
-        dir="ltr"
-      />
-      <FieldComp
-        label="AR"
-        value={ar}
-        onChange={(e) => onChangeAr(e.target.value)}
-        placeholder="عربي"
-        dir="rtl"
-        className="text-right font-arabic"
-      />
-    </div>
+    <FieldComp
+      label={label}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={config.placeholder.label}
+      dir={config.dir}
+      className={config.textClass}
+    />
   );
 }
 
@@ -58,8 +72,15 @@ function ImageUploadField({
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = React.useState(false);
+  const [showPicker, setShowPicker] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   const handleFile = async (file: File) => {
+    setError(null);
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image must be under 5MB");
+      return;
+    }
     setUploading(true);
     const fd = new FormData();
     fd.append("file", file);
@@ -67,6 +88,9 @@ function ImageUploadField({
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const data = await res.json();
       if (res.ok) onChange(data.url);
+      else setError(data.error ?? "Upload failed");
+    } catch {
+      setError("Network error");
     } finally {
       setUploading(false);
     }
@@ -90,16 +114,28 @@ function ImageUploadField({
         className="hidden"
         onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
       />
-      <Button
-        variant="secondary"
-        size="sm"
-        loading={uploading}
-        onClick={() => fileRef.current?.click()}
-        className="w-full gap-2"
-      >
-        <Upload size={14} />
-        {value ? "Replace Image" : "Upload Image"}
-      </Button>
+      <div className="grid grid-cols-2 gap-2">
+        <Button
+          variant="secondary"
+          size="sm"
+          loading={uploading}
+          onClick={() => fileRef.current?.click()}
+          className="gap-1.5"
+        >
+          <Upload size={14} />
+          Upload
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowPicker(true)}
+          className="gap-1.5"
+        >
+          <ImageIcon size={14} />
+          Library
+        </Button>
+      </div>
+      {error && <p className="text-xs text-red-600">{error}</p>}
       {value && (
         <Input
           value={value}
@@ -108,15 +144,66 @@ function ImageUploadField({
           className="text-xs"
         />
       )}
+      {showPicker && (
+        <AssetPickerModal
+          onSelect={(asset) => {
+            onChange(asset.url);
+            setShowPicker(false);
+          }}
+          onClose={() => setShowPicker(false)}
+          category="image"
+        />
+      )}
     </div>
   );
 }
 
+function IconField({
+  value, onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [showPicker, setShowPicker] = React.useState(false);
+  return (
+    <>
+      <div className="flex items-center gap-1">
+        <Input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-16 text-center text-lg px-1"
+          title="Emoji or asset URL"
+        />
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowPicker(true)}
+          className="p-1"
+          title="Pick from library"
+        >
+          <ImageIcon size={13} />
+        </Button>
+      </div>
+      {showPicker && (
+        <AssetPickerModal
+          onSelect={(asset) => {
+            onChange(asset.icon ?? asset.url);
+            setShowPicker(false);
+          }}
+          onClose={() => setShowPicker(false)}
+          category="icon"
+        />
+      )}
+    </>
+  );
+}
+
 function IngredientsEditor({
-  items, onChange,
+  items, onChange, config,
 }: {
   items: IngredientItem[];
   onChange: (items: IngredientItem[]) => void;
+  config: LangConfig;
 }) {
   const updateItem = (id: string, patch: Partial<IngredientItem>) =>
     onChange(items.map((it) => (it.id === id ? { ...it, ...patch } : it)));
@@ -137,40 +224,33 @@ function IngredientsEditor({
           <div className="flex items-center gap-2">
             <GripVertical size={14} className="text-ink-muted/50 shrink-0" />
             <span className="text-xs font-semibold text-ink-muted">#{i + 1}</span>
-            <Input
+            <IconField
               value={item.icon}
-              onChange={(e) => updateItem(item.id, { icon: e.target.value })}
-              className="w-16 text-center text-lg px-1"
-              title="Emoji icon"
+              onChange={(v) => updateItem(item.id, { icon: v })}
             />
             <Button
               variant="ghost"
               size="sm"
               onClick={() => removeItem(item.id)}
               className="ms-auto p-1 text-red-500 hover:text-red-700"
+              aria-label={`Delete ingredient ${i + 1}`}
             >
               <Trash2 size={13} />
             </Button>
           </div>
-          <div className="grid grid-cols-2 gap-1.5">
-            <Input
-              value={item.label.en}
-              onChange={(e) => updateItem(item.id, { label: { ...item.label, en: e.target.value } })}
-              placeholder="Label EN"
-              className="text-xs"
-            />
-            <Input
-              value={item.label.ar}
-              onChange={(e) => updateItem(item.id, { label: { ...item.label, ar: e.target.value } })}
-              placeholder="العنوان"
-              className="text-xs text-right font-arabic"
-              dir="rtl"
-            />
-          </div>
+          <Input
+            value={item.label[config.code]}
+            onChange={(e) =>
+              updateItem(item.id, { label: { ...item.label, [config.code]: e.target.value } })
+            }
+            placeholder={config.placeholder.label}
+            className={`text-xs ${config.textClass}`}
+            dir={config.dir}
+          />
           <Input
             value={item.amount}
             onChange={(e) => updateItem(item.id, { amount: e.target.value })}
-            placeholder="Amount (e.g. 100g)"
+            placeholder={config.placeholder.amount}
             className="text-xs"
           />
         </div>
@@ -183,10 +263,11 @@ function IngredientsEditor({
 }
 
 function StepsEditor({
-  items, onChange, addLabel = "Add Step",
+  items, onChange, config, addLabel = "Add Step",
 }: {
   items: InstructionStep[];
   onChange: (items: InstructionStep[]) => void;
+  config: LangConfig;
   addLabel?: string;
 }) {
   const updateItem = (id: string, patch: Partial<InstructionStep>) =>
@@ -209,33 +290,28 @@ function StepsEditor({
             <div className="size-5 rounded-full bg-gold text-white flex items-center justify-center text-[9px] font-black shrink-0">
               {i + 1}
             </div>
-            <Input
+            <IconField
               value={item.icon}
-              onChange={(e) => updateItem(item.id, { icon: e.target.value })}
-              className="w-16 text-center text-lg px-1"
-              title="Emoji icon"
+              onChange={(v) => updateItem(item.id, { icon: v })}
             />
             <Button
               variant="ghost"
               size="sm"
               onClick={() => removeItem(item.id)}
               className="ms-auto p-1 text-red-500 hover:text-red-700"
+              aria-label={`Delete step ${i + 1}`}
             >
               <Trash2 size={13} />
             </Button>
           </div>
           <Textarea
-            value={item.text.en}
-            onChange={(e) => updateItem(item.id, { text: { ...item.text, en: e.target.value } })}
-            placeholder="Instruction (EN)"
-            className="text-xs min-h-[50px]"
-          />
-          <Textarea
-            value={item.text.ar}
-            onChange={(e) => updateItem(item.id, { text: { ...item.text, ar: e.target.value } })}
-            placeholder="التعليمات (AR)"
-            className="text-xs min-h-[50px] text-right font-arabic"
-            dir="rtl"
+            value={item.text[config.code]}
+            onChange={(e) =>
+              updateItem(item.id, { text: { ...item.text, [config.code]: e.target.value } })
+            }
+            placeholder={config.placeholder.instruction}
+            className={`text-xs min-h-[56px] ${config.textClass}`}
+            dir={config.dir}
           />
         </div>
       ))}
@@ -249,10 +325,11 @@ function StepsEditor({
 // ─── Sections Editor ──────────────────────────────────────────────────────────
 
 function SectionsEditor({
-  sections, onChange,
+  sections, onChange, config,
 }: {
   sections: DocumentSection[];
   onChange: (sections: DocumentSection[]) => void;
+  config: LangConfig;
 }) {
   const [openId, setOpenId] = React.useState<string | null>(null);
 
@@ -279,13 +356,12 @@ function SectionsEditor({
     <div className="flex flex-col gap-2">
       {sections.map((sec) => (
         <div key={sec.id} className="border border-gold-light/50 rounded-lg overflow-hidden">
-          {/* Section header row */}
           <div className="flex items-center bg-cream-dark px-3 py-2 gap-2">
             <button
               className="flex-1 text-sm font-semibold text-ink text-start truncate"
               onClick={() => setOpenId((v) => (v === sec.id ? null : sec.id))}
             >
-              {sec.title.en || "Untitled Section"}
+              {sec.title[config.code] || "Untitled Section"}
             </button>
             {openId === sec.id ? (
               <ChevronUp size={13} className="text-ink-muted shrink-0" />
@@ -297,6 +373,7 @@ function SectionsEditor({
               size="sm"
               onClick={() => removeSection(sec.id)}
               className="p-1 text-red-500 hover:text-red-700 shrink-0"
+              aria-label="Delete section"
             >
               <Trash2 size={13} />
             </Button>
@@ -304,15 +381,15 @@ function SectionsEditor({
 
           {openId === sec.id && (
             <div className="p-3 flex flex-col gap-3">
-              <BilingualField
+              <SingleLangField
                 label="Section Title"
-                en={sec.title.en}
-                ar={sec.title.ar}
-                onChangeEn={(v) => updateSection(sec.id, { title: { ...sec.title, en: v } })}
-                onChangeAr={(v) => updateSection(sec.id, { title: { ...sec.title, ar: v } })}
+                value={sec.title[config.code]}
+                onChange={(v) =>
+                  updateSection(sec.id, { title: { ...sec.title, [config.code]: v } })
+                }
+                config={config}
               />
 
-              {/* Type toggle */}
               <div className="flex gap-2">
                 <button
                   onClick={() => updateSection(sec.id, { type: "ingredients", items: [] })}
@@ -340,11 +417,13 @@ function SectionsEditor({
                 <IngredientsEditor
                   items={sec.items as IngredientItem[]}
                   onChange={(items) => updateSection(sec.id, { items })}
+                  config={config}
                 />
               ) : (
                 <StepsEditor
                   items={sec.items as InstructionStep[]}
                   onChange={(items) => updateSection(sec.id, { items })}
+                  config={config}
                 />
               )}
             </div>
@@ -358,7 +437,18 @@ function SectionsEditor({
   );
 }
 
-// ─── Shared Color Picker ───────────────────────────────────────────────────────
+// ─── Shared Color Picker with presets ──────────────────────────────────────────
+
+const BRAND_SWATCHES = [
+  "#B78D4B", // Egnite gold
+  "#8B6A35", // gold dark
+  "#0E7C65", // emerald
+  "#B91C55", // rose
+  "#475569", // slate
+  "#D97706", // amber
+  "#0369A1", // ocean
+  "#FCFAF4", // cream
+];
 
 function ColorPickers({
   primaryColor, backgroundColor,
@@ -370,303 +460,347 @@ function ColorPickers({
   onChangeBg: (v: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-3">
-        <label className="text-xs font-medium text-ink flex-1">Accent Color</label>
-        <div className="flex items-center gap-2">
-          <input
-            type="color"
-            value={primaryColor}
-            onChange={(e) => onChangePrimary(e.target.value)}
-            className="w-8 h-8 rounded cursor-pointer border border-gold-light"
-          />
-          <span className="text-xs text-ink-muted font-mono">{primaryColor}</span>
+    <div className="flex flex-col gap-4">
+      {[
+        { label: "Accent Color", value: primaryColor, set: onChangePrimary },
+        { label: "Background Color", value: backgroundColor, set: onChangeBg },
+      ].map((row) => (
+        <div key={row.label} className="flex flex-col gap-2">
+          <div className="flex items-center gap-3">
+            <label className="text-xs font-medium text-ink flex-1">{row.label}</label>
+            <input
+              type="color"
+              value={row.value}
+              onChange={(e) => row.set(e.target.value)}
+              className="w-8 h-8 rounded cursor-pointer border border-gold-light"
+              aria-label={row.label}
+            />
+            <span className="text-xs text-ink-muted font-mono">{row.value}</span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {BRAND_SWATCHES.map((c) => (
+              <button
+                key={c}
+                onClick={() => row.set(c)}
+                className={`w-6 h-6 rounded-full border transition-transform hover:scale-110 ${
+                  row.value.toLowerCase() === c.toLowerCase()
+                    ? "border-ink ring-2 ring-gold"
+                    : "border-gold-light"
+                }`}
+                style={{ backgroundColor: c }}
+                title={c}
+                aria-label={`Set ${row.label} to ${c}`}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-3">
-        <label className="text-xs font-medium text-ink flex-1">Background Color</label>
-        <div className="flex items-center gap-2">
-          <input
-            type="color"
-            value={backgroundColor}
-            onChange={(e) => onChangeBg(e.target.value)}
-            className="w-8 h-8 rounded cursor-pointer border border-gold-light"
-          />
-          <span className="text-xs text-ink-muted font-mono">{backgroundColor}</span>
-        </div>
-      </div>
+      ))}
     </div>
   );
 }
 
-// ─── Recipe Card Panel ────────────────────────────────────────────────────────
+// ─── Collapsible primitive ─────────────────────────────────────────────────────
 
-function RecipeCardPanel({ fields }: { fields: RecipeCardFields }) {
+function Collapsible({
+  id, label, openId, setOpenId, children,
+}: {
+  id: string;
+  label: string;
+  openId: string | null;
+  setOpenId: (v: string | null) => void;
+  children: React.ReactNode;
+}) {
+  const open = openId === id;
+  return (
+    <div className="border border-gold-light/50 rounded-lg overflow-hidden">
+      <button
+        className="w-full flex items-center justify-between px-3 py-2.5 bg-cream-dark hover:bg-gold-light/30 transition-colors text-sm font-semibold text-ink"
+        onClick={() => setOpenId(open ? null : id)}
+        aria-expanded={open}
+      >
+        {label}
+        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+      </button>
+      {open && <div className="p-3 flex flex-col gap-3">{children}</div>}
+    </div>
+  );
+}
+
+// ─── Recipe Card Panel (per language) ─────────────────────────────────────────
+
+function RecipeCardPanel({ fields, config }: { fields: RecipeCardFields; config: LangConfig }) {
   const { updateFields } = useEditorStore();
   const [openSection, setOpenSection] = React.useState<string | null>("title");
-
-  const toggle = (s: string) => setOpenSection((v) => (v === s ? null : s));
-
-  function Collapsible({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
-    const open = openSection === id;
-    return (
-      <div className="border border-gold-light/50 rounded-lg overflow-hidden">
-        <button
-          className="w-full flex items-center justify-between px-3 py-2.5 bg-cream-dark hover:bg-gold-light/30 transition-colors text-sm font-semibold text-ink"
-          onClick={() => toggle(id)}
-        >
-          {label}
-          {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        </button>
-        {open && <div className="p-3 flex flex-col gap-3">{children}</div>}
-      </div>
-    );
-  }
+  const shared = config.code === "en";
 
   return (
     <div className="flex flex-col gap-2 pb-6">
-      <Collapsible id="hero" label="Hero Image">
-        <ImageUploadField
-          label="Food Photo"
-          value={fields.heroImage}
-          onChange={(url) => updateFields({ heroImage: url })}
-        />
-      </Collapsible>
+      {shared && (
+        <Collapsible id="hero" label="Hero Image (shared)" openId={openSection} setOpenId={setOpenSection}>
+          <ImageUploadField
+            label="Food Photo"
+            value={fields.heroImage}
+            onChange={(url) => updateFields({ heroImage: url })}
+          />
+        </Collapsible>
+      )}
 
-      <Collapsible id="title" label="Title & Subtitle">
-        <BilingualField
+      <Collapsible id="title" label="Title & Subtitle" openId={openSection} setOpenId={setOpenSection}>
+        <SingleLangField
           label="Recipe Title"
-          en={fields.title.en}
-          ar={fields.title.ar}
-          onChangeEn={(v) => updateFields({ title: { ...fields.title, en: v } })}
-          onChangeAr={(v) => updateFields({ title: { ...fields.title, ar: v } })}
+          value={fields.title[config.code]}
+          onChange={(v) => updateFields({ title: { ...fields.title, [config.code]: v } })}
+          config={config}
         />
-        <BilingualField
+        <SingleLangField
           label="Subtitle"
-          en={fields.subtitle.en}
-          ar={fields.subtitle.ar}
-          onChangeEn={(v) => updateFields({ subtitle: { ...fields.subtitle, en: v } })}
-          onChangeAr={(v) => updateFields({ subtitle: { ...fields.subtitle, ar: v } })}
+          value={fields.subtitle[config.code]}
+          onChange={(v) => updateFields({ subtitle: { ...fields.subtitle, [config.code]: v } })}
+          config={config}
           multiline
         />
       </Collapsible>
 
-      <Collapsible id="meta" label="Prep · Cook · Yield">
-        <Input label="Prep Time" value={fields.prepTime} onChange={(e) => updateFields({ prepTime: e.target.value })} />
-        <Input label="Cook Time" value={fields.cookTime} onChange={(e) => updateFields({ cookTime: e.target.value })} />
-        <Input label="Yield / Servings" value={fields.servings} onChange={(e) => updateFields({ servings: e.target.value })} />
-        <Input label="Difficulty" value={fields.difficulty} onChange={(e) => updateFields({ difficulty: e.target.value })} />
-      </Collapsible>
+      {shared && (
+        <Collapsible id="meta" label="Prep · Cook · Yield (shared)" openId={openSection} setOpenId={setOpenSection}>
+          <Input label="Prep Time" value={fields.prepTime} onChange={(e) => updateFields({ prepTime: e.target.value })} />
+          <Input label="Cook Time" value={fields.cookTime} onChange={(e) => updateFields({ cookTime: e.target.value })} />
+          <Input label="Yield / Servings" value={fields.servings} onChange={(e) => updateFields({ servings: e.target.value })} />
+          <Input label="Difficulty" value={fields.difficulty} onChange={(e) => updateFields({ difficulty: e.target.value })} />
+        </Collapsible>
+      )}
 
-      <Collapsible id="ingredients" label={`Ingredients (${fields.ingredients.length})`}>
+      <Collapsible id="ingredients" label={`Ingredients (${fields.ingredients.length})`} openId={openSection} setOpenId={setOpenSection}>
         <IngredientsEditor
           items={fields.ingredients}
           onChange={(items) => updateFields({ ingredients: items })}
+          config={config}
         />
       </Collapsible>
 
-      <Collapsible id="instructions" label={`Instructions (${fields.instructions.length} steps)`}>
+      <Collapsible id="instructions" label={`Instructions (${fields.instructions.length} steps)`} openId={openSection} setOpenId={setOpenSection}>
         <StepsEditor
           items={fields.instructions}
           onChange={(items) => updateFields({ instructions: items })}
+          config={config}
         />
       </Collapsible>
 
-      <Collapsible id="sections" label={`Extra Sections (${fields.sections.length})`}>
+      <Collapsible id="sections" label={`Extra Sections (${fields.sections.length})`} openId={openSection} setOpenId={setOpenSection}>
         <p className="text-xs text-ink-muted">
-          Add sub-sections like "Chocolate Coating" or "Frosting" below the main recipe body.
+          Add sub-sections like &quot;Chocolate Coating&quot; or &quot;Frosting&quot; below the main recipe body.
         </p>
         <SectionsEditor
           sections={fields.sections}
           onChange={(sections) => updateFields({ sections })}
+          config={config}
         />
       </Collapsible>
 
-      <Collapsible id="badge" label="Footer / Badge">
-        <BilingualField
+      <Collapsible id="badge" label="Footer / Badge" openId={openSection} setOpenId={setOpenSection}>
+        <SingleLangField
           label="Badge Text"
-          en={fields.badgeText.en}
-          ar={fields.badgeText.ar}
-          onChangeEn={(v) => updateFields({ badgeText: { ...fields.badgeText, en: v } })}
-          onChangeAr={(v) => updateFields({ badgeText: { ...fields.badgeText, ar: v } })}
+          value={fields.badgeText[config.code]}
+          onChange={(v) => updateFields({ badgeText: { ...fields.badgeText, [config.code]: v } })}
+          config={config}
         />
-        <BilingualField
+        <SingleLangField
           label="Tagline"
-          en={fields.tagline.en}
-          ar={fields.tagline.ar}
-          onChangeEn={(v) => updateFields({ tagline: { ...fields.tagline, en: v } })}
-          onChangeAr={(v) => updateFields({ tagline: { ...fields.tagline, ar: v } })}
+          value={fields.tagline[config.code]}
+          onChange={(v) => updateFields({ tagline: { ...fields.tagline, [config.code]: v } })}
+          config={config}
         />
       </Collapsible>
 
-      <Collapsible id="theme" label="Colors">
-        <ColorPickers
-          primaryColor={fields.primaryColor}
-          backgroundColor={fields.backgroundColor}
-          onChangePrimary={(v) => updateFields({ primaryColor: v })}
-          onChangeBg={(v) => updateFields({ backgroundColor: v })}
-        />
-      </Collapsible>
+      {shared && (
+        <Collapsible id="theme" label="Colors (shared)" openId={openSection} setOpenId={setOpenSection}>
+          <ColorPickers
+            primaryColor={fields.primaryColor}
+            backgroundColor={fields.backgroundColor}
+            onChangePrimary={(v) => updateFields({ primaryColor: v })}
+            onChangeBg={(v) => updateFields({ backgroundColor: v })}
+          />
+        </Collapsible>
+      )}
     </div>
   );
 }
 
-// ─── Infographic Panel ────────────────────────────────────────────────────────
+// ─── Infographic Panel (per language) ────────────────────────────────────────
 
-function InfographicPanel({ fields }: { fields: InfographicCardFields }) {
+function InfographicPanel({ fields, config }: { fields: InfographicCardFields; config: LangConfig }) {
   const { updateFields } = useEditorStore();
   const [open, setOpen] = React.useState<string | null>("title");
-  const toggle = (s: string) => setOpen((v) => (v === s ? null : s));
-
-  function C({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
-    return (
-      <div className="border border-gold-light/50 rounded-lg overflow-hidden">
-        <button
-          className="w-full flex items-center justify-between px-3 py-2.5 bg-cream-dark hover:bg-gold-light/30 transition-colors text-sm font-semibold text-ink"
-          onClick={() => toggle(id)}
-        >
-          {label}
-          {open === id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        </button>
-        {open === id && <div className="p-3 flex flex-col gap-3">{children}</div>}
-      </div>
-    );
-  }
+  const shared = config.code === "en";
 
   return (
     <div className="flex flex-col gap-2 pb-6">
-      <C id="title" label="Title & Prep Time">
-        <BilingualField label="Title" en={fields.title.en} ar={fields.title.ar}
-          onChangeEn={(v) => updateFields({ title: { ...fields.title, en: v } })}
-          onChangeAr={(v) => updateFields({ title: { ...fields.title, ar: v } })} />
-        <Input label="Prep Time" value={fields.prepTime} onChange={(e) => updateFields({ prepTime: e.target.value })} />
-      </C>
-      <C id="hero" label="Hero Image">
-        <ImageUploadField label="Food Photo" value={fields.heroImage} onChange={(url) => updateFields({ heroImage: url })} />
-      </C>
-      <C id="ingredients" label={`Ingredients (${fields.ingredients.length})`}>
-        <IngredientsEditor items={fields.ingredients} onChange={(items) => updateFields({ ingredients: items })} />
-      </C>
-      <C id="dosage" label="Dosage Information">
-        <div className="text-xs font-semibold text-ink mb-1">Essence</div>
-        <div className="grid grid-cols-3 gap-1.5">
-          <Input value={fields.dosageEssence.icon} onChange={(e) => updateFields({ dosageEssence: { ...fields.dosageEssence, icon: e.target.value } })} className="text-center text-lg" />
-          <Input value={fields.dosageEssence.amount} onChange={(e) => updateFields({ dosageEssence: { ...fields.dosageEssence, amount: e.target.value } })} placeholder="Amount" />
-          <Input value={fields.dosageEssence.range} onChange={(e) => updateFields({ dosageEssence: { ...fields.dosageEssence, range: e.target.value } })} placeholder="Range" />
-        </div>
-        <div className="text-xs font-semibold text-ink mb-1 mt-2">Emulsion</div>
-        <div className="grid grid-cols-3 gap-1.5">
-          <Input value={fields.dosageEmulsion.icon} onChange={(e) => updateFields({ dosageEmulsion: { ...fields.dosageEmulsion, icon: e.target.value } })} className="text-center text-lg" />
-          <Input value={fields.dosageEmulsion.amount} onChange={(e) => updateFields({ dosageEmulsion: { ...fields.dosageEmulsion, amount: e.target.value } })} placeholder="Amount" />
-          <Input value={fields.dosageEmulsion.range} onChange={(e) => updateFields({ dosageEmulsion: { ...fields.dosageEmulsion, range: e.target.value } })} placeholder="Range" />
-        </div>
-      </C>
-      <C id="steps" label={`Instructions (${fields.instructions.length} steps)`}>
-        <StepsEditor items={fields.instructions} onChange={(items) => updateFields({ instructions: items })} />
-      </C>
-      <C id="footer" label="Footer Tagline">
-        <BilingualField label="Tagline" en={fields.footerTagline.en} ar={fields.footerTagline.ar}
-          onChangeEn={(v) => updateFields({ footerTagline: { ...fields.footerTagline, en: v } })}
-          onChangeAr={(v) => updateFields({ footerTagline: { ...fields.footerTagline, ar: v } })} />
-      </C>
-      <C id="theme" label="Colors">
-        <ColorPickers
-          primaryColor={fields.primaryColor}
-          backgroundColor={fields.backgroundColor}
-          onChangePrimary={(v) => updateFields({ primaryColor: v })}
-          onChangeBg={(v) => updateFields({ backgroundColor: v })}
+      <Collapsible id="title" label="Title" openId={open} setOpenId={setOpen}>
+        <SingleLangField
+          label="Title"
+          value={fields.title[config.code]}
+          onChange={(v) => updateFields({ title: { ...fields.title, [config.code]: v } })}
+          config={config}
         />
-      </C>
+        {shared && (
+          <Input label="Prep Time" value={fields.prepTime} onChange={(e) => updateFields({ prepTime: e.target.value })} />
+        )}
+      </Collapsible>
+
+      {shared && (
+        <Collapsible id="hero" label="Hero Image (shared)" openId={open} setOpenId={setOpen}>
+          <ImageUploadField label="Food Photo" value={fields.heroImage} onChange={(url) => updateFields({ heroImage: url })} />
+        </Collapsible>
+      )}
+
+      <Collapsible id="ingredients" label={`Ingredients (${fields.ingredients.length})`} openId={open} setOpenId={setOpen}>
+        <IngredientsEditor items={fields.ingredients} onChange={(items) => updateFields({ ingredients: items })} config={config} />
+      </Collapsible>
+
+      {shared && (
+        <Collapsible id="dosage" label="Dosage (shared)" openId={open} setOpenId={setOpen}>
+          <div className="text-xs font-semibold text-ink mb-1">Essence</div>
+          <div className="grid grid-cols-3 gap-1.5">
+            <Input value={fields.dosageEssence.icon} onChange={(e) => updateFields({ dosageEssence: { ...fields.dosageEssence, icon: e.target.value } })} className="text-center text-lg" />
+            <Input value={fields.dosageEssence.amount} onChange={(e) => updateFields({ dosageEssence: { ...fields.dosageEssence, amount: e.target.value } })} placeholder="Amount" />
+            <Input value={fields.dosageEssence.range} onChange={(e) => updateFields({ dosageEssence: { ...fields.dosageEssence, range: e.target.value } })} placeholder="Range" />
+          </div>
+          <div className="text-xs font-semibold text-ink mb-1 mt-2">Emulsion</div>
+          <div className="grid grid-cols-3 gap-1.5">
+            <Input value={fields.dosageEmulsion.icon} onChange={(e) => updateFields({ dosageEmulsion: { ...fields.dosageEmulsion, icon: e.target.value } })} className="text-center text-lg" />
+            <Input value={fields.dosageEmulsion.amount} onChange={(e) => updateFields({ dosageEmulsion: { ...fields.dosageEmulsion, amount: e.target.value } })} placeholder="Amount" />
+            <Input value={fields.dosageEmulsion.range} onChange={(e) => updateFields({ dosageEmulsion: { ...fields.dosageEmulsion, range: e.target.value } })} placeholder="Range" />
+          </div>
+        </Collapsible>
+      )}
+
+      <Collapsible id="steps" label={`Instructions (${fields.instructions.length} steps)`} openId={open} setOpenId={setOpen}>
+        <StepsEditor items={fields.instructions} onChange={(items) => updateFields({ instructions: items })} config={config} />
+      </Collapsible>
+
+      <Collapsible id="footer" label="Footer Tagline" openId={open} setOpenId={setOpen}>
+        <SingleLangField
+          label="Tagline"
+          value={fields.footerTagline[config.code]}
+          onChange={(v) => updateFields({ footerTagline: { ...fields.footerTagline, [config.code]: v } })}
+          config={config}
+        />
+      </Collapsible>
+
+      {shared && (
+        <Collapsible id="theme" label="Colors (shared)" openId={open} setOpenId={setOpen}>
+          <ColorPickers
+            primaryColor={fields.primaryColor}
+            backgroundColor={fields.backgroundColor}
+            onChangePrimary={(v) => updateFields({ primaryColor: v })}
+            onChangeBg={(v) => updateFields({ backgroundColor: v })}
+          />
+        </Collapsible>
+      )}
     </div>
   );
 }
 
-// ─── Beverage Panel ───────────────────────────────────────────────────────────
+// ─── Beverage Panel (per language) ────────────────────────────────────────────
 
-function BeveragePanel({ fields }: { fields: BeverageCardFields }) {
+function BeveragePanel({ fields, config }: { fields: BeverageCardFields; config: LangConfig }) {
   const { updateFields } = useEditorStore();
   const [open, setOpen] = React.useState<string | null>("title");
-  const toggle = (s: string) => setOpen((v) => (v === s ? null : s));
-
-  function C({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
-    return (
-      <div className="border border-gold-light/50 rounded-lg overflow-hidden">
-        <button
-          className="w-full flex items-center justify-between px-3 py-2.5 bg-cream-dark hover:bg-gold-light/30 transition-colors text-sm font-semibold text-ink"
-          onClick={() => toggle(id)}
-        >
-          {label}
-          {open === id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-        </button>
-        {open === id && <div className="p-3 flex flex-col gap-3">{children}</div>}
-      </div>
-    );
-  }
+  const shared = config.code === "en";
 
   return (
     <div className="flex flex-col gap-2 pb-6">
-      <C id="title" label="Title & Subtitle">
-        <BilingualField label="Title" en={fields.title.en} ar={fields.title.ar}
-          onChangeEn={(v) => updateFields({ title: { ...fields.title, en: v } })}
-          onChangeAr={(v) => updateFields({ title: { ...fields.title, ar: v } })} />
-        <BilingualField label="Subtitle" en={fields.subtitle.en} ar={fields.subtitle.ar}
-          onChangeEn={(v) => updateFields({ subtitle: { ...fields.subtitle, en: v } })}
-          onChangeAr={(v) => updateFields({ subtitle: { ...fields.subtitle, ar: v } })} />
-      </C>
-      <C id="ingredients" label={`Ingredients (${fields.ingredients.length})`}>
-        <IngredientsEditor items={fields.ingredients} onChange={(items) => updateFields({ ingredients: items })} />
-      </C>
-      <C id="dosage" label="Dosage">
-        <div className="grid grid-cols-3 gap-1.5">
-          <Input value={fields.dosage.icon} onChange={(e) => updateFields({ dosage: { ...fields.dosage, icon: e.target.value } })} className="text-center text-lg" />
-          <Input value={fields.dosage.amount} onChange={(e) => updateFields({ dosage: { ...fields.dosage, amount: e.target.value } })} placeholder="Amount" />
-          <Input value={fields.dosage.range} onChange={(e) => updateFields({ dosage: { ...fields.dosage, range: e.target.value } })} placeholder="Range" />
-        </div>
-      </C>
-      <C id="steps" label={`Preparation Steps (${fields.steps.length})`}>
-        <StepsEditor items={fields.steps} onChange={(items) => updateFields({ steps: items })} addLabel="Add Step" />
-      </C>
-      <C id="storage" label="Storage Note">
-        <BilingualField label="Storage Note" en={fields.storageNote.en} ar={fields.storageNote.ar}
-          onChangeEn={(v) => updateFields({ storageNote: { ...fields.storageNote, en: v } })}
-          onChangeAr={(v) => updateFields({ storageNote: { ...fields.storageNote, ar: v } })}
-          multiline />
-      </C>
-      <C id="footer" label="Footer Tagline">
-        <BilingualField label="Tagline" en={fields.footerTagline.en} ar={fields.footerTagline.ar}
-          onChangeEn={(v) => updateFields({ footerTagline: { ...fields.footerTagline, en: v } })}
-          onChangeAr={(v) => updateFields({ footerTagline: { ...fields.footerTagline, ar: v } })} />
-      </C>
-      <C id="theme" label="Colors">
-        <ColorPickers
-          primaryColor={fields.primaryColor}
-          backgroundColor={fields.backgroundColor}
-          onChangePrimary={(v) => updateFields({ primaryColor: v })}
-          onChangeBg={(v) => updateFields({ backgroundColor: v })}
+      <Collapsible id="title" label="Title & Subtitle" openId={open} setOpenId={setOpen}>
+        <SingleLangField
+          label="Title"
+          value={fields.title[config.code]}
+          onChange={(v) => updateFields({ title: { ...fields.title, [config.code]: v } })}
+          config={config}
         />
-      </C>
+        <SingleLangField
+          label="Subtitle"
+          value={fields.subtitle[config.code]}
+          onChange={(v) => updateFields({ subtitle: { ...fields.subtitle, [config.code]: v } })}
+          config={config}
+        />
+      </Collapsible>
+
+      {shared && (
+        <Collapsible id="hero" label="Hero Image (shared)" openId={open} setOpenId={setOpen}>
+          <ImageUploadField label="Food Photo" value={fields.heroImage} onChange={(url) => updateFields({ heroImage: url })} />
+        </Collapsible>
+      )}
+
+      <Collapsible id="ingredients" label={`Ingredients (${fields.ingredients.length})`} openId={open} setOpenId={setOpen}>
+        <IngredientsEditor items={fields.ingredients} onChange={(items) => updateFields({ ingredients: items })} config={config} />
+      </Collapsible>
+
+      {shared && (
+        <Collapsible id="dosage" label="Dosage (shared)" openId={open} setOpenId={setOpen}>
+          <div className="grid grid-cols-3 gap-1.5">
+            <Input value={fields.dosage.icon} onChange={(e) => updateFields({ dosage: { ...fields.dosage, icon: e.target.value } })} className="text-center text-lg" />
+            <Input value={fields.dosage.amount} onChange={(e) => updateFields({ dosage: { ...fields.dosage, amount: e.target.value } })} placeholder="Amount" />
+            <Input value={fields.dosage.range} onChange={(e) => updateFields({ dosage: { ...fields.dosage, range: e.target.value } })} placeholder="Range" />
+          </div>
+        </Collapsible>
+      )}
+
+      <Collapsible id="steps" label={`Preparation Steps (${fields.steps.length})`} openId={open} setOpenId={setOpen}>
+        <StepsEditor items={fields.steps} onChange={(items) => updateFields({ steps: items })} config={config} addLabel="Add Step" />
+      </Collapsible>
+
+      <Collapsible id="storage" label="Storage Note" openId={open} setOpenId={setOpen}>
+        <SingleLangField
+          label="Storage Note"
+          value={fields.storageNote[config.code]}
+          onChange={(v) => updateFields({ storageNote: { ...fields.storageNote, [config.code]: v } })}
+          config={config}
+          multiline
+        />
+      </Collapsible>
+
+      <Collapsible id="footer" label="Footer Tagline" openId={open} setOpenId={setOpen}>
+        <SingleLangField
+          label="Tagline"
+          value={fields.footerTagline[config.code]}
+          onChange={(v) => updateFields({ footerTagline: { ...fields.footerTagline, [config.code]: v } })}
+          config={config}
+        />
+      </Collapsible>
+
+      {shared && (
+        <Collapsible id="theme" label="Colors (shared)" openId={open} setOpenId={setOpen}>
+          <ColorPickers
+            primaryColor={fields.primaryColor}
+            backgroundColor={fields.backgroundColor}
+            onChangePrimary={(v) => updateFields({ primaryColor: v })}
+            onChangeBg={(v) => updateFields({ backgroundColor: v })}
+          />
+        </Collapsible>
+      )}
     </div>
   );
 }
 
 // ─── Main FieldPanel export ───────────────────────────────────────────────────
 
-export function FieldPanel() {
+export function FieldPanel({ lang }: { lang: PanelLang }) {
   const { document } = useEditorStore();
   if (!document) return null;
 
   const fields = document.fields;
+  const config = LANG_CONFIG[lang];
 
   return (
     <div className="h-full overflow-y-auto p-3 flex flex-col gap-1">
       {(document.templateType === "recipe-card" || document.templateType === "extended-recipe") && (
-        <RecipeCardPanel fields={fields as RecipeCardFields} />
+        <RecipeCardPanel fields={fields as RecipeCardFields} config={config} />
       )}
       {document.templateType === "infographic-card" && (
-        <InfographicPanel fields={fields as InfographicCardFields} />
+        <InfographicPanel fields={fields as InfographicCardFields} config={config} />
       )}
       {document.templateType === "beverage-card" && (
-        <BeveragePanel fields={fields as BeverageCardFields} />
+        <BeveragePanel fields={fields as BeverageCardFields} config={config} />
       )}
     </div>
   );
