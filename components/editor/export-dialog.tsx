@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Download, X, FileImage, FileText, Code2 } from "lucide-react";
 import { useEditorStore } from "@/lib/store/editor";
 import { A4_PORTRAIT, A4_LANDSCAPE } from "@/lib/data/templates";
+import { useToast } from "@/components/ui/toast";
 import type { FactoryDocument } from "@/lib/types";
 
 interface ExportDialogProps {
@@ -126,6 +127,7 @@ ${element.outerHTML}
 export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
   const { document, setExporting } = useEditorStore();
   const [progress, setProgress] = useState<ExportFormat | null>(null);
+  const toast = useToast();
 
   if (!document) return null;
 
@@ -141,9 +143,10 @@ export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
       if (fmt === "png") await exportPng(el, safeName);
       else if (fmt === "pdf") await exportPdf(el, safeName, dims);
       else if (fmt === "html") exportHtml(document as FactoryDocument, el, safeName);
+      toast.success(`Exported as ${fmt.toUpperCase()}`);
     } catch (err) {
       console.error("Export error:", err);
-      alert("Export failed. Check the browser console for details.");
+      toast.error("Export failed — check browser console");
     } finally {
       setProgress(null);
       setExporting(false);
