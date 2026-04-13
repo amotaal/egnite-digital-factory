@@ -1,9 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Download, X, FileImage, FileText, Code2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useEditorStore } from "@/lib/store/editor";
 import { A4_PORTRAIT, A4_LANDSCAPE } from "@/lib/data/templates";
+import { useToast } from "@/components/ui/toast";
 import type { FactoryDocument } from "@/lib/types";
 
 interface ExportDialogProps {
@@ -127,6 +127,16 @@ ${element.outerHTML}
 export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
   const { document, setExporting } = useEditorStore();
   const [progress, setProgress] = useState<ExportFormat | null>(null);
+  const toast = useToast();
+
+  // Escape to close (don't close mid-export)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !progress) onClose();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose, progress]);
 
   if (!document) return null;
 
@@ -142,9 +152,10 @@ export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
       if (fmt === "png") await exportPng(el, safeName);
       else if (fmt === "pdf") await exportPdf(el, safeName, dims);
       else if (fmt === "html") exportHtml(document as FactoryDocument, el, safeName);
+      toast.success(`Exported as ${fmt.toUpperCase()}`);
     } catch (err) {
       console.error("Export error:", err);
-      alert("Export failed. Check the browser console for details.");
+      toast.error("Export failed — check browser console");
     } finally {
       setProgress(null);
       setExporting(false);
@@ -173,15 +184,29 @@ export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-2xl border border-gold-light/50 w-full max-w-md overflow-hidden">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Export document"
+      onClick={() => !progress && onClose()}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl border border-gold-light/50 w-full max-w-md overflow-hidden animate-slide-up"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="bg-gold px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 text-white">
             <Download size={18} />
             <span className="font-bold text-base">Export Document</span>
           </div>
-          <button onClick={onClose} className="text-white/80 hover:text-white">
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-white/80 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 rounded"
+            aria-label="Close export dialog"
+          >
             <X size={18} />
           </button>
         </div>

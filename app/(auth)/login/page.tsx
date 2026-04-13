@@ -1,12 +1,11 @@
 "use client";
 import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Sparkles, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/dashboard";
 
@@ -29,13 +28,14 @@ function LoginForm() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? "Login failed");
+        setLoading(false);
         return;
       }
-      router.push(next);
-      router.refresh();
+      // Hard navigation bypasses the Next.js Router Cache, which otherwise
+      // can serve a stale server-component payload from a previous session.
+      window.location.href = next;
     } catch {
       setError("Network error — please try again");
-    } finally {
       setLoading(false);
     }
   };

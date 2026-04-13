@@ -1,11 +1,10 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { resolveSession, SESSION_COOKIE } from "@/lib/auth";
 import { getAllDocuments } from "@/lib/storage";
 import { TEMPLATES } from "@/lib/data/templates";
 import { NewDocumentButton } from "./new-document-button";
-import { DocumentCard } from "./document-card";
+import { DocumentsBrowser } from "./documents-browser";
 
 export const metadata = { title: "Dashboard — Egnite Digital Factory" };
 
@@ -82,29 +81,8 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      {/* ── Recent Documents ──────────────────────────────────────────── */}
-      <section>
-        <h2 className="text-base font-bold text-ink mb-4 flex items-center gap-2">
-          <span className="size-1.5 rounded-full bg-gold inline-block" />
-          All Documents
-          <span className="text-xs font-normal text-ink-muted">({allDocs.length})</span>
-        </h2>
-
-        {allDocs.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gold-light/50 p-12 text-center">
-            <div className="text-5xl mb-4">🌟</div>
-            <p className="text-ink-muted text-sm">
-              No documents yet. Start by creating one from a template above.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {allDocs.map((doc) => (
-              <DocumentCard key={doc.id} document={doc} />
-            ))}
-          </div>
-        )}
-      </section>
+      {/* ── All Documents (search / filter / sort) ─────────────────── */}
+      <DocumentsBrowser documents={allDocs} />
     </main>
   );
 }

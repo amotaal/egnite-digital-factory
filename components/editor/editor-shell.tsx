@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useCallback, useState } from "react";
 import {
   Save, Download, ArrowLeft, Check, Clock,
   Loader2, Languages, PanelLeftClose, PanelLeftOpen,
+  PanelRightClose, PanelRightOpen,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { CanvasPreview } from "./canvas-preview";
 import { FieldPanel } from "./field-panel";
 import { ExportDialog } from "./export-dialog";
 import { useEditorStore } from "@/lib/store/editor";
+import { useToast } from "@/components/ui/toast";
 import type { FactoryDocument } from "@/lib/types";
 
 interface EditorShellProps {
@@ -19,9 +21,11 @@ interface EditorShellProps {
 export function EditorShell({ initialDocument }: EditorShellProps) {
   const router = useRouter();
   const exportRef = useRef<HTMLDivElement>(null);
+  const toast = useToast();
   const [showExport, setShowExport] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  // Local state for the document name input — avoids calling getState() in render
+  const [leftOpen, setLeftOpen] = useState(true);
+  const [rightOpen, setRightOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const [nameInput, setNameInput] = useState(initialDocument.name);
 
   const {
@@ -35,12 +39,39 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
     setNameInput(initialDocument.name);
   }, [initialDocument, setDocument]);
 
-  // Keep local name input in sync when document changes externally
+  // Re-sync name when doc id changes
   useEffect(() => {
     if (document) setNameInput(document.name);
-  }, [document?.id]); // only re-sync when the document *id* changes (not on every name edit)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [document?.id]);
 
-  // Warn before closing/refreshing the tab when there are unsaved changes
+  // Collapse sidebars + switch to overlay mode on narrow screens
+  useEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth;
+      setIsMobile(w < 768);
+      if (w < 1280) setRightOpen(false);
+      if (w < 1024) setLeftOpen(false);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // On mobile, pressing Escape closes any open sidebar overlay
+  useEffect(() => {
+    if (!isMobile) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (rightOpen) setRightOpen(false);
+        else if (leftOpen) setLeftOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isMobile, leftOpen, rightOpen]);
+
+  // Warn before closing/refreshing the tab with unsaved changes
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
       if (isDirty) {
@@ -53,21 +84,28 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
   }, [isDirty]);
 
   const save = useCallback(async () => {
-    if (!document) return;
+    const current = useEditorStore.getState().document;
+    if (!current) return;
     setSaving(true);
     try {
-      await fetch(`/api/documents/${document.id}`, {
+      const res = await fetch(`/api/documents/${current.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: document.name, fields: document.fields }),
+        body: JSON.stringify({ name: current.name, fields: current.fields }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? "Save failed");
+      }
       markSaved();
+      toast.success("Saved");
     } catch (err) {
       console.error("Save error:", err);
+      toast.error(err instanceof Error ? err.message : "Save failed");
     } finally {
       setSaving(false);
     }
-  }, [document, setSaving, markSaved]);
+  }, [setSaving, markSaved, toast]);
 
   // Auto-save every 30s when dirty
   useEffect(() => {
@@ -76,7 +114,7 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
     return () => clearTimeout(timer);
   }, [isDirty, save]);
 
-  // Keyboard shortcut: Cmd/Ctrl+S
+  // Cmd/Ctrl+S
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "s") {
@@ -113,13 +151,13 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
     <div className="flex-1 flex flex-col h-[calc(100vh-56px)] overflow-hidden">
       {/* ── Editor Toolbar ─────────────────────────────────────────────── */}
       <div className="h-12 bg-white border-b border-gold-light/60 flex items-center px-3 gap-2 shrink-0">
-        {/* Sidebar toggle */}
         <button
-          onClick={() => setSidebarOpen((v) => !v)}
-          className="text-ink-muted hover:text-ink p-1 rounded"
-          title={sidebarOpen ? "Hide panel" : "Show panel"}
+          onClick={() => setLeftOpen((v) => !v)}
+          className="text-ink-muted hover:text-ink p-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          title={leftOpen ? "Hide English panel" : "Show English panel"}
+          aria-label={leftOpen ? "Hide English panel" : "Show English panel"}
         >
-          {sidebarOpen ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
+          {leftOpen ? <PanelLeftClose size={16} /> : <PanelLeftOpen size={16} />}
         </button>
 
         <Button variant="ghost" size="sm" onClick={handleBack} className="gap-1.5">
@@ -129,7 +167,6 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
 
         <div className="h-5 w-px bg-gold-light mx-1" />
 
-        {/* Document name — controlled local state, commits to store on blur/Enter */}
         <input
           className="text-sm font-semibold text-ink bg-transparent border-none outline-none flex-1 min-w-0 truncate hover:bg-cream-dark focus:bg-cream-dark rounded px-1 transition-colors"
           value={nameInput}
@@ -144,12 +181,13 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
           }}
           spellCheck={false}
           title="Click to rename document"
+          aria-label="Document name"
         />
 
         <div className="flex-1" />
 
-        {/* Language toggle */}
-        <div className="flex items-center gap-1 bg-cream rounded-lg p-1">
+        {/* Language toggle — affects canvas preview only */}
+        <div className="flex items-center gap-1 bg-cream rounded-lg p-1" role="tablist" aria-label="Canvas language">
           <Languages size={13} className="text-ink-muted ms-1" />
           {langOptions.map((opt) => (
             <button
@@ -160,6 +198,8 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
                   ? "bg-gold text-white shadow-sm"
                   : "text-ink-muted hover:text-ink"
               }`}
+              role="tab"
+              aria-selected={lang === opt.value}
             >
               {opt.label}
             </button>
@@ -169,7 +209,7 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
         <div className="h-5 w-px bg-gold-light mx-1" />
 
         {/* Save status */}
-        <div className="text-xs text-ink-muted flex items-center gap-1.5 min-w-[72px]">
+        <div className="text-xs text-ink-muted flex items-center gap-1.5 min-w-[72px]" aria-live="polite">
           {isSaving ? (
             <>
               <Loader2 size={11} className="animate-spin" />
@@ -197,24 +237,74 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
           <Download size={14} />
           Export
         </Button>
+
+        <button
+          onClick={() => setRightOpen((v) => !v)}
+          className="text-ink-muted hover:text-ink p-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          title={rightOpen ? "Hide Arabic panel" : "Show Arabic panel"}
+          aria-label={rightOpen ? "Hide Arabic panel" : "Show Arabic panel"}
+        >
+          {rightOpen ? <PanelRightClose size={16} /> : <PanelRightOpen size={16} />}
+        </button>
       </div>
 
-      {/* ── Main layout ────────────────────────────────────────────────── */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left sidebar: Field panel — collapsible */}
-        {sidebarOpen && (
-          <aside className="w-72 shrink-0 bg-white border-e border-gold-light/50 flex flex-col overflow-hidden">
-            <div className="px-3 py-2 border-b border-gold-light/30 bg-cream">
+      {/* ── Main layout: EN | Canvas | AR ──────────────────────────────── */}
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Mobile backdrop */}
+        {isMobile && (leftOpen || rightOpen) && (
+          <div
+            className="absolute inset-0 z-30 bg-black/40 animate-fade-in"
+            onClick={() => {
+              setLeftOpen(false);
+              setRightOpen(false);
+            }}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Left sidebar: English editor */}
+        {leftOpen && (
+          <aside
+            className={`${
+              isMobile
+                ? "absolute inset-y-0 start-0 z-40 w-[85%] max-w-sm shadow-xl animate-slide-in-right"
+                : "w-72 shrink-0"
+            } bg-white border-e border-gold-light/50 flex flex-col overflow-hidden`}
+            aria-label="English content editor"
+          >
+            <div className="px-3 py-2 border-b border-gold-light/30 bg-cream flex items-center justify-between">
               <span className="text-[10px] font-black uppercase tracking-widest text-gold">
-                Content Editor
+                🇬🇧 English
               </span>
+              <span className="text-[9px] text-ink-muted">LTR</span>
             </div>
-            <FieldPanel />
+            <FieldPanel lang="en" />
           </aside>
         )}
 
         {/* Canvas */}
         <CanvasPreview document={document} lang={lang} exportRef={exportRef} />
+
+        {/* Right sidebar: Arabic editor */}
+        {rightOpen && (
+          <aside
+            className={`${
+              isMobile
+                ? "absolute inset-y-0 end-0 z-40 w-[85%] max-w-sm shadow-xl animate-slide-in-right"
+                : "w-72 shrink-0"
+            } bg-white border-s border-gold-light/50 flex flex-col overflow-hidden`}
+            aria-label="Arabic content editor"
+            dir="rtl"
+          >
+            <div className="px-3 py-2 border-b border-gold-light/30 bg-cream flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-widest text-gold">
+                🇸🇦 العربية
+              </span>
+              <span className="text-[9px] text-ink-muted">RTL</span>
+            </div>
+            <FieldPanel lang="ar" />
+          </aside>
+        )}
       </div>
 
       {/* Export dialog */}

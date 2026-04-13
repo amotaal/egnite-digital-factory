@@ -64,13 +64,21 @@ export function ExtendedRecipe({ fields, previewLang }: ExtendedRecipeProps) {
           justifyContent: "space-between",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ color: "white", fontSize: 18 }}>✦</span>
-          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: "0.15em", color: "white", fontFamily: "'Inter', sans-serif" }}>
-            EGNITE
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ color: "white", fontSize: 22 }}>✦</span>
+          <span
+            style={{
+              fontWeight: 800,
+              fontSize: 24,
+              letterSpacing: "-0.5px",
+              color: "white",
+              fontFamily: "'Playfair Display', Georgia, serif",
+            }}
+          >
+            Egnite
           </span>
         </div>
-        <span style={{ fontSize: 10, color: "rgba(255,255,255,0.75)" }}>egniteflavors.com</span>
+        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.85)", fontWeight: 500 }}>egniteflavors.com</span>
       </div>
 
       {/* ── Hero Image ─────────────────────────────────────────────────── */}
@@ -97,15 +105,52 @@ export function ExtendedRecipe({ fields, previewLang }: ExtendedRecipeProps) {
       {/* ── Title Block ────────────────────────────────────────────────── */}
       <div style={{ padding: "16px 28px 12px", borderBottom: `1px solid ${accentLight}` }}>
         {isBilingual ? (
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
-            <h1 style={{ fontSize: 26, fontWeight: 900, color: accent, margin: 0 }}>{title.en}</h1>
-            <h1 style={{ fontSize: 22, fontWeight: 900, color: accent, margin: 0, fontFamily: "'Cairo', sans-serif", direction: "rtl" }}>{title.ar}</h1>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
+            <h1
+              style={{
+                fontSize: 32,
+                fontWeight: 800,
+                color: accent,
+                margin: 0,
+                letterSpacing: "-0.01em",
+                fontFamily: "'Playfair Display', Georgia, serif",
+                lineHeight: 1.1,
+              }}
+            >
+              {title.en}
+            </h1>
+            <h1
+              style={{
+                fontSize: 28,
+                fontWeight: 800,
+                color: accent,
+                margin: 0,
+                fontFamily: "'Cairo', sans-serif",
+                direction: "rtl",
+              }}
+            >
+              {title.ar}
+            </h1>
           </div>
         ) : (
-          <h1 style={{ fontSize: 28, fontWeight: 900, color: accent, margin: 0 }}>{t(title, lang)}</h1>
+          <h1
+            style={{
+              fontSize: 36,
+              fontWeight: 800,
+              color: accent,
+              margin: 0,
+              letterSpacing: "-0.01em",
+              fontFamily: isRtl
+                ? "'Cairo', 'Segoe UI', Arial, sans-serif"
+                : "'Playfair Display', Georgia, serif",
+              lineHeight: 1.1,
+            }}
+          >
+            {t(title, lang)}
+          </h1>
         )}
         {subtitle && (
-          <p style={{ fontSize: 12, color: "#666", margin: "4px 0 0" }}>
+          <p style={{ fontSize: 13, color: "#666", margin: "6px 0 0", fontStyle: "italic" }}>
             {isBilingual ? `${subtitle.en}  ·  ${subtitle.ar}` : t(subtitle, lang)}
           </p>
         )}

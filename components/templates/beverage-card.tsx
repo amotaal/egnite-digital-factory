@@ -55,35 +55,38 @@ export function BeverageCard({ fields }: { fields: BeverageCardFields }) {
           <h1
             style={{
               color: accent,
-              fontSize: 28,
-              fontWeight: 900,
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
+              fontSize: 38,
+              fontWeight: 800,
+              letterSpacing: "-0.5px",
               margin: 0,
+              fontFamily: isRtl
+                ? "'Cairo', 'Segoe UI', Arial, sans-serif"
+                : "'Playfair Display', Georgia, serif",
+              lineHeight: 1.1,
             }}
           >
             {isBilingual
               ? `${fields.title.en} / ${fields.title.ar}`
               : t(fields.title, lang)}
           </h1>
-          <p style={{ color: "#999", fontSize: 12, margin: "2px 0 0" }}>
+          <p style={{ color: "#bbb", fontSize: 14, margin: "4px 0 0", fontStyle: "italic" }}>
             {isBilingual
               ? `${fields.subtitle.en} / ${fields.subtitle.ar}`
               : t(fields.subtitle, lang)}
           </p>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ color: accent, fontSize: 22 }}>✦</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ color: accent, fontSize: 26 }}>✦</span>
           <span
             style={{
-              fontWeight: 900,
-              fontSize: 24,
-              letterSpacing: "0.15em",
+              fontWeight: 800,
+              fontSize: 28,
+              letterSpacing: "-1px",
               color: accent,
-              fontFamily: "'Inter', 'Segoe UI', Arial, sans-serif",
+              fontFamily: "'Playfair Display', Georgia, serif",
             }}
           >
-            EGNITE
+            Egnite
           </span>
         </div>
       </div>
@@ -327,19 +330,30 @@ export function BeverageCard({ fields }: { fields: BeverageCardFields }) {
       <div
         style={{
           backgroundColor: GOLD_LIGHT,
-          padding: "10px 40px",
+          padding: "14px 40px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           borderTop: `2px solid ${accent}`,
         }}
       >
-        <span style={{ fontWeight: 600, fontSize: 11 }}>
+        <span style={{ fontWeight: 600, fontSize: 14 }}>
           {isBilingual
             ? `${fields.footerTagline.en} · ${fields.footerTagline.ar}`
             : t(fields.footerTagline, lang)}
         </span>
-        <span style={{ fontSize: 10, color: "#888" }}>egniteflavors.com</span>
+        <span
+          style={{
+            fontSize: 22,
+            fontWeight: 800,
+            letterSpacing: "-1px",
+            color: INK,
+            fontFamily: "'Playfair Display', Georgia, serif",
+          }}
+        >
+          Egnite
+        </span>
+        <span style={{ fontSize: 12, color: "#555", fontWeight: 500 }}>egniteflavors.com</span>
       </div>
     </div>
   );
