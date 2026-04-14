@@ -1,0 +1,147 @@
+{
+  "id": "a9594ac3-0772-4b32-bfa0-c450e048f685",
+  "name": "Sample — Recipe Card",
+  "templateType": "recipe-card",
+  "fields": {
+    "language": "en",
+    "logoText": "EGNITE",
+    "heroImage": "",
+    "title": {
+      "en": "Recipe Name",
+      "ar": "اسم الوصفة"
+    },
+    "subtitle": {
+      "en": "A delicious creation with Egnite flavors",
+      "ar": "إبداع لذيذ بنكهات إيغنايت"
+    },
+    "prepTime": "15 mins",
+    "cookTime": "30 mins",
+    "servings": "12 pieces",
+    "difficulty": "Medium",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "🧈",
+        "label": {
+          "en": "Butter",
+          "ar": "زبدة"
+        },
+        "amount": "100g"
+      },
+      {
+        "id": "i2",
+        "icon": "🍚",
+        "label": {
+          "en": "Sugar",
+          "ar": "سكر"
+        },
+        "amount": "150g"
+      },
+      {
+        "id": "i3",
+        "icon": "🌾",
+        "label": {
+          "en": "Flour",
+          "ar": "دقيق"
+        },
+        "amount": "200g"
+      },
+      {
+        "id": "i4",
+        "icon": "🥚",
+        "label": {
+          "en": "Eggs",
+          "ar": "بيض"
+        },
+        "amount": "2 large"
+      },
+      {
+        "id": "i5",
+        "icon": "🧪",
+        "label": {
+          "en": "Egnite Essence",
+          "ar": "جوهر إيغنايت"
+        },
+        "amount": "¼ tsp (1.25g)"
+      }
+    ],
+    "instructions": [
+      {
+        "id": "s1",
+        "icon": "🥣",
+        "text": {
+          "en": "Cream together butter and sugar until light and fluffy.",
+          "ar": "اخفق الزبدة والسكر حتى يصبح خفيفاً وهشاً."
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🥚",
+        "text": {
+          "en": "Add eggs one at a time, beating well after each.",
+          "ar": "أضف البيض واحدة تلو الأخرى مع الخفق الجيد."
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🧪",
+        "text": {
+          "en": "Add Egnite Essence and mix until combined.",
+          "ar": "أضف جوهر إيغنايت وامزج حتى يتجانس."
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "🌾",
+        "text": {
+          "en": "Fold in flour until just combined — do not over-mix.",
+          "ar": "أضف الدقيق برفق حتى يتجانس، لا تمزج كثيراً."
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🫙",
+        "text": {
+          "en": "Bake at 180°C for 20–25 minutes until golden.",
+          "ar": "اخبز على 180°م لمدة 20-25 دقيقة حتى يصبح ذهبياً."
+        }
+      },
+      {
+        "id": "s6",
+        "icon": "❄️",
+        "text": {
+          "en": "Let cool completely before glazing.",
+          "ar": "اتركها تبرد تماماً قبل التزيين."
+        }
+      },
+      {
+        "id": "s7",
+        "icon": "✨",
+        "text": {
+          "en": "Dust with powdered sugar and serve.",
+          "ar": "رشّها بالسكر الناعم وقدّمها."
+        }
+      }
+    ],
+    "sideNote": {
+      "en": "For closer cuts, use your knife under hot water and wipe dry before slicing.",
+      "ar": "للحصول على قطع أنظف، استخدم سكيناً دافئاً ونشّفه قبل التقطيع."
+    },
+    "sections": [],
+    "badgeText": {
+      "en": "ENJOY EVERY BITE !",
+      "ar": "استمتع بكل قضمة"
+    },
+    "tagline": {
+      "en": "Creativity with Confidence",
+      "ar": "ابدع بثقة"
+    },
+    "products": [],
+    "primaryColor": "",
+    "backgroundColor": "",
+    "themeId": "egnite-recipe-card"
+  },
+  "createdBy": "1",
+  "createdAt": "2026-04-14T11:41:58.310Z",
+  "updatedAt": "2026-04-14T11:41:58.311Z"
+}

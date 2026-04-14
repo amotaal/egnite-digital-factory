@@ -1,0 +1,160 @@
+{
+  "id": "6ce1018e-2900-4c31-8415-6071095aa4b8",
+  "name": "Sample — Carbonated Beverage",
+  "templateType": "beverage-card",
+  "fields": {
+    "language": "en",
+    "headerPill": {
+      "en": "CARBONATED",
+      "ar": "غازي"
+    },
+    "title": {
+      "en": "Carbonated Beverage",
+      "ar": "مشروب غازي"
+    },
+    "subtitle": {
+      "en": "Preparation Guide",
+      "ar": "دليل التحضير"
+    },
+    "heroImage": "",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "💧",
+        "label": {
+          "en": "Water",
+          "ar": "ماء"
+        },
+        "amount": "1,000.00g",
+        "quantity": "1 ltr",
+        "weight": "1,000.00g"
+      },
+      {
+        "id": "i2",
+        "icon": "🍚",
+        "label": {
+          "en": "Sugar",
+          "ar": "سكر"
+        },
+        "amount": "112.50g",
+        "quantity": "½ cup",
+        "weight": "112.50g"
+      },
+      {
+        "id": "i3",
+        "icon": "🍋",
+        "label": {
+          "en": "Citric Acid",
+          "ar": "حمض الستريك"
+        },
+        "amount": "2.50g",
+        "quantity": "½ tsp",
+        "weight": "2.50g"
+      },
+      {
+        "id": "i4",
+        "icon": "🧪",
+        "label": {
+          "en": "Flavor",
+          "ar": "نكهة"
+        },
+        "amount": "0.60g",
+        "quantity": "19 drops",
+        "weight": "0.60g"
+      }
+    ],
+    "dosage": {
+      "icon": "🧪",
+      "amount": "1.25g per liter",
+      "range": "0.10% – 0.15%"
+    },
+    "dosageStarting": {
+      "label": {
+        "en": "Starting Dose",
+        "ar": "جرعة الانطلاق"
+      },
+      "value": "1.0g",
+      "icon": "🟢"
+    },
+    "dosageQuick": {
+      "label": {
+        "en": "Quick Dose",
+        "ar": "جرعة سريعة"
+      },
+      "value": "0.5g",
+      "icon": "⚡"
+    },
+    "dosageRange": {
+      "label": {
+        "en": "Dosage Range",
+        "ar": "نطاق الجرعة"
+      },
+      "value": "0.04% – 0.08%",
+      "icon": "📏"
+    },
+    "steps": [
+      {
+        "id": "s1",
+        "icon": "🫙",
+        "text": {
+          "en": "Add water, sugar, and citric acid to a jug",
+          "ar": "أضف الماء والسكر وحمض الستريك إلى إبريق"
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🥄",
+        "text": {
+          "en": "Stir well for 2–3 minutes",
+          "ar": "امزج جيداً لمدة 2-3 دقائق"
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🧪",
+        "text": {
+          "en": "Add 19 drops Egnite Essence (hide dots) and color drops as needed",
+          "ar": "أضف 19 قطرة من جوهر إيغنايت وقطرات اللون حسب الحاجة"
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "💧",
+        "text": {
+          "en": "Stir well until fully dissolved",
+          "ar": "امزج جيداً حتى يذوب بالكامل"
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🍾",
+        "text": {
+          "en": "Pour the mixture into the carbonation machine bottle",
+          "ar": "اسكب الخليط في زجاجة مكينة الغاز"
+        }
+      },
+      {
+        "id": "s6",
+        "icon": "⏱️",
+        "text": {
+          "en": "Twist the carbonation lever 3 times to release the gas",
+          "ar": "أدر رافعة الغاز 3 مرات لإطلاقه"
+        }
+      }
+    ],
+    "storageNote": {
+      "en": "The beverage can be stored for up to 36 hours if refrigerated. Best placed away from direct sunlight. Rests before 2 years from production date.",
+      "ar": "يمكن تخزين المشروب حتى 36 ساعة في الثلاجة. الأفضل تخزينه بعيداً عن أشعة الشمس المباشرة."
+    },
+    "footerTagline": {
+      "en": "Creativity with Confidence",
+      "ar": "ابدع بثقة"
+    },
+    "primaryColor": "",
+    "backgroundColor": "",
+    "themeId": "egnite-beverage-card"
+  },
+  "createdBy": "1",
+  "createdAt": "2026-04-14T11:41:58.311Z",
+  "updatedAt": "2026-04-14T11:41:58.313Z"
+}

@@ -155,10 +155,11 @@
       "Mixed Berries",
       "Pink Color"
     ],
-    "primaryColor": "#B78D4B",
-    "backgroundColor": "#FCFAF4"
+    "primaryColor": "",
+    "backgroundColor": "",
+    "themeId": "egnite-recipe-card"
   },
   "createdAt": "2026-04-13T09:27:58.301Z",
-  "updatedAt": "2026-04-13T09:27:58.301Z",
+  "updatedAt": "2026-04-14T11:41:51.406Z",
   "createdBy": "1"
 }

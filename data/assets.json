@@ -1,0 +1,435 @@
+[
+  {
+    "name": {
+      "en": "Butter",
+      "ar": "زبدة"
+    },
+    "category": "icon",
+    "icon": "🧈",
+    "url": "",
+    "tags": [
+      "dairy",
+      "baking",
+      "fat"
+    ],
+    "id": "9acfaeb4-f264-4be6-bc5b-95d453cebfec",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Sugar",
+      "ar": "سكر"
+    },
+    "category": "icon",
+    "icon": "🍚",
+    "url": "",
+    "tags": [
+      "sweet",
+      "baking",
+      "powder"
+    ],
+    "id": "ac867b32-4416-471d-910c-baae2b047043",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Flour",
+      "ar": "دقيق"
+    },
+    "category": "icon",
+    "icon": "🌾",
+    "url": "",
+    "tags": [
+      "baking",
+      "grain"
+    ],
+    "id": "18fe9722-d0b4-4ad3-b3da-8fcae900e241",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Eggs",
+      "ar": "بيض"
+    },
+    "category": "icon",
+    "icon": "🥚",
+    "url": "",
+    "tags": [
+      "protein",
+      "baking"
+    ],
+    "id": "2d53131b-ae19-4e17-883b-fc684b1a447f",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Milk",
+      "ar": "حليب"
+    },
+    "category": "icon",
+    "icon": "🥛",
+    "url": "",
+    "tags": [
+      "dairy",
+      "liquid"
+    ],
+    "id": "67e492f8-e556-49dd-ae2a-da40fc9224a1",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Heavy Cream",
+      "ar": "كريم"
+    },
+    "category": "icon",
+    "icon": "🥛",
+    "url": "",
+    "tags": [
+      "dairy",
+      "liquid"
+    ],
+    "id": "1516a971-1851-44ca-857d-14335d36fef1",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Ghee (Samneh)",
+      "ar": "سمنة"
+    },
+    "category": "icon",
+    "icon": "🍯",
+    "url": "",
+    "tags": [
+      "dairy",
+      "fat"
+    ],
+    "id": "3bd81f02-40b2-436d-9ee6-e53ac997112b",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Vanilla Essence",
+      "ar": "جوهر الفانيليا"
+    },
+    "category": "icon",
+    "icon": "🧪",
+    "url": "",
+    "tags": [
+      "essence",
+      "egnite",
+      "flavor"
+    ],
+    "id": "22679586-b873-469b-8b41-fb186436996c",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Strawberry Essence",
+      "ar": "جوهر الفراولة"
+    },
+    "category": "icon",
+    "icon": "🍓",
+    "url": "",
+    "tags": [
+      "essence",
+      "egnite",
+      "fruit"
+    ],
+    "id": "910198f4-95a4-4300-89cf-d6a905c210b4",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Chocolate Essence",
+      "ar": "جوهر الشوكولاتة"
+    },
+    "category": "icon",
+    "icon": "🍫",
+    "url": "",
+    "tags": [
+      "essence",
+      "egnite",
+      "chocolate"
+    ],
+    "id": "b2931190-8c57-49df-9fe3-b57cc402ccb4",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Coconut Essence",
+      "ar": "جوهر جوز الهند"
+    },
+    "category": "icon",
+    "icon": "🥥",
+    "url": "",
+    "tags": [
+      "essence",
+      "egnite",
+      "tropical"
+    ],
+    "id": "36e46aed-8b45-4b90-b7cb-47a30fbb24a7",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Coffee Essence",
+      "ar": "جوهر القهوة"
+    },
+    "category": "icon",
+    "icon": "☕",
+    "url": "",
+    "tags": [
+      "essence",
+      "egnite",
+      "beverage"
+    ],
+    "id": "3f4284a1-c460-43dc-aa29-545a1006bd9d",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Lemon Essence",
+      "ar": "جوهر الليمون"
+    },
+    "category": "icon",
+    "icon": "🍋",
+    "url": "",
+    "tags": [
+      "essence",
+      "egnite",
+      "citrus"
+    ],
+    "id": "adc3cd47-ac0e-4d1b-aaba-2cf0cf0ce8d5",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Hazelnut Essence",
+      "ar": "جوهر البندق"
+    },
+    "category": "icon",
+    "icon": "🌰",
+    "url": "",
+    "tags": [
+      "essence",
+      "egnite",
+      "nut"
+    ],
+    "id": "8630f63f-c4f0-4894-9328-76a3f209c331",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Blueberry Essence",
+      "ar": "جوهر التوت"
+    },
+    "category": "icon",
+    "icon": "🫐",
+    "url": "",
+    "tags": [
+      "essence",
+      "egnite",
+      "berry"
+    ],
+    "id": "18b69dc2-ec4e-4746-a2fa-4525f3242071",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Emulsion",
+      "ar": "إيمولشن"
+    },
+    "category": "icon",
+    "icon": "🧴",
+    "url": "",
+    "tags": [
+      "egnite",
+      "emulsion"
+    ],
+    "id": "8e86c49d-97f5-4178-ab61-bf5355eba376",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Water",
+      "ar": "ماء"
+    },
+    "category": "icon",
+    "icon": "💧",
+    "url": "",
+    "tags": [
+      "liquid"
+    ],
+    "id": "36e43690-9f92-4ae3-95e9-8bbc632b1b66",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Salt",
+      "ar": "ملح"
+    },
+    "category": "icon",
+    "icon": "🧂",
+    "url": "",
+    "tags": [
+      "seasoning"
+    ],
+    "id": "69f6d1c1-ded2-4a84-9e4a-d94efd27a6d9",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Baking Powder",
+      "ar": "بيكينج باودر"
+    },
+    "category": "icon",
+    "icon": "🥄",
+    "url": "",
+    "tags": [
+      "baking",
+      "leavening"
+    ],
+    "id": "8996cb46-9e1b-4588-909a-308f9294c79e",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Yeast",
+      "ar": "خميرة"
+    },
+    "category": "icon",
+    "icon": "🫧",
+    "url": "",
+    "tags": [
+      "baking",
+      "leavening"
+    ],
+    "id": "5db522a1-cf6d-4158-9c3b-bae0ab18749e",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Cocoa Powder",
+      "ar": "كاكاو"
+    },
+    "category": "icon",
+    "icon": "🍫",
+    "url": "",
+    "tags": [
+      "baking",
+      "chocolate"
+    ],
+    "id": "fb2acbae-ee78-4750-8abf-aa01397a62ce",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Powdered Sugar",
+      "ar": "سكر بودرة"
+    },
+    "category": "icon",
+    "icon": "❄️",
+    "url": "",
+    "tags": [
+      "sweet",
+      "baking"
+    ],
+    "id": "ae508081-fbec-4898-a6a8-770e78fcfcaa",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Measuring Scale",
+      "ar": "ميزان"
+    },
+    "category": "icon",
+    "icon": "⚖️",
+    "url": "",
+    "tags": [
+      "tool",
+      "measurement"
+    ],
+    "id": "9487fa26-b6eb-4cd6-9619-1db2663dba60",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Citric Acid",
+      "ar": "حمض الستريك"
+    },
+    "category": "icon",
+    "icon": "🍋",
+    "url": "",
+    "tags": [
+      "beverage",
+      "acid"
+    ],
+    "id": "80343de0-9e10-4b95-92b7-73391d99f34f",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  },
+  {
+    "name": {
+      "en": "Ice",
+      "ar": "جليد"
+    },
+    "category": "icon",
+    "icon": "🧊",
+    "url": "",
+    "tags": [
+      "beverage",
+      "cold"
+    ],
+    "id": "2651f415-ace2-4402-8867-fefdb9a88831",
+    "createdAt": "2026-04-14T11:41:58.316Z",
+    "updatedAt": "2026-04-14T11:41:58.316Z",
+    "createdBy": "1"
+  }
+]

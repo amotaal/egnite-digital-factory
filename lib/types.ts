@@ -29,13 +29,9 @@ export type TemplateType =
   | "beverage-card"
   | "extended-recipe";
 
-export type ExportFormat = "png" | "pdf" | "html";
+export type ExportFormat = "png" | "pdf" | "html" | "json";
 
 // ─── Theme override (re-exported here for convenience) ───────────────────────
-// The actual ThemeOverride shape lives in lib/template-theme.ts. Documents may
-// carry an optional themeId (preset selector) and a themeOverride (deep-partial
-// overrides on top of that preset). Both are optional — when absent, each
-// template falls back to its built-in default preset.
 export type DocumentThemeOverride = {
   colors?: Record<string, string>;
   typography?: Record<string, string | number>;
@@ -50,9 +46,14 @@ export type DocumentThemeOverride = {
 
 export interface IngredientItem {
   id: string;
-  icon: string;       // emoji or image URL
-  label: LocaleString; // e.g. "Butter" / "زبدة"
-  amount: string;     // e.g. "100g (1 stick)"
+  /** Emoji or asset-URL, rendered flat (no pill background). */
+  icon: string;
+  label: LocaleString;
+  /** Free-form amount — e.g. "100g", "1 stick (100g)". */
+  amount: string;
+  /** Optional separated numeric + unit, used by the 4-col beverage table. */
+  quantity?: string;
+  weight?: string;
 }
 
 export interface InstructionStep {
@@ -61,17 +62,35 @@ export interface InstructionStep {
   text: LocaleString;
 }
 
+/**
+ * An extra section shown after the main recipe. Used by Recipe Card (compact
+ * inline chips) and by Extended Recipe (full sub-recipe block with header
+ * strip + ingredients + numbered steps).
+ */
 export interface DocumentSection {
   id: string;
   title: LocaleString;
-  type: "ingredients" | "instructions";
+  type: "ingredients" | "instructions" | "sub-recipe";
   items: IngredientItem[] | InstructionStep[];
+  /** For type === "sub-recipe": optional numbered steps rendered below items. */
+  steps?: InstructionStep[];
 }
 
 export interface DosageRow {
   icon: string;
-  amount: string;     // e.g. "1.25g (¼ tsp)"
-  range: string;      // e.g. "0.25% – 0.30%"
+  amount: string;     // "1.25g (¼ tsp)"
+  range: string;      // "0.25% – 0.30%"
+}
+
+/**
+ * Tri-cell dosage block (Carbonated beverage sample). Each cell has a short
+ * label and a value. The labels are bilingual so RTL users still see
+ * "Starting Dose" / "جرعة الانطلاق".
+ */
+export interface DosageCell {
+  label: LocaleString;
+  value: string;
+  icon?: string;
 }
 
 // ─── Template Field Shapes ───────────────────────────────────────────────────
@@ -89,7 +108,7 @@ export interface RecipeCardFields {
   title: LocaleString;
   subtitle: LocaleString;
 
-  // Meta row
+  // Meta row — stacked in header-right on recipe card
   prepTime: string;
   cookTime: string;
   servings: string;
@@ -99,6 +118,9 @@ export interface RecipeCardFields {
   ingredients: IngredientItem[];
   instructions: InstructionStep[];
 
+  // Optional side-callout (handwritten-style tip quote near the hero)
+  sideNote?: LocaleString;
+
   // Optional extra sections (chocolate coating, frosting, etc.)
   sections: DocumentSection[];
 
@@ -106,14 +128,13 @@ export interface RecipeCardFields {
   badgeText: LocaleString;
   tagline: LocaleString;
 
-  // Products / essences used (for display purposes)
+  // Products / essences used
   products: string[];
 
-  // Theme overrides
+  // Legacy colour overrides (deprecated — use themeOverride)
   primaryColor: string;
   backgroundColor: string;
 
-  // Optional design system override (preset id + per-token overrides)
   themeId?: string;
   themeOverride?: DocumentThemeOverride;
 }
@@ -142,12 +163,21 @@ export interface InfographicCardFields {
 export interface BeverageCardFields {
   language: ActiveLanguage;
 
+  /** The uppercase pill label sitting centered in the dark top banner. */
+  headerPill: LocaleString;
   title: LocaleString;
   subtitle: LocaleString;
   heroImage: string;
 
+  /** 4-column table (Icon · Item · Quantity · Weight). */
   ingredients: IngredientItem[];
+
+  /** Single-value fallback (kept for simple beverages). */
   dosage: DosageRow;
+  /** Extended tri-cell dosage block (Carbonated sample). */
+  dosageStarting?: DosageCell;
+  dosageQuick?: DosageCell;
+  dosageRange?: DosageCell;
 
   steps: InstructionStep[];
   storageNote: LocaleString;
@@ -172,10 +202,10 @@ export interface FactoryDocument {
   name: string;
   templateType: TemplateType;
   fields: DocumentFields;
-  thumbnail?: string;   // path to a PNG preview snapshot
-  createdAt: string;    // ISO date string
+  thumbnail?: string;
+  createdAt: string;
   updatedAt: string;
-  createdBy: string;    // user id
+  createdBy: string;
 }
 
 // ─── Template Definition ─────────────────────────────────────────────────────
@@ -225,9 +255,7 @@ export interface Asset {
   name: LocaleString;
   category: AssetCategory;
   tags: string[];
-  /** URL to the full asset (image file or remote URL) */
   url: string;
-  /** Optional shorthand icon/emoji used inline in templates */
   icon?: string;
   thumbnailUrl?: string;
   createdAt: string;
@@ -247,7 +275,7 @@ export interface RecipeSource {
   difficulty: "Easy" | "Medium" | "Hard";
   lesson: string;
   attributes: string[];
-  heroImage: string;   // path under /samples/
+  heroImage: string;
   ingredients: IngredientItem[];
   instructions: InstructionStep[];
   sections: DocumentSection[];
