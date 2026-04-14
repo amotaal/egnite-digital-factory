@@ -11,7 +11,10 @@ import { AssetPickerModal } from "./asset-picker";
 import type {
   RecipeCardFields, InfographicCardFields, BeverageCardFields,
   IngredientItem, InstructionStep, DocumentSection,
+  DocumentThemeOverride,
 } from "@/lib/types";
+import { THEME_PRESETS, getThemePreset } from "@/lib/template-theme";
+import { BRAND_SWATCHES as TOKEN_SWATCHES } from "@/lib/design-tokens";
 
 // ─── Per-language config ──────────────────────────────────────────────────────
 
@@ -499,6 +502,259 @@ function ColorPickers({
   );
 }
 
+// ─── Design Panel (theme picker + token overrides) ────────────────────────────
+//
+// Lets a designer (a) pick a built-in theme preset, (b) tweak any token on top
+// of it, and (c) export/import the resulting JSON. Token overrides are stored
+// as a sparse `themeOverride` document field; absent keys fall through to the
+// preset.
+
+interface ThemedFields {
+  themeId?: string;
+  themeOverride?: DocumentThemeOverride;
+  primaryColor: string;
+  backgroundColor: string;
+}
+
+function ThemeColorRow({
+  label, value, onChange, swatches = TOKEN_SWATCHES,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  swatches?: readonly string[];
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center gap-2">
+        <label className="text-xs font-medium text-ink flex-1 truncate">{label}</label>
+        <input
+          type="color"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-7 h-7 rounded cursor-pointer border border-gold-light"
+          aria-label={label}
+        />
+        <Input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-20 text-[10px] font-mono px-1.5"
+        />
+      </div>
+      <div className="flex flex-wrap gap-1">
+        {swatches.map((c) => (
+          <button
+            key={c}
+            onClick={() => onChange(c)}
+            className={`w-5 h-5 rounded-full border ${
+              value.toLowerCase() === c.toLowerCase()
+                ? "border-ink ring-2 ring-gold"
+                : "border-gold-light"
+            }`}
+            style={{ backgroundColor: c }}
+            title={c}
+            aria-label={`Set ${label} to ${c}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function NumberRow({
+  label, value, onChange, min = 0, max = 200, step = 1,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <label className="text-xs font-medium text-ink flex-1 truncate">{label}</label>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-24"
+      />
+      <span className="text-[10px] font-mono text-ink-muted w-10 text-right">{value}</span>
+    </div>
+  );
+}
+
+function DesignPanel({
+  fields, defaultThemeId, onUpdate,
+}: {
+  fields: ThemedFields;
+  defaultThemeId: string;
+  onUpdate: (patch: Partial<ThemedFields>) => void;
+}) {
+  const activeThemeId = fields.themeId ?? defaultThemeId;
+  const preset = getThemePreset(activeThemeId);
+  const override = fields.themeOverride ?? {};
+
+  // Resolve effective values (override wins over preset)
+  const colors = { ...preset.colors, ...(override.colors as Record<string, string> ?? {}) };
+  const spacing = { ...preset.spacing, ...(override.spacing as Record<string, number> ?? {}) };
+  const radii = { ...preset.radii, ...(override.radii as Record<string, number> ?? {}) };
+  const decorations = { ...preset.decorations, ...(override.decorations ?? {}) };
+
+  const setColor = (key: string, value: string) =>
+    onUpdate({
+      themeOverride: {
+        ...override,
+        colors: { ...(override.colors ?? {}), [key]: value },
+      },
+    });
+  const setSpacing = (key: string, value: number) =>
+    onUpdate({
+      themeOverride: {
+        ...override,
+        spacing: { ...(override.spacing ?? {}), [key]: value },
+      },
+    });
+  const setRadius = (key: string, value: number) =>
+    onUpdate({
+      themeOverride: {
+        ...override,
+        radii: { ...(override.radii ?? {}), [key]: value },
+      },
+    });
+  const setDecoration = (key: string, value: string | boolean) =>
+    onUpdate({
+      themeOverride: {
+        ...override,
+        decorations: { ...(override.decorations ?? {}), [key]: value },
+      },
+    });
+
+  const exportTheme = () => {
+    const payload = JSON.stringify({ themeId: activeThemeId, themeOverride: override }, null, 2);
+    const blob = new Blob([payload], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = window.document.createElement("a");
+    a.href = url;
+    a.download = `${activeThemeId}.theme.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const importRef = useRef<HTMLInputElement>(null);
+  const importTheme = async (file: File) => {
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text) as { themeId?: string; themeOverride?: DocumentThemeOverride };
+      onUpdate({
+        themeId: parsed.themeId ?? activeThemeId,
+        themeOverride: parsed.themeOverride ?? {},
+      });
+    } catch {
+      // swallow — invalid JSON
+    }
+  };
+  const resetTheme = () => onUpdate({ themeOverride: {} });
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Preset picker */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-medium text-ink">Theme Preset</label>
+        <div className="grid grid-cols-2 gap-1.5">
+          {THEME_PRESETS.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => onUpdate({ themeId: p.id })}
+              className={`px-2 py-1.5 text-[11px] font-semibold rounded-lg border transition-all ${
+                activeThemeId === p.id
+                  ? "bg-gold text-white border-gold"
+                  : "border-gold-light text-ink-muted hover:bg-cream"
+              }`}
+            >
+              {p.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Colours */}
+      <div className="flex flex-col gap-2">
+        <div className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">Colours</div>
+        <ThemeColorRow label="Accent" value={colors.accent} onChange={(v) => setColor("accent", v)} />
+        <ThemeColorRow label="Background" value={colors.background} onChange={(v) => setColor("background", v)} />
+        <ThemeColorRow label="Surface" value={colors.surface} onChange={(v) => setColor("surface", v)} />
+        <ThemeColorRow label="Ink" value={colors.ink} onChange={(v) => setColor("ink", v)} />
+        <ThemeColorRow label="Footer BG" value={colors.footerBg} onChange={(v) => setColor("footerBg", v)} />
+      </div>
+
+      {/* Spacing */}
+      <div className="flex flex-col gap-2">
+        <div className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">Spacing</div>
+        <NumberRow label="Page Margin X" value={spacing.pageMarginX} onChange={(v) => setSpacing("pageMarginX", v)} max={120} />
+        <NumberRow label="Page Margin Y" value={spacing.pageMarginY} onChange={(v) => setSpacing("pageMarginY", v)} max={120} />
+        <NumberRow label="Section Gap" value={spacing.sectionGap} onChange={(v) => setSpacing("sectionGap", v)} max={80} />
+        <NumberRow label="Block Gap" value={spacing.blockGap} onChange={(v) => setSpacing("blockGap", v)} max={60} />
+      </div>
+
+      {/* Radii */}
+      <div className="flex flex-col gap-2">
+        <div className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">Radii</div>
+        <NumberRow label="Image" value={radii.image} onChange={(v) => setRadius("image", v)} max={50} />
+        <NumberRow label="Card" value={radii.card} onChange={(v) => setRadius("card", v)} max={50} />
+      </div>
+
+      {/* Decorations */}
+      <div className="flex flex-col gap-2">
+        <div className="text-[11px] font-bold uppercase tracking-wide text-ink-muted">Decorations</div>
+        {[
+          { key: "badgeStamp", label: "ENJOY EVERY BITE stamp" },
+          { key: "ingredientCard", label: "Ingredient white card" },
+          { key: "sectionHeaderUnderline", label: "Section underline" },
+          { key: "titleFlankingRule", label: "Title flanking rules" },
+          { key: "heroTopStripe", label: "Hero top stripe" },
+          { key: "heroBottomStripe", label: "Hero bottom stripe" },
+        ].map(({ key, label }) => (
+          <label key={key} className="flex items-center gap-2 text-xs text-ink cursor-pointer">
+            <input
+              type="checkbox"
+              checked={Boolean(decorations[key as keyof typeof decorations])}
+              onChange={(e) => setDecoration(key, e.target.checked)}
+              className="accent-gold"
+            />
+            <span className="flex-1">{label}</span>
+          </label>
+        ))}
+      </div>
+
+      {/* Import / Export / Reset */}
+      <div className="flex flex-col gap-2 pt-2 border-t border-gold-light/40">
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="secondary" size="sm" onClick={exportTheme}>Export theme JSON</Button>
+          <Button variant="outline" size="sm" onClick={() => importRef.current?.click()}>Import theme JSON</Button>
+        </div>
+        <input
+          ref={importRef}
+          type="file"
+          accept="application/json,.json"
+          className="hidden"
+          onChange={(e) => e.target.files?.[0] && importTheme(e.target.files[0])}
+        />
+        <Button variant="ghost" size="sm" onClick={resetTheme}>Reset overrides</Button>
+        <p className="text-[10px] text-ink-muted/70 text-center">
+          Active preset: <span className="font-mono">{activeThemeId}</span> ·
+          {Object.keys(override).length > 0
+            ? ` ${Object.keys(override).length} group(s) overridden`
+            : " no overrides"}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Collapsible primitive ─────────────────────────────────────────────────────
 
 function Collapsible({
@@ -613,13 +869,23 @@ function RecipeCardPanel({ fields, config }: { fields: RecipeCardFields; config:
       </Collapsible>
 
       {shared && (
-        <Collapsible id="theme" label="Colors (shared)" openId={openSection} setOpenId={setOpenSection}>
-          <ColorPickers
-            primaryColor={fields.primaryColor}
-            backgroundColor={fields.backgroundColor}
-            onChangePrimary={(v) => updateFields({ primaryColor: v })}
-            onChangeBg={(v) => updateFields({ backgroundColor: v })}
+        <Collapsible id="design" label="Design (shared)" openId={openSection} setOpenId={setOpenSection}>
+          <DesignPanel
+            fields={fields}
+            defaultThemeId="egnite-recipe-card"
+            onUpdate={(patch) => updateFields(patch as Record<string, unknown>)}
           />
+          <div className="mt-4 pt-3 border-t border-gold-light/40">
+            <ColorPickers
+              primaryColor={fields.primaryColor}
+              backgroundColor={fields.backgroundColor}
+              onChangePrimary={(v) => updateFields({ primaryColor: v })}
+              onChangeBg={(v) => updateFields({ backgroundColor: v })}
+            />
+            <p className="text-[10px] text-ink-muted/70 mt-1">
+              Legacy quick colours — overridden by Design panel above when both are set.
+            </p>
+          </div>
         </Collapsible>
       )}
     </div>
@@ -688,13 +954,20 @@ function InfographicPanel({ fields, config }: { fields: InfographicCardFields; c
       </Collapsible>
 
       {shared && (
-        <Collapsible id="theme" label="Colors (shared)" openId={open} setOpenId={setOpen}>
-          <ColorPickers
-            primaryColor={fields.primaryColor}
-            backgroundColor={fields.backgroundColor}
-            onChangePrimary={(v) => updateFields({ primaryColor: v })}
-            onChangeBg={(v) => updateFields({ backgroundColor: v })}
+        <Collapsible id="design" label="Design (shared)" openId={open} setOpenId={setOpen}>
+          <DesignPanel
+            fields={fields}
+            defaultThemeId="egnite-infographic"
+            onUpdate={(patch) => updateFields(patch as Record<string, unknown>)}
           />
+          <div className="mt-4 pt-3 border-t border-gold-light/40">
+            <ColorPickers
+              primaryColor={fields.primaryColor}
+              backgroundColor={fields.backgroundColor}
+              onChangePrimary={(v) => updateFields({ primaryColor: v })}
+              onChangeBg={(v) => updateFields({ backgroundColor: v })}
+            />
+          </div>
         </Collapsible>
       )}
     </div>
@@ -769,13 +1042,20 @@ function BeveragePanel({ fields, config }: { fields: BeverageCardFields; config:
       </Collapsible>
 
       {shared && (
-        <Collapsible id="theme" label="Colors (shared)" openId={open} setOpenId={setOpen}>
-          <ColorPickers
-            primaryColor={fields.primaryColor}
-            backgroundColor={fields.backgroundColor}
-            onChangePrimary={(v) => updateFields({ primaryColor: v })}
-            onChangeBg={(v) => updateFields({ backgroundColor: v })}
+        <Collapsible id="design" label="Design (shared)" openId={open} setOpenId={setOpen}>
+          <DesignPanel
+            fields={fields}
+            defaultThemeId="egnite-beverage-card"
+            onUpdate={(patch) => updateFields(patch as Record<string, unknown>)}
           />
+          <div className="mt-4 pt-3 border-t border-gold-light/40">
+            <ColorPickers
+              primaryColor={fields.primaryColor}
+              backgroundColor={fields.backgroundColor}
+              onChangePrimary={(v) => updateFields({ primaryColor: v })}
+              onChangeBg={(v) => updateFields({ backgroundColor: v })}
+            />
+          </div>
         </Collapsible>
       )}
     </div>

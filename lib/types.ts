@@ -31,6 +31,21 @@ export type TemplateType =
 
 export type ExportFormat = "png" | "pdf" | "html";
 
+// ─── Theme override (re-exported here for convenience) ───────────────────────
+// The actual ThemeOverride shape lives in lib/template-theme.ts. Documents may
+// carry an optional themeId (preset selector) and a themeOverride (deep-partial
+// overrides on top of that preset). Both are optional — when absent, each
+// template falls back to its built-in default preset.
+export type DocumentThemeOverride = {
+  colors?: Record<string, string>;
+  typography?: Record<string, string | number>;
+  spacing?: Record<string, number>;
+  radii?: Record<string, number>;
+  strokes?: Record<string, number>;
+  shadows?: Record<string, string>;
+  decorations?: Record<string, string | boolean>;
+};
+
 // ─── Content Primitives ──────────────────────────────────────────────────────
 
 export interface IngredientItem {
@@ -97,6 +112,10 @@ export interface RecipeCardFields {
   // Theme overrides
   primaryColor: string;
   backgroundColor: string;
+
+  // Optional design system override (preset id + per-token overrides)
+  themeId?: string;
+  themeOverride?: DocumentThemeOverride;
 }
 
 export interface InfographicCardFields {
@@ -115,6 +134,9 @@ export interface InfographicCardFields {
   footerTagline: LocaleString;
   primaryColor: string;
   backgroundColor: string;
+
+  themeId?: string;
+  themeOverride?: DocumentThemeOverride;
 }
 
 export interface BeverageCardFields {
@@ -133,6 +155,9 @@ export interface BeverageCardFields {
   footerTagline: LocaleString;
   primaryColor: string;
   backgroundColor: string;
+
+  themeId?: string;
+  themeOverride?: DocumentThemeOverride;
 }
 
 export type DocumentFields =

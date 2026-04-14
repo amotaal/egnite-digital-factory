@@ -1,236 +1,134 @@
 /**
  * Recipe Card Template — A4 Portrait (794 × 1123px)
- * Egnite Digital Factory
+ *
+ * Visual reference: sources/{creamy_pinwheel_cookies,coconut_madeleines,
+ * lemon_cake,bubblegum_fudgebites,mixedberries_cake,wildberry_cupcakes,
+ * coffeebean_cookies,hazelnut_chocolate_cookies}.png.
+ *
+ * All colours, fonts, radii, and spacing values come from `lib/design-tokens.ts`
+ * (resolved through the recipe-card theme preset). No literal hex codes.
  */
 import React from "react";
-import type { RecipeCardFields, ActiveLanguage } from "@/lib/types";
+import type { ActiveLanguage, RecipeCardFields } from "@/lib/types";
+import { TYPE } from "@/lib/design-tokens";
+import {
+  BracketFrame,
+  EnjoyStamp,
+  PageRoot,
+  SectionTitle,
+  StepNumberCircle,
+  Wordmark,
+  fontFor,
+  pickLocale,
+  resolveDocumentTheme,
+  typeStyle,
+} from "./_shared";
 
 interface RecipeCardProps {
   fields: RecipeCardFields;
-  /** Override language for preview purposes */
   previewLang?: ActiveLanguage;
 }
-
-function t(val: { en: string; ar: string }, lang: ActiveLanguage): string {
-  if (lang === "ar") return val.ar;
-  if (lang === "bilingual") return val.en;
-  return val.en;
-}
-
-function tAr(val: { en: string; ar: string }): string {
-  return val.ar;
-}
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-const GOLD = "#B78D4B";
-const GOLD_LIGHT = "#EBD4A4";
-const CREAM = "#FCFAF4";
-const INK = "#1A1A1A";
-
-function MetaItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div style={{ textAlign: "center", flex: 1 }}>
-      <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em", color: GOLD, fontWeight: 700 }}>
-        {label}
-      </div>
-      <div style={{ fontSize: 13, fontWeight: 600, color: INK, marginTop: 2 }}>{value}</div>
-    </div>
-  );
-}
-
-// ─── Main Component ───────────────────────────────────────────────────────────
 
 export function RecipeCard({ fields, previewLang }: RecipeCardProps) {
   const lang = previewLang ?? fields.language;
   const isRtl = lang === "ar";
-  const isBilingual = lang === "bilingual";
-  const dir = isRtl ? "rtl" : "ltr";
+  const theme = resolveDocumentTheme("egnite-recipe-card", fields);
 
   const {
     heroImage, title, subtitle, prepTime, cookTime, servings,
-    ingredients, instructions, sections, badgeText, tagline,
-    primaryColor = GOLD, backgroundColor = CREAM,
+    ingredients, instructions, sections, tagline,
   } = fields;
 
-  const accentColor = primaryColor;
-  const accentLight = GOLD_LIGHT;
+  const stepVariant = theme.decorations.stepFill === "ring" ? "ring" : "fill";
 
   return (
-    <div
-      className="template-root"
-      dir={dir}
-      style={{
-        width: 794,
-        minHeight: 1123,
-        backgroundColor,
-        fontFamily: isRtl
-          ? "'Cairo', 'Segoe UI', Arial, sans-serif"
-          : "'Inter', 'Segoe UI', Arial, sans-serif",
-        color: INK,
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-      }}
-    >
-      {/* ── Header ─────────────────────────────────────────────────────── */}
+    <PageRoot theme={theme} width={794} height={1123} isRtl={isRtl}>
+      {/* ── Header ──────────────────────────────────────────────────────── */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "14px 28px",
-          borderBottom: `2px solid ${accentColor}`,
-          backgroundColor: CREAM,
+          padding: `${theme.spacing.innerGap}px ${theme.spacing.pageMarginX}px`,
+          background: theme.colors.surface,
+          borderBottom: `${theme.strokes.imageFrame}px solid ${theme.colors.accent}`,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ color: accentColor, fontSize: 22 }}>✦</span>
-          <span
-            style={{
-              fontWeight: 800,
-              fontSize: 22,
-              letterSpacing: "-0.5px",
-              color: accentColor,
-              fontFamily: "'Playfair Display', Georgia, serif",
-            }}
-          >
-            Egnite
-          </span>
-        </div>
-        <div style={{ fontSize: 11, color: "#888", textAlign: "end", fontWeight: 500 }}>
-          <span>egniteflavors.com</span>
-        </div>
+        <Wordmark theme={theme} tone="ink" size={1} />
+        <span style={{ ...typeStyle("caption", theme), color: theme.colors.inkMuted }}>
+          {/* website pulled from BRAND constant inside FooterBar; mirror here */}
+          egniteflavors.com
+        </span>
       </div>
 
-      {/* ── Hero Image ─────────────────────────────────────────────────── */}
-      <div
-        style={{
-          width: "100%",
-          height: 320,
-          position: "relative",
-          backgroundColor: "#e8e0d0",
-          overflow: "hidden",
-        }}
-      >
+      {/* ── Hero image with bracket frame ───────────────────────────────── */}
+      <div style={{ position: "relative", width: "100%", height: 320, background: theme.colors.surfaceAlt, overflow: "hidden" }}>
         {heroImage ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src={heroImage}
-            alt={t(title, lang)}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={heroImage} alt={pickLocale(title, lang)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         ) : (
-          /* Branded placeholder — gold diagonal stripe pattern */
           <div
             style={{
-              width: "100%",
-              height: "100%",
-              background: `repeating-linear-gradient(45deg, ${accentLight}40 0, ${accentLight}40 10px, transparent 0, transparent 50%)`,
-              backgroundSize: "20px 20px",
-              backgroundColor: "#f0e8d8",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "column",
-              gap: 8,
+              width: "100%", height: "100%",
+              background: `repeating-linear-gradient(45deg, ${theme.colors.accentSoft} 0 10px, transparent 10px 22px)`,
+              display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 6,
             }}
           >
-            <span style={{ fontSize: 40, opacity: 0.35 }}>🍽️</span>
-            <span style={{ fontSize: 11, color: accentColor, fontWeight: 700, opacity: 0.6, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+            <span style={{ fontSize: 36, opacity: 0.4 }}>🍽️</span>
+            <span style={{ ...typeStyle("eyebrow", theme), color: theme.colors.accent, opacity: 0.7 }}>
               Add Hero Image
             </span>
           </div>
         )}
-        {/* Gold overlay bar at bottom */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 4,
-            background: `linear-gradient(to right, ${accentColor}, ${accentLight}, ${accentColor})`,
-          }}
-        />
+        {theme.decorations.heroFrameStyle === "bracket" && (
+          <BracketFrame color={theme.colors.accent} thickness={theme.strokes.imageFrame} length={32} inset={12} />
+        )}
+        {theme.decorations.heroBottomStripe && (
+          <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 4, background: theme.colors.accent }} />
+        )}
       </div>
 
-      {/* ── Title Block ────────────────────────────────────────────────── */}
-      <div style={{ padding: "18px 28px 10px", borderBottom: `1px solid ${accentLight}` }}>
-        {/* Bilingual: show both */}
-        {isBilingual ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
-              <h1
-                style={{
-                  fontSize: 30,
-                  fontWeight: 800,
-                  color: accentColor,
-                  margin: 0,
-                  letterSpacing: "-0.01em",
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  lineHeight: 1.1,
-                }}
-              >
-                {title.en}
-              </h1>
-              <h1
-                style={{
-                  fontSize: 26,
-                  fontWeight: 800,
-                  color: accentColor,
-                  margin: 0,
-                  fontFamily: "'Cairo', sans-serif",
-                  direction: "rtl",
-                }}
-              >
-                {title.ar}
-              </h1>
-            </div>
-            <p style={{ fontSize: 13, color: "#666", margin: 0 }}>{subtitle.en}</p>
-          </div>
-        ) : (
-          <>
-            <h1
-              style={{
-                fontSize: 34,
-                fontWeight: 800,
-                color: accentColor,
-                margin: 0,
-                letterSpacing: "-0.01em",
-                fontFamily: isRtl
-                  ? "'Cairo', 'Segoe UI', Arial, sans-serif"
-                  : "'Playfair Display', Georgia, serif",
-                lineHeight: 1.1,
-              }}
-            >
-              {t(title, lang)}
-            </h1>
-            {subtitle && (
-              <p style={{ fontSize: 13, color: "#666", margin: "6px 0 0", fontStyle: "italic" }}>
-                {t(subtitle, lang)}
-              </p>
-            )}
-          </>
+      {/* ── Title block ─────────────────────────────────────────────────── */}
+      <div style={{ padding: `${theme.spacing.blockGap}px ${theme.spacing.pageMarginX}px ${theme.spacing.innerGap}px` }}>
+        <h1
+          style={{
+            ...typeStyle("displayTitle", theme),
+            color: theme.colors.ink,
+            margin: 0,
+            fontFamily: fontFor("display", theme, isRtl),
+          }}
+        >
+          {pickLocale(title, lang)}
+        </h1>
+        {subtitle && (
+          <p style={{ ...typeStyle("body", theme), color: theme.colors.inkMuted, margin: "6px 0 0", fontStyle: "italic" }}>
+            {pickLocale(subtitle, lang)}
+          </p>
         )}
 
         {/* Meta row */}
         <div
           style={{
             display: "flex",
-            gap: 0,
-            marginTop: 12,
-            borderTop: `1px solid ${accentLight}`,
-            borderBottom: `1px solid ${accentLight}`,
+            marginTop: theme.spacing.innerGap,
+            borderTop: `1px solid ${theme.colors.divider}`,
+            borderBottom: `1px solid ${theme.colors.divider}`,
             padding: "8px 0",
           }}
         >
-          <MetaItem label={isRtl ? "وقت التحضير" : "Prep Time"} value={prepTime} />
-          <div style={{ width: 1, background: accentLight, margin: "0 4px" }} />
-          <MetaItem label={isRtl ? "وقت الطهي" : "Cook Time"} value={cookTime} />
-          <div style={{ width: 1, background: accentLight, margin: "0 4px" }} />
-          <MetaItem label={isRtl ? "الكمية" : "Yield"} value={servings} />
+          {[
+            { label: isRtl ? "وقت التحضير" : "Prep Time", value: prepTime },
+            { label: isRtl ? "وقت الطهي" : "Cook Time", value: cookTime },
+            { label: isRtl ? "الكمية" : "Yield", value: servings },
+          ].map((m, i, arr) => (
+            <React.Fragment key={m.label}>
+              <div style={{ flex: 1, textAlign: "center" }}>
+                <div style={{ ...typeStyle("eyebrow", theme), color: theme.colors.accent }}>{m.label}</div>
+                <div style={{ ...typeStyle("bodyStrong", theme), color: theme.colors.ink, marginTop: 2 }}>{m.value}</div>
+              </div>
+              {i < arr.length - 1 && <div style={{ width: 1, background: theme.colors.divider, margin: "0 6px" }} />}
+            </React.Fragment>
+          ))}
         </div>
       </div>
 
@@ -240,148 +138,81 @@ export function RecipeCard({ fields, previewLang }: RecipeCardProps) {
           display: "grid",
           gridTemplateColumns: "1fr 1px 1fr",
           flex: 1,
-          padding: "16px 0",
-          minHeight: 380,
+          padding: `${theme.spacing.innerGap}px 0`,
+          minHeight: 360,
         }}
       >
-        {/* Left: Ingredients */}
-        <div style={{ padding: "0 20px 0 28px" }}>
-          <h2
+        {/* Ingredients (optionally wrapped in white rounded card) */}
+        <div style={{ padding: `0 ${theme.spacing.blockGap}px 0 ${theme.spacing.pageMarginX}px` }}>
+          <SectionTitle text={isRtl ? "المكونات" : "Ingredients"} theme={theme} />
+          <div
             style={{
-              fontSize: 11,
-              fontWeight: 800,
-              textTransform: "uppercase",
-              letterSpacing: "0.12em",
-              color: accentColor,
-              marginBottom: 14,
-              paddingBottom: 6,
-              borderBottom: `1.5px solid ${accentLight}`,
+              background: theme.decorations.ingredientCard ? theme.colors.surface : "transparent",
+              borderRadius: theme.decorations.ingredientCard ? theme.radii.card : 0,
+              padding: theme.decorations.ingredientCard ? `${theme.spacing.innerGap}px ${theme.spacing.innerGap}px` : 0,
+              boxShadow: theme.decorations.ingredientCard ? theme.shadows.card : "none",
             }}
           >
-            {isRtl ? "المكونات" : "Ingredients"}
-          </h2>
-          {ingredients.map((ing) => (
-            <div
-              key={ing.id}
-              style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 10 }}
-            >
-              <span style={{ fontSize: 20, lineHeight: 1, minWidth: 24, textAlign: "center" }}>
-                {ing.icon}
-              </span>
-              <div style={{ flex: 1, fontSize: 12, lineHeight: 1.4 }}>
-                <span style={{ fontWeight: 600 }}>
-                  {isBilingual
-                    ? `${ing.label.en} / ${ing.label.ar}`
-                    : t(ing.label, lang)}
-                </span>
-                {ing.amount && (
-                  <span style={{ color: "#666" }}>: {ing.amount}</span>
-                )}
+            {ingredients.map((ing) => (
+              <div key={ing.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 9 }}>
+                <span style={{ fontSize: 18, lineHeight: 1, minWidth: 22, textAlign: "center" }}>{ing.icon}</span>
+                <div style={{ flex: 1, ...typeStyle("body", theme) }}>
+                  <span style={{ fontWeight: 600 }}>{pickLocale(ing.label, lang)}</span>
+                  {ing.amount && <span style={{ color: theme.colors.inkMuted }}>: {ing.amount}</span>}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* Divider */}
-        <div style={{ background: accentLight }} />
+        {/* Vertical divider */}
+        <div style={{ background: theme.colors.divider }} />
 
-        {/* Right: Instructions */}
-        <div style={{ padding: "0 28px 0 20px" }}>
-          <h2
-            style={{
-              fontSize: 11,
-              fontWeight: 800,
-              textTransform: "uppercase",
-              letterSpacing: "0.12em",
-              color: accentColor,
-              marginBottom: 14,
-              paddingBottom: 6,
-              borderBottom: `1.5px solid ${accentLight}`,
-            }}
-          >
-            {isRtl ? "طريقة التحضير" : "Instructions"}
-          </h2>
+        {/* Instructions */}
+        <div style={{ padding: `0 ${theme.spacing.pageMarginX}px 0 ${theme.spacing.blockGap}px` }}>
+          <SectionTitle text={isRtl ? "طريقة التحضير" : "Instructions"} theme={theme} />
           {instructions.map((step, i) => (
-            <div
-              key={step.id}
-              style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 12 }}
-            >
-              {/* Step number circle */}
-              <div
-                style={{
-                  minWidth: 22,
-                  height: 22,
-                  borderRadius: "50%",
-                  backgroundColor: accentColor,
-                  color: "white",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 10,
-                  fontWeight: 800,
-                  marginTop: 1,
-                  flexShrink: 0,
-                }}
-              >
-                {i + 1}
-              </div>
-              <p
-                style={{
-                  fontSize: 12,
-                  lineHeight: 1.5,
-                  margin: 0,
-                  flex: 1,
-                }}
-              >
-                {isBilingual
-                  ? `${step.text.en} / ${step.text.ar}`
-                  : t(step.text, lang)}
-              </p>
+            <div key={step.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 11 }}>
+              <StepNumberCircle n={i + 1} theme={theme} variant={stepVariant} />
+              <p style={{ ...typeStyle("body", theme), margin: 0, flex: 1 }}>{pickLocale(step.text, lang)}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ── Extra Sections ───────────────────────────────────────────────── */}
+      {/* ── Extra sections (chips) ──────────────────────────────────────── */}
       {sections.length > 0 && (
-        <div style={{ borderTop: `1px solid ${accentLight}`, margin: "0 28px", paddingTop: 12 }}>
+        <div style={{ borderTop: `1px solid ${theme.colors.divider}`, margin: `0 ${theme.spacing.pageMarginX}px`, paddingTop: theme.spacing.innerGap }}>
           {sections.map((section) => (
-            <div key={section.id} style={{ marginBottom: 14 }}>
+            <div key={section.id} style={{ marginBottom: 12 }}>
               <h3
                 style={{
-                  fontSize: 11,
-                  fontWeight: 800,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                  color: accentColor,
-                  marginBottom: 8,
+                  ...typeStyle("eyebrow", theme),
+                  color: theme.colors.accent,
+                  margin: "0 0 6px",
                 }}
               >
-                {isBilingual
-                  ? `${section.title.en} / ${section.title.ar}`
-                  : t(section.title, lang)}
+                {pickLocale(section.title, lang)}
               </h3>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                 {(section.items as Array<{ id: string; icon: string; label?: { en: string; ar: string }; text?: { en: string; ar: string }; amount?: string }>).map((item) => (
                   <div
                     key={item.id}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                      background: accentLight + "60",
-                      borderRadius: 6,
+                      display: "inline-flex", alignItems: "center", gap: 6,
+                      background: theme.colors.accentSoft,
+                      borderRadius: theme.radii.pill,
                       padding: "4px 10px",
-                      fontSize: 11,
+                      fontSize: TYPE.caption.size,
                     }}
                   >
                     <span>{item.icon}</span>
                     <span>
                       {item.label
-                        ? `${isBilingual ? `${item.label.en} / ${item.label.ar}` : t(item.label, lang)}${item.amount ? `: ${item.amount}` : ""}`
+                        ? `${pickLocale(item.label, lang)}${item.amount ? `: ${item.amount}` : ""}`
                         : item.text
-                        ? isBilingual ? `${item.text.en} / ${item.text.ar}` : t(item.text, lang)
-                        : ""}
+                          ? pickLocale(item.text, lang)
+                          : ""}
                     </span>
                   </div>
                 ))}
@@ -391,47 +222,27 @@ export function RecipeCard({ fields, previewLang }: RecipeCardProps) {
         </div>
       )}
 
-      {/* ── Footer ──────────────────────────────────────────────────────── */}
+      {/* ── Footer: tagline left, ENJOY EVERY BITE stamp right ──────────── */}
       <div
         style={{
           marginTop: "auto",
-          backgroundColor: accentLight,
-          padding: "12px 28px",
+          background: theme.colors.accentSoft,
+          padding: `${theme.spacing.innerGap}px ${theme.spacing.pageMarginX}px`,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          borderTop: `2px solid ${accentColor}`,
+          borderTop: `${theme.strokes.imageFrame}px solid ${theme.colors.accent}`,
         }}
       >
-        <span style={{ fontSize: 11, fontWeight: 600, color: accentColor === GOLD ? INK : accentColor }}>
-          {isBilingual
-            ? `${tagline.en} · ${tagline.ar}`
-            : t(tagline, lang)}
+        <span style={{ ...typeStyle("cta", theme), color: theme.colors.ink }}>
+          {pickLocale(tagline, lang)}
         </span>
-
-        {/* ENJOY EVERY BITE badge */}
-        <div
-          style={{
-            background: accentColor,
-            color: "white",
-            borderRadius: 20,
-            padding: "5px 16px",
-            fontSize: 11,
-            fontWeight: 800,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-          }}
-        >
-          {isBilingual
-            ? badgeText.en
-            : t(badgeText, lang)}
-        </div>
+        {theme.decorations.badgeStamp && <EnjoyStamp theme={theme} lang={lang} />}
       </div>
 
-      {/* Bilingual Arabic title overlay (if bilingual mode) is already handled above */}
-    </div>
+    </PageRoot>
   );
 }
 
-// ─── Bilingual label helper for external use ─────────────────────────────────
-export { t as resolveLocale, tAr as resolveAr };
+// ─── Bilingual label helpers (kept for backwards compatibility) ──────────────
+export const resolveLocale = pickLocale;

@@ -1,167 +1,118 @@
 /**
  * Infographic Card Template — A4 Landscape (1123 × 794px)
- * Three-column: ingredients | hero + dosage | instructions
  *
- * Spec source: sources/sample_infographic.html
- *   - Header h1: 3rem, weight 800, letter-spacing 1px
- *   - Grid: 1fr 1.5fr 1fr
- *   - Ingredient icon: 45×45px @ 1.8rem
- *   - Step circle: 55×55px, border 2px, icon 1.5rem
- *   - Step number badge: 22×22px at position -5/-5
- *   - Image: aspect-ratio 4/3, border 3px, radius 15px
- *   - Footer: padding 15px 40px, logo 1.8rem wt800 letter-spacing -1px
+ * Visual reference: sources/sample_infographic.{html,jpg} — gold + charcoal,
+ * centered title flanked by hairline rules, gold-ringed numbered step circles,
+ * subtle speckle background texture, three-column body (ingredients · hero +
+ * dosage table · instructions), full-width charcoal footer with social.
+ *
+ * All colours, fonts, radii from `lib/design-tokens.ts` via the
+ * `egnite-infographic` theme preset.
  */
 import React from "react";
-import type { InfographicCardFields } from "@/lib/types";
+import type { ActiveLanguage, InfographicCardFields } from "@/lib/types";
+import {
+  FlankedTitle,
+  FooterBar,
+  PageRoot,
+  SectionTitle,
+  StepNumberCircle,
+  fontFor,
+  pickLocale,
+  resolveDocumentTheme,
+  typeStyle,
+} from "./_shared";
 
-const GOLD = "#B78D4B";
-const GOLD_LIGHT = "#EBD4A4";
-const CREAM = "#FCFAF4";
-const INK = "#1A1A1A";
-
-function t(val: { en: string; ar: string }, lang: string): string {
-  if (lang === "ar") return val.ar;
-  return val.en;
+interface InfographicCardProps {
+  fields: InfographicCardFields;
+  previewLang?: ActiveLanguage;
 }
 
-export function InfographicCard({ fields }: { fields: InfographicCardFields }) {
-  const lang = fields.language;
+export function InfographicCard({ fields, previewLang }: InfographicCardProps) {
+  const lang = previewLang ?? fields.language;
   const isRtl = lang === "ar";
-  const isBilingual = lang === "bilingual";
-  const dir = isRtl ? "rtl" : "ltr";
-  const accent = fields.primaryColor ?? GOLD;
-  const bg = fields.backgroundColor ?? CREAM;
+  const theme = resolveDocumentTheme("egnite-infographic", fields);
+  const stepVariant = theme.decorations.stepFill === "ring" ? "ring" : "fill";
 
   return (
-    <div
-      className="template-root"
-      dir={dir}
-      style={{
-        width: 1123,
-        height: 794,
-        backgroundColor: bg,
-        fontFamily: isRtl
-          ? "'Cairo', 'Segoe UI', Arial, sans-serif"
-          : "'Inter', 'Segoe UI', Arial, sans-serif",
-        color: INK,
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        border: "1px solid #EAE1D0",
-      }}
-    >
+    <PageRoot theme={theme} width={1123} height={794} isRtl={isRtl} fixedHeight>
       {/* ── Header ──────────────────────────────────────────────────────── */}
-      <div
-        style={{
-          textAlign: "center",
-          padding: "30px 20px 20px 20px",
-        }}
-      >
-        <h1
-          style={{
-            color: accent,
-            fontSize: 48, // 3rem
-            fontWeight: 800,
-            letterSpacing: 1,
-            textTransform: "uppercase",
-            margin: 0,
-            marginBottom: 5,
-            fontFamily: isRtl
-              ? "'Cairo', 'Segoe UI', Arial, sans-serif"
-              : "'Playfair Display', Georgia, serif",
-            lineHeight: 1.1,
-          }}
-        >
-          {isBilingual
-            ? `${fields.title.en} / ${fields.title.ar}`
-            : t(fields.title, lang)}
-        </h1>
-        <p style={{ fontSize: 17, fontWeight: 500, margin: 0 }}>
+      <div style={{ padding: `${theme.spacing.pageMarginY}px ${theme.spacing.pageMarginX}px ${theme.spacing.innerGap}px` }}>
+        {theme.decorations.titleFlankingRule ? (
+          <FlankedTitle text={pickLocale(fields.title, lang)} theme={theme} isRtl={isRtl} />
+        ) : (
+          <h1
+            style={{
+              ...typeStyle("displayHero", theme),
+              color: theme.colors.accent,
+              margin: 0,
+              fontFamily: fontFor("display", theme, isRtl),
+              textAlign: "center",
+            }}
+          >
+            {pickLocale(fields.title, lang)}
+          </h1>
+        )}
+        <p style={{ ...typeStyle("bodyLg", theme), color: theme.colors.ink, textAlign: "center", margin: "8px 0 0" }}>
           {isRtl ? "وقت التحضير" : "Preparation Time"}: {fields.prepTime}
         </p>
       </div>
 
-      {/* ── Three-column grid ───────────────────────────────────────────── */}
+      {/* ── Three-column body ───────────────────────────────────────────── */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1.5fr 1fr",
-          gap: 30,
-          padding: "10px 40px 20px 40px",
+          gap: theme.spacing.sectionGap,
+          padding: `${theme.spacing.innerGap}px ${theme.spacing.pageMarginX}px ${theme.spacing.blockGap}px`,
           flex: 1,
           minHeight: 0,
         }}
       >
-        {/* Left: Ingredients */}
-        <div style={{ paddingTop: 10 }}>
-          <h2
-            style={{
-              fontSize: 18,
-              fontWeight: 700,
-              textTransform: "uppercase",
-              marginBottom: 18,
-              color: INK,
-            }}
-          >
-            {isRtl ? "المكونات" : "Ingredients"}
-          </h2>
+        {/* Ingredients */}
+        <div>
+          <SectionTitle text={isRtl ? "المكونات" : "Ingredients"} theme={theme} />
           {fields.ingredients.map((ing) => (
             <div
               key={ing.id}
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 15,
-                marginBottom: 18,
-                fontSize: 15,
-                lineHeight: 1.3,
+                gap: 14,
+                marginBottom: 14,
+                ...typeStyle("body", theme),
               }}
             >
               <div
                 style={{
-                  width: 45,
-                  height: 45,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 29, // 1.8rem
+                  width: 44, height: 44,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 28,
                   flexShrink: 0,
+                  background: theme.colors.accentSoft,
+                  borderRadius: theme.radii.pill,
                 }}
               >
                 {ing.icon}
               </div>
               <div>
-                <span style={{ fontWeight: 600 }}>
-                  {isBilingual ? `${ing.label.en} / ${ing.label.ar}` : t(ing.label, lang)}
-                </span>
-                {ing.amount && (
-                  <>
-                    : {ing.amount}
-                  </>
-                )}
+                <span style={{ fontWeight: 600 }}>{pickLocale(ing.label, lang)}</span>
+                {ing.amount && <span>: {ing.amount}</span>}
               </div>
             </div>
           ))}
         </div>
 
         {/* Center: Hero + Dosage */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 18,
-          }}
-        >
-          {/* Hero image — aspect-ratio 4/3 per source */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: theme.spacing.blockGap }}>
           <div
             style={{
               width: "100%",
               aspectRatio: "4/3",
-              borderRadius: 15,
-              border: `3px solid ${accent}`,
+              borderRadius: theme.radii.image,
+              border: `${theme.strokes.imageFrame}px solid ${theme.colors.accent}`,
               overflow: "hidden",
-              backgroundColor: "#333",
+              background: theme.colors.surfaceAlt,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -170,21 +121,17 @@ export function InfographicCard({ fields }: { fields: InfographicCardFields }) {
           >
             {fields.heroImage ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={fields.heroImage}
-                alt={t(fields.title, lang)}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
+              <img src={fields.heroImage} alt={pickLocale(fields.title, lang)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             ) : (
-              <div style={{
-                width: "100%", height: "100%",
-                background: `repeating-linear-gradient(45deg, ${accent}30 0, ${accent}30 8px, transparent 0, transparent 40%)`,
-                backgroundSize: "16px 16px",
-                backgroundColor: "#f0e8d8",
-                display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 6,
-              }}>
-                <span style={{ fontSize: 36, opacity: 0.35 }}>🍽️</span>
-                <span style={{ fontSize: 10, color: accent, fontWeight: 700, opacity: 0.6, letterSpacing: "0.08em", textTransform: "uppercase" }}>Add Image</span>
+              <div
+                style={{
+                  width: "100%", height: "100%",
+                  background: `repeating-linear-gradient(45deg, ${theme.colors.accentSoft} 0 8px, transparent 8px 18px)`,
+                  display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 6,
+                }}
+              >
+                <span style={{ fontSize: 32, opacity: 0.45 }}>🍽️</span>
+                <span style={{ ...typeStyle("eyebrow", theme), color: theme.colors.accent, opacity: 0.7 }}>Add Image</span>
               </div>
             )}
           </div>
@@ -193,10 +140,9 @@ export function InfographicCard({ fields }: { fields: InfographicCardFields }) {
           <div style={{ width: "100%", textAlign: "center" }}>
             <h3
               style={{
-                fontSize: 16,
-                fontWeight: 700,
-                marginBottom: 10,
-                textTransform: "uppercase",
+                ...typeStyle("sectionTitle", theme),
+                color: theme.colors.ink,
+                margin: "0 0 8px",
               }}
             >
               {isRtl ? "معلومات الجرعة" : "Dosage Information"}
@@ -205,206 +151,93 @@ export function InfographicCard({ fields }: { fields: InfographicCardFields }) {
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
-                border: `2px solid ${accent}`,
-                borderRadius: 12,
+                border: `${theme.strokes.imageFrame}px solid ${theme.colors.accent}`,
+                borderRadius: theme.radii.card,
                 overflow: "hidden",
-                backgroundColor: "#F8F1E3",
+                background: theme.colors.accentFill,
               }}
             >
-              {/* Headers */}
-              <div
-                style={{
-                  backgroundColor: "#F0E2C8",
-                  padding: 8,
-                  fontWeight: 600,
-                  fontSize: 13,
-                  textTransform: "uppercase",
-                  borderBottom: `2px solid ${accent}`,
-                  borderInlineEnd: `2px solid ${accent}`,
-                }}
-              >
-                {isRtl ? "جوهر" : "Essence"}
-              </div>
-              <div
-                style={{
-                  backgroundColor: "#F0E2C8",
-                  padding: 8,
-                  fontWeight: 600,
-                  fontSize: 13,
-                  textTransform: "uppercase",
-                  borderBottom: `2px solid ${accent}`,
-                }}
-              >
-                {isRtl ? "إيمولشن" : "Emulsion"}
-              </div>
-              {/* Essence cell */}
-              <div
-                style={{
-                  padding: "15px 10px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  textAlign: "start",
-                  fontSize: 12,
-                  borderInlineEnd: `2px solid ${accent}`,
-                }}
-              >
-                <span style={{ fontSize: 22, width: 30, flexShrink: 0, textAlign: "center" }}>{fields.dosageEssence.icon}</span>
-                <div>
-                  <div style={{ fontWeight: "bold", marginBottom: 5 }}>{fields.dosageEssence.amount}</div>
-                  <div style={{ fontSize: 11 }}>
-                    {isRtl ? "نطاق الجرعة" : "Dosage range"}
-                    <br />
-                    {fields.dosageEssence.range}
+              {[
+                { header: isRtl ? "جوهر" : "Essence", row: fields.dosageEssence, isLast: false },
+                { header: isRtl ? "إيمولشن" : "Emulsion", row: fields.dosageEmulsion, isLast: true },
+              ].map((cell) => (
+                <React.Fragment key={cell.header}>
+                  <div
+                    style={{
+                      background: theme.colors.accentHeaderFill,
+                      padding: 8,
+                      ...typeStyle("eyebrow", theme),
+                      color: theme.colors.ink,
+                      borderBottom: `${theme.strokes.imageFrame}px solid ${theme.colors.accent}`,
+                      ...(cell.isLast ? {} : { borderInlineEnd: `${theme.strokes.imageFrame}px solid ${theme.colors.accent}` }),
+                    }}
+                  >
+                    {cell.header}
+                  </div>
+                </React.Fragment>
+              ))}
+              {[fields.dosageEssence, fields.dosageEmulsion].map((row, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    padding: "12px 10px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    textAlign: "start",
+                    ...typeStyle("body", theme),
+                    ...(idx === 0 ? { borderInlineEnd: `${theme.strokes.imageFrame}px solid ${theme.colors.accent}` } : {}),
+                  }}
+                >
+                  <span style={{ fontSize: 22, width: 28, flexShrink: 0, textAlign: "center" }}>{row.icon}</span>
+                  <div>
+                    <div style={{ ...typeStyle("amount", theme) }}>{row.amount}</div>
+                    <div style={{ ...typeStyle("caption", theme), color: theme.colors.inkMuted }}>
+                      {isRtl ? "نطاق الجرعة" : "Dosage range"}<br />{row.range}
+                    </div>
                   </div>
                 </div>
-              </div>
-              {/* Emulsion cell */}
-              <div
-                style={{
-                  padding: "15px 10px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  textAlign: "start",
-                  fontSize: 12,
-                }}
-              >
-                <span style={{ fontSize: 22, width: 30, flexShrink: 0, textAlign: "center" }}>{fields.dosageEmulsion.icon}</span>
-                <div>
-                  <div style={{ fontWeight: "bold", marginBottom: 5 }}>{fields.dosageEmulsion.amount}</div>
-                  <div style={{ fontSize: 11 }}>
-                    {isRtl ? "نطاق الجرعة" : "Dosage range"}
-                    <br />
-                    {fields.dosageEmulsion.range}
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Right: Instructions */}
-        <div style={{ paddingTop: 10 }}>
-          <h2
-            style={{
-              fontSize: 18,
-              fontWeight: 700,
-              textTransform: "uppercase",
-              marginBottom: 18,
-              color: INK,
-            }}
-          >
-            {isRtl ? "طريقة التحضير" : "Step-By-Step Instructions"}
-          </h2>
+        {/* Instructions */}
+        <div>
+          <SectionTitle text={isRtl ? "طريقة التحضير" : "Step-By-Step Instructions"} theme={theme} />
           {fields.instructions.map((step, i) => (
-            <div
-              key={step.id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 15,
-                marginBottom: 22,
-              }}
-            >
-              {/* Step circle with icon */}
-              <div
-                style={{
-                  position: "relative",
-                  width: 55,
-                  height: 55,
-                  border: `2px solid ${accent}`,
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "#FDFBF4",
-                  fontSize: 24, // 1.5rem
-                  flexShrink: 0,
-                }}
-              >
+            <div key={step.id} style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 18 }}>
+              <div style={{ position: "relative", flexShrink: 0 }}>
+                <div
+                  style={{
+                    width: 52, height: 52,
+                    border: `${theme.strokes.imageFrame}px solid ${theme.colors.accent}`,
+                    borderRadius: "50%",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    background: theme.colors.surface,
+                    fontSize: 22,
+                  }}
+                >
+                  {step.icon}
+                </div>
                 <div
                   style={{
                     position: "absolute",
-                    top: -5,
-                    ...(isRtl ? { right: -5 } : { left: -5 }),
-                    width: 22,
-                    height: 22,
-                    borderRadius: "50%",
-                    backgroundColor: accent,
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 13,
-                    fontWeight: "bold",
+                    top: -4,
+                    ...(isRtl ? { right: -4 } : { left: -4 }),
                   }}
                 >
-                  {i + 1}
+                  <StepNumberCircle n={i + 1} theme={theme} size={20} variant={stepVariant === "ring" ? "fill" : stepVariant} />
                 </div>
-                {step.icon}
               </div>
-              <p style={{ fontSize: 15, lineHeight: 1.3, margin: 0, flex: 1 }}>
-                {isBilingual
-                  ? `${step.text.en} / ${step.text.ar}`
-                  : t(step.text, lang)}
-              </p>
+              <p style={{ ...typeStyle("body", theme), margin: 0, flex: 1 }}>{pickLocale(step.text, lang)}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── Footer ──────────────────────────────────────────────────────── */}
-      <div
-        style={{
-          backgroundColor: GOLD_LIGHT,
-          padding: "15px 40px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <span style={{ fontWeight: 600, fontSize: 17 }}>
-          {isBilingual
-            ? `${fields.footerTagline.en} · ${fields.footerTagline.ar}`
-            : t(fields.footerTagline, lang)}
-        </span>
-        <span
-          style={{
-            fontSize: 29, // 1.8rem
-            fontWeight: 800,
-            letterSpacing: "-1px",
-            color: INK,
-            fontFamily: "'Playfair Display', Georgia, serif",
-          }}
-        >
-          Egnite
-        </span>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, fontWeight: 500 }}>
-          <span>egniteflavors.com</span>
-          <div style={{ display: "flex", gap: 5 }}>
-            {["🌐", "f", "X", "♪"].map((icon, i) => (
-              <div
-                key={i}
-                style={{
-                  width: 24,
-                  height: 24,
-                  backgroundColor: INK,
-                  color: GOLD_LIGHT,
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 11,
-                  fontWeight: "bold",
-                }}
-              >
-                {icon}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
+      <FooterBar theme={theme} taglineText={pickLocale(fields.footerTagline, lang)} showSocial showWebsite />
+    </PageRoot>
   );
 }
