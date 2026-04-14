@@ -8,8 +8,32 @@
  *
  * Documents may carry a partial override (see `ThemeOverride`) which is
  * merged onto the preset theme at render time. This lets a designer (or an
- * imported JSON file) tweak a single axis — "make the gold more amber and
- * tighten the spacing" — without re-declaring the whole theme.
+ * imported JSON file) tweak a single axis — "make the orange more amber" —
+ * without re-declaring the whole theme.
+ *
+ * There are two canonical preset families, matching the two sub-palettes
+ * the Egnite brand actually uses in the wild:
+ *
+ *   `egnite-recipe-card`  — orange + charcoal, bracket-frame hero, orange
+ *                           section-underline rules, orange "ENJOY EVERY
+ *                           BITE" stamp, full-width charcoal footer bar
+ *                           with orange social circles. Matches
+ *                           sources/{bubblegum,coconut,coffeebean,creamy,
+ *                           hazelnut,lemon,mixedberries,wildberry,
+ *                           strawberry}*.png.
+ *
+ *   `egnite-infographic`  — gold + charcoal, centered title flanked by
+ *                           gold hairline rules, gold-ringed numbered
+ *                           step circles, subtle speckle page texture,
+ *                           same charcoal footer bar. Matches
+ *                           sources/sample_infographic.{html,jpg} and
+ *                           the biscuit-filling hybrid.
+ *
+ * Plus two variants layered on top:
+ *   `egnite-extended-recipe` — recipe-card palette with editorial spacing
+ *                             for 2-page guides.
+ *   `egnite-beverage-card`   — charcoal-banner header + horizontal step
+ *                             flow, matches sources/other_infographic.jpeg.
  */
 
 import {
@@ -21,62 +45,65 @@ import {
   STROKES,
   TYPE,
   DECORATIONS,
+  TEXTURES,
 } from "./design-tokens";
 
 // ─── Theme shape ──────────────────────────────────────────────────────────────
 
 export interface TemplateTheme {
-  /** Identifier used to track which preset spawned this theme (for UI). */
   id: string;
   name: string;
 
-  /** All semantic colour roles consumed by templates. */
+  /** Semantic colour roles consumed by the renderer. */
   colors: {
-    background: string;     // page background
-    surface: string;        // cards / panels over the background
-    surfaceAlt: string;     // subtle alternative surface (e.g. dosage row)
-    accent: string;         // primary brand accent (gold)
-    accentSoft: string;     // softer accent tint (gold-light)
-    accentStrong: string;   // deeper accent (gold-dark)
-    accentFill: string;     // low-saturation accent wash for frames
-    accentHeaderFill: string; // header cell fill in dosage-style tables
-    ink: string;            // primary text
-    inkMuted: string;       // secondary text
-    inkSoft: string;        // tertiary text / hints
-    divider: string;        // hairline dividers
-    onAccent: string;       // text placed on top of accent colour (usually white)
-    onDark: string;         // text placed on top of ink/dark (usually accentSoft)
+    background: string;        // page background
+    backgroundTexture: string; // CSS background-image (e.g. paper speckle), or ""
+    surface: string;           // cards / panels over the background
+    surfaceAlt: string;        // subtle alternative surface (e.g. dosage wash)
+    accent: string;            // primary brand accent (orange OR gold)
+    accentSoft: string;        // 10–20% accent wash
+    accentStrong: string;      // deeper accent
+    accentFill: string;        // low-saturation accent wash for frames
+    accentHeaderFill: string;  // header cell fill in dosage-style tables
+    ink: string;               // primary text (charcoal)
+    inkMuted: string;          // secondary text (slate)
+    inkSoft: string;           // tertiary / captions
+    divider: string;           // hairline dividers
+    footerBg: string;          // full-width footer bar background
+    footerInk: string;         // text on footer
+    footerAccent: string;      // accent on footer (social-circle fill)
+    onAccent: string;          // text on top of accent colour (usually #FFF)
+    onDark: string;            // text on top of charcoal
   };
 
-  /** Typeface assignments + a global scale factor. */
   typography: {
-    display: string;        // brand display face (Playfair by default)
-    sans: string;           // UI / body
-    arabic: string;         // Arabic / RTL
-    scale: number;          // multiplier applied to every type size
+    display: string;           // heavy display face
+    sans: string;              // UI / body
+    arabic: string;            // RTL
+    wordmark: string;          // lockup face
+    scale: number;             // multiplier applied to every type size
     headingCase: "uppercase" | "none";
     sectionTitleCase: "uppercase" | "none";
+    headingVariant: "displayHero" | "displayTitle" | "h1";  // which token headings use
   };
 
-  /** Spacing rhythm — everything scales with `scale`. */
   spacing: {
-    scale: number;          // 0.8 – 1.3 typical
-    pageMarginX: number;    // canvas horizontal padding
-    pageMarginY: number;    // canvas vertical padding
-    sectionGap: number;     // gap between major sections
-    blockGap: number;       // gap between items inside a section
-    innerGap: number;       // gap between inline parts (icon + text)
+    scale: number;
+    pageMarginX: number;
+    pageMarginY: number;
+    sectionGap: number;
+    blockGap: number;
+    innerGap: number;
   };
 
-  /** Corner-radius palette for images, cards, badges. */
   radii: {
-    image: number;          // hero image corner radius
-    card: number;           // dosage card, footer, etc.
-    badge: number;          // pills, chips
-    step: number;           // step circles (usually full-round)
+    image: number;
+    card: number;
+    badge: number;
+    step: number;
+    pill: number;
   };
 
-  /** Stroke weights for dividers, image frames, and borders. */
   strokes: {
     imageFrame: number;
     divider: number;
@@ -84,21 +111,27 @@ export interface TemplateTheme {
     stepRing: number;
   };
 
-  /** Shadow presets. */
   shadows: {
     card: string;
     image: string;
+    stamp: string;
   };
 
-  /** Brand motifs used by some templates (sparkle next to wordmark, etc.). */
+  /** Brand motifs. */
   decorations: {
-    wordmarkGlyph: string;    // e.g. "✦"
-    bulletGlyph: string;      // e.g. "·"
-    heroTopStripe: boolean;   // thin gold rule above hero image
-    heroBottomStripe: boolean; // thin gold rule below hero image
+    wordmarkGlyph: string;        // flame / sparkle
+    bulletGlyph: string;
+    heroFrameStyle: "bracket" | "ring" | "shadow" | "stripe" | "none";
+    heroTopStripe: boolean;
+    heroBottomStripe: boolean;
     stepShape: "circle" | "squircle" | "diamond";
+    stepFill: "accent" | "ring" | "ink";
     dividerStyle: "solid" | "dashed" | "dotted";
-    frameMode: "ring" | "ring-dashed" | "shadow" | "none";
+    sectionHeaderUnderline: boolean;
+    titleFlankingRule: boolean;
+    badgeStamp: boolean;         // "ENJOY EVERY BITE" stamp in recipe cards
+    footerVariant: "bar" | "cream" | "accent";
+    ingredientCard: boolean;     // wrap ingredients in a white rounded card
   };
 }
 
@@ -110,183 +143,225 @@ export type ThemeOverride = {
     : TemplateTheme[K];
 };
 
-// ─── Canonical Egnite preset ──────────────────────────────────────────────────
+// ─── Preset: Recipe Card (orange + charcoal) ─────────────────────────────────
 
-/**
- * The default, on-brand Egnite theme. Values derived from:
- *   - `sources/sample_infographic.html`
- *   - `app/globals.css` `@theme` block
- *   - The sample PNG recipe cards in `sources/`
- */
-export const EGNITE_CLASSIC: TemplateTheme = {
-  id: "egnite-classic",
-  name: "Egnite Classic",
-
+export const EGNITE_RECIPE_CARD: TemplateTheme = {
+  id: "egnite-recipe-card",
+  name: "Egnite Recipe Card",
   colors: {
     background: COLORS.cream,
+    backgroundTexture: TEXTURES.none,
     surface: COLORS.surface,
-    surfaceAlt: COLORS.goldFill,
-    accent: COLORS.gold,
-    accentSoft: COLORS.goldLight,
-    accentStrong: COLORS.goldDark,
-    accentFill: COLORS.goldFill,
-    accentHeaderFill: COLORS.goldHeaderFill,
-    ink: COLORS.ink,
-    inkMuted: COLORS.inkMuted,
-    inkSoft: COLORS.inkSoft,
-    divider: COLORS.goldDivider,
+    surfaceAlt: COLORS.orangeTint,
+    accent: COLORS.orange,
+    accentSoft: COLORS.orangeTint,
+    accentStrong: COLORS.orangeDeep,
+    accentFill: COLORS.orangeTint,
+    accentHeaderFill: COLORS.peachSoft,
+    ink: COLORS.charcoal,
+    inkMuted: COLORS.slate,
+    inkSoft: COLORS.slateSoft,
+    divider: COLORS.orangeTint,
+    footerBg: COLORS.charcoal,
+    footerInk: "#FFFFFF",
+    footerAccent: COLORS.orange,
     onAccent: "#FFFFFF",
-    onDark: COLORS.goldLight,
+    onDark: "#FFFFFF",
   },
-
   typography: {
-    display: FONTS.display,
+    display: FONTS.heavy,
     sans: FONTS.sans,
     arabic: FONTS.arabic,
+    wordmark: FONTS.wordmark,
     scale: 1,
     headingCase: "uppercase",
     sectionTitleCase: "uppercase",
+    headingVariant: "displayTitle",
   },
-
   spacing: {
     scale: 1,
-    pageMarginX: SPACING.px40,
+    pageMarginX: SPACING.px36,
     pageMarginY: SPACING.px28,
     sectionGap: SPACING.px24,
     blockGap: SPACING.px16,
     innerGap: SPACING.px12,
   },
-
   radii: {
-    image: RADII.lg,     // 12px – slightly softer than sample (15px) at current scale
-    card: RADII.lg,
+    image: RADII.md,           // ~8px, matches bracket-frame image radius
+    card: RADII.card,          // 16px per brand guideline
     badge: RADII.pill,
     step: RADII.full,
+    pill: RADII.pill,
   },
-
   strokes: {
-    imageFrame: STROKES.bold,
+    imageFrame: STROKES.thin,  // the bracket hairline
     divider: STROKES.hairline,
-    sectionRule: STROKES.thin,
+    sectionRule: STROKES.thin, // orange underline under section titles
     stepRing: STROKES.regular,
   },
-
   shadows: {
-    card: SHADOWS.md,
+    card: SHADOWS.card,
     image: SHADOWS.sm,
+    stamp: SHADOWS.sm,
   },
-
   decorations: {
-    wordmarkGlyph: DECORATIONS.sparkle,
+    wordmarkGlyph: DECORATIONS.flame,
     bulletGlyph: DECORATIONS.dot,
+    heroFrameStyle: "bracket",
     heroTopStripe: false,
-    heroBottomStripe: true,
+    heroBottomStripe: false,
     stepShape: "circle",
+    stepFill: "ink",
     dividerStyle: "solid",
-    frameMode: "ring",
+    sectionHeaderUnderline: true,
+    titleFlankingRule: false,
+    badgeStamp: true,
+    footerVariant: "bar",
+    ingredientCard: true,
   },
 };
 
-/**
- * "Editorial" variant — airier, serif-forward, subtler dividers. Aimed at
- * long-form extended recipes / multi-page guides.
- */
-export const EGNITE_EDITORIAL: TemplateTheme = {
-  ...EGNITE_CLASSIC,
-  id: "egnite-editorial",
-  name: "Egnite Editorial",
+// ─── Preset: Infographic (gold + charcoal) ───────────────────────────────────
+
+export const EGNITE_INFOGRAPHIC: TemplateTheme = {
+  id: "egnite-infographic",
+  name: "Egnite Infographic",
+  colors: {
+    background: COLORS.cream,
+    backgroundTexture: TEXTURES.speckle,
+    surface: COLORS.surface,
+    surfaceAlt: COLORS.goldFill,
+    accent: COLORS.gold,
+    accentSoft: COLORS.goldSoft,
+    accentStrong: COLORS.goldDark,
+    accentFill: COLORS.goldFill,
+    accentHeaderFill: COLORS.goldHeaderFill,
+    ink: COLORS.charcoal,
+    inkMuted: COLORS.slate,
+    inkSoft: COLORS.slateSoft,
+    divider: COLORS.goldDivider,
+    footerBg: COLORS.charcoal,
+    footerInk: "#FFFFFF",
+    footerAccent: COLORS.orange,
+    onAccent: "#FFFFFF",
+    onDark: "#FFFFFF",
+  },
   typography: {
-    ...EGNITE_CLASSIC.typography,
-    scale: 1.05,
-    headingCase: "none",
+    display: FONTS.sans,
+    sans: FONTS.sans,
+    arabic: FONTS.arabic,
+    wordmark: FONTS.wordmark,
+    scale: 1,
+    headingCase: "uppercase",
     sectionTitleCase: "uppercase",
+    headingVariant: "displayHero",
   },
   spacing: {
-    ...EGNITE_CLASSIC.spacing,
-    scale: 1.05,
+    scale: 1,
+    pageMarginX: SPACING.px40,
+    pageMarginY: SPACING.px28,
+    sectionGap: SPACING.px28,
+    blockGap: SPACING.px20,
+    innerGap: SPACING.px14,
+  },
+  radii: {
+    image: RADII.card,
+    card: RADII.lg,
+    badge: RADII.pill,
+    step: RADII.full,
+    pill: RADII.pill,
+  },
+  strokes: {
+    imageFrame: STROKES.regular,
+    divider: STROKES.hairline,
+    sectionRule: STROKES.hairline,
+    stepRing: STROKES.regular,
+  },
+  shadows: {
+    card: SHADOWS.sm,
+    image: SHADOWS.none,
+    stamp: SHADOWS.none,
+  },
+  decorations: {
+    wordmarkGlyph: DECORATIONS.flame,
+    bulletGlyph: DECORATIONS.dot,
+    heroFrameStyle: "ring",
+    heroTopStripe: false,
+    heroBottomStripe: false,
+    stepShape: "circle",
+    stepFill: "ring",
+    dividerStyle: "solid",
+    sectionHeaderUnderline: true,
+    titleFlankingRule: true,
+    badgeStamp: false,
+    footerVariant: "bar",
+    ingredientCard: false,
+  },
+};
+
+// ─── Preset: Extended Recipe (editorial orange) ──────────────────────────────
+
+export const EGNITE_EXTENDED_RECIPE: TemplateTheme = {
+  ...EGNITE_RECIPE_CARD,
+  id: "egnite-extended-recipe",
+  name: "Egnite Extended Recipe",
+  typography: {
+    ...EGNITE_RECIPE_CARD.typography,
+    scale: 1.02,
+    headingVariant: "displayTitle",
+  },
+  spacing: {
+    ...EGNITE_RECIPE_CARD.spacing,
+    scale: 1.04,
     sectionGap: SPACING.px32,
     blockGap: SPACING.px20,
   },
   decorations: {
-    ...EGNITE_CLASSIC.decorations,
-    dividerStyle: "solid",
-    frameMode: "shadow",
-    heroBottomStripe: true,
+    ...EGNITE_RECIPE_CARD.decorations,
     heroTopStripe: true,
+    heroBottomStripe: true,
   },
 };
 
-/**
- * "Bold" variant — darker header, higher-contrast accents. Aimed at beverage
- * / product cards where a strong hero crop reads better on a dark plate.
- */
-export const EGNITE_BOLD: TemplateTheme = {
-  ...EGNITE_CLASSIC,
-  id: "egnite-bold",
-  name: "Egnite Bold",
+// ─── Preset: Beverage Card (charcoal banner + horizontal flow) ───────────────
+
+export const EGNITE_BEVERAGE_CARD: TemplateTheme = {
+  ...EGNITE_INFOGRAPHIC,
+  id: "egnite-beverage-card",
+  name: "Egnite Beverage Card",
   colors: {
-    ...EGNITE_CLASSIC.colors,
-    accent: COLORS.goldDark,
-    accentStrong: COLORS.ink,
-  },
-  typography: {
-    ...EGNITE_CLASSIC.typography,
-    scale: 1,
-    headingCase: "uppercase",
+    ...EGNITE_INFOGRAPHIC.colors,
+    backgroundTexture: TEXTURES.bubbles,
+    accent: COLORS.charcoal,
+    accentSoft: COLORS.peachSoft,
+    accentStrong: COLORS.charcoalDark,
+    accentHeaderFill: COLORS.goldHeaderFill,
+    divider: COLORS.goldDivider,
   },
   decorations: {
-    ...EGNITE_CLASSIC.decorations,
-    frameMode: "shadow",
+    ...EGNITE_INFOGRAPHIC.decorations,
+    heroFrameStyle: "shadow",
+    stepFill: "accent",
     stepShape: "circle",
-  },
-};
-
-/**
- * "Minimal" variant — no decorative stripes, thinner strokes, tight spacing.
- * Useful for dense multi-step fillings.
- */
-export const EGNITE_MINIMAL: TemplateTheme = {
-  ...EGNITE_CLASSIC,
-  id: "egnite-minimal",
-  name: "Egnite Minimal",
-  spacing: {
-    ...EGNITE_CLASSIC.spacing,
-    scale: 0.92,
-    sectionGap: SPACING.px16,
-    blockGap: SPACING.px10,
-  },
-  strokes: {
-    imageFrame: STROKES.thin,
-    divider: STROKES.hairline,
-    sectionRule: STROKES.hairline,
-    stepRing: STROKES.thin,
-  },
-  decorations: {
-    ...EGNITE_CLASSIC.decorations,
-    heroBottomStripe: false,
-    frameMode: "none",
+    titleFlankingRule: false,
+    sectionHeaderUnderline: true,
   },
 };
 
 export const THEME_PRESETS: readonly TemplateTheme[] = [
-  EGNITE_CLASSIC,
-  EGNITE_EDITORIAL,
-  EGNITE_BOLD,
-  EGNITE_MINIMAL,
+  EGNITE_RECIPE_CARD,
+  EGNITE_INFOGRAPHIC,
+  EGNITE_EXTENDED_RECIPE,
+  EGNITE_BEVERAGE_CARD,
 ];
 
-export function getThemePreset(id: string): TemplateTheme | undefined {
-  return THEME_PRESETS.find((t) => t.id === id);
+export function getThemePreset(id: string | undefined): TemplateTheme {
+  if (!id) return EGNITE_RECIPE_CARD;
+  return THEME_PRESETS.find((t) => t.id === id) ?? EGNITE_RECIPE_CARD;
 }
 
 // ─── Merging ──────────────────────────────────────────────────────────────────
 
-/**
- * Resolve a final theme by merging the override on top of the base preset.
- * Only the keys that are explicitly overridden are replaced — everything else
- * inherits from the preset. (Shallow-per-bucket merge, which matches how the
- * theme is shaped: each bucket is flat.)
- */
 export function resolveTheme(
   base: TemplateTheme,
   override?: ThemeOverride | null,
@@ -295,25 +370,24 @@ export function resolveTheme(
   return {
     ...base,
     ...override,
-    colors: { ...base.colors, ...(override.colors ?? {}) },
-    typography: { ...base.typography, ...(override.typography ?? {}) },
-    spacing: { ...base.spacing, ...(override.spacing ?? {}) },
-    radii: { ...base.radii, ...(override.radii ?? {}) },
-    strokes: { ...base.strokes, ...(override.strokes ?? {}) },
-    shadows: { ...base.shadows, ...(override.shadows ?? {}) },
-    decorations: { ...base.decorations, ...(override.decorations ?? {}) },
+    colors:       { ...base.colors,       ...(override.colors ?? {}) },
+    typography:   { ...base.typography,   ...(override.typography ?? {}) },
+    spacing:      { ...base.spacing,      ...(override.spacing ?? {}) },
+    radii:        { ...base.radii,        ...(override.radii ?? {}) },
+    strokes:      { ...base.strokes,      ...(override.strokes ?? {}) },
+    shadows:      { ...base.shadows,      ...(override.shadows ?? {}) },
+    decorations:  { ...base.decorations,  ...(override.decorations ?? {}) },
   };
 }
 
 /**
- * Compute legacy `primaryColor` / `backgroundColor` overrides onto a theme.
- * Existing documents only expose two colour knobs — we preserve that UX by
- * mapping those two values onto the appropriate semantic roles.
+ * Apply the legacy `primaryColor` / `backgroundColor` knobs exposed by the
+ * original editor UI. Maps those two values onto semantic roles.
  */
 export function applyLegacyColorOverride(
   base: TemplateTheme,
-  primary: string | undefined,
-  background: string | undefined,
+  primary: string | undefined | null,
+  background: string | undefined | null,
 ): TemplateTheme {
   if (!primary && !background) return base;
   return {
@@ -328,7 +402,10 @@ export function applyLegacyColorOverride(
 
 // ─── Typography helpers ───────────────────────────────────────────────────────
 
-export function scaledSize(typeKey: keyof typeof TYPE, theme: TemplateTheme): number {
+export function scaledSize(
+  typeKey: keyof typeof TYPE,
+  theme: TemplateTheme,
+): number {
   return Math.round(TYPE[typeKey].size * theme.typography.scale);
 }
 
@@ -336,13 +413,33 @@ export function scaledSpacing(value: number, theme: TemplateTheme): number {
   return Math.round(value * theme.spacing.scale);
 }
 
-/** Resolve the appropriate font-family for a given language role. */
 export function fontFor(
-  role: "display" | "sans" | "body" | "heading",
+  role: "display" | "sans" | "body" | "heading" | "wordmark",
   theme: TemplateTheme,
   isRtl: boolean,
 ): string {
   if (isRtl) return theme.typography.arabic;
   if (role === "display" || role === "heading") return theme.typography.display;
+  if (role === "wordmark") return theme.typography.wordmark;
   return theme.typography.sans;
+}
+
+/** Pick a TYPE token and return a ready-to-spread style object. */
+export function typeStyle(
+  typeKey: keyof typeof TYPE,
+  theme: TemplateTheme,
+  overrides: Partial<React.CSSProperties> = {},
+): React.CSSProperties {
+  const t = TYPE[typeKey];
+  return {
+    fontSize: Math.round(t.size * theme.typography.scale),
+    fontWeight: t.weight,
+    letterSpacing: t.tracking,
+    lineHeight: t.leading,
+    textTransform:
+      t.case === "uppercase" ? "uppercase"
+      : t.case === "lowercase" ? "lowercase"
+      : "none",
+    ...overrides,
+  };
 }
