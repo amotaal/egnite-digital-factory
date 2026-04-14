@@ -1,161 +1,111 @@
 /**
  * Extended Recipe Template — A4 Portrait (794 × 1123px)
- * Richer layout: taller hero, full-width sections, multi-column section items.
- * Uses the same RecipeCardFields as the standard recipe card.
+ *
+ * Variant of the recipe-card with a coloured accent-bar header, taller hero,
+ * and full-width section blocks for sub-recipes (coatings, fillings, frostings).
+ * Visual reference: sources/strawberry_shortcake_2_pages.png and the editorial
+ * spread variants of the recipe samples.
  */
 import React from "react";
-import type { RecipeCardFields, ActiveLanguage } from "@/lib/types";
+import type { ActiveLanguage, RecipeCardFields } from "@/lib/types";
+import {
+  EnjoyStamp,
+  PageRoot,
+  SectionTitle,
+  StepNumberCircle,
+  Wordmark,
+  fontFor,
+  pickLocale,
+  resolveDocumentTheme,
+  typeStyle,
+} from "./_shared";
 
 interface ExtendedRecipeProps {
   fields: RecipeCardFields;
   previewLang?: ActiveLanguage;
 }
 
-const GOLD = "#B78D4B";
-const GOLD_LIGHT = "#EBD4A4";
-const CREAM = "#FCFAF4";
-const INK = "#1A1A1A";
-
-function t(val: { en: string; ar: string }, lang: ActiveLanguage): string {
-  if (lang === "ar") return val.ar;
-  return val.en;
-}
-
 export function ExtendedRecipe({ fields, previewLang }: ExtendedRecipeProps) {
   const lang = previewLang ?? fields.language;
   const isRtl = lang === "ar";
-  const isBilingual = lang === "bilingual";
-  const dir = isRtl ? "rtl" : "ltr";
+  const theme = resolveDocumentTheme("egnite-extended-recipe", fields);
 
   const {
     heroImage, title, subtitle, prepTime, cookTime, servings, difficulty,
-    ingredients, instructions, sections, badgeText, tagline,
-    primaryColor = GOLD, backgroundColor = CREAM,
+    ingredients, instructions, sections, tagline,
   } = fields;
 
-  const accent = primaryColor;
-  const accentLight = GOLD_LIGHT;
+  const stepVariant = theme.decorations.stepFill === "ring" ? "ring" : "fill";
 
   return (
-    <div
-      className="template-root"
-      dir={dir}
-      style={{
-        width: 794,
-        minHeight: 1123,
-        backgroundColor,
-        fontFamily: isRtl
-          ? "'Cairo', 'Segoe UI', Arial, sans-serif"
-          : "'Inter', 'Segoe UI', Arial, sans-serif",
-        color: INK,
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-      }}
-    >
-      {/* ── Header ─────────────────────────────────────────────────────── */}
+    <PageRoot theme={theme} width={794} height={1123} isRtl={isRtl}>
+      {/* ── Coloured header bar ─────────────────────────────────────────── */}
       <div
         style={{
-          backgroundColor: accent,
-          padding: "14px 28px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          background: theme.colors.accent,
+          color: theme.colors.onAccent,
+          padding: `${theme.spacing.innerGap}px ${theme.spacing.pageMarginX}px`,
+          display: "flex", alignItems: "center", justifyContent: "space-between",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ color: "white", fontSize: 22 }}>✦</span>
-          <span
-            style={{
-              fontWeight: 800,
-              fontSize: 24,
-              letterSpacing: "-0.5px",
-              color: "white",
-              fontFamily: "'Playfair Display', Georgia, serif",
-            }}
-          >
-            Egnite
-          </span>
-        </div>
-        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.85)", fontWeight: 500 }}>egniteflavors.com</span>
+        <Wordmark theme={theme} tone="onDark" size={1} />
+        <span style={{ ...typeStyle("caption", theme), color: theme.colors.onAccent, opacity: 0.85 }}>
+          egniteflavors.com
+        </span>
       </div>
 
-      {/* ── Hero Image ─────────────────────────────────────────────────── */}
-      <div style={{ width: "100%", height: 260, position: "relative", overflow: "hidden", backgroundColor: "#e8e0d0" }}>
+      {/* ── Hero with optional top + bottom stripes ─────────────────────── */}
+      {theme.decorations.heroTopStripe && (
+        <div style={{ height: 4, background: theme.colors.accent }} />
+      )}
+      <div style={{ width: "100%", height: 280, position: "relative", background: theme.colors.surfaceAlt, overflow: "hidden" }}>
         {heroImage ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={heroImage} alt={t(title, lang)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <img src={heroImage} alt={pickLocale(title, lang)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         ) : (
-          <div style={{
-            width: "100%", height: "100%",
-            background: `repeating-linear-gradient(45deg, ${accentLight}40 0, ${accentLight}40 10px, transparent 0, transparent 50%)`,
-            backgroundSize: "20px 20px",
-            backgroundColor: "#f0e8d8",
-            display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 8,
-          }}>
-            <span style={{ fontSize: 40, opacity: 0.35 }}>🍽️</span>
-            <span style={{ fontSize: 11, color: accent, fontWeight: 700, opacity: 0.6, letterSpacing: "0.08em", textTransform: "uppercase" }}>Add Hero Image</span>
-          </div>
-        )}
-        {/* Gold bar */}
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 4, background: `linear-gradient(to right, ${accent}, ${accentLight}, ${accent})` }} />
-      </div>
-
-      {/* ── Title Block ────────────────────────────────────────────────── */}
-      <div style={{ padding: "16px 28px 12px", borderBottom: `1px solid ${accentLight}` }}>
-        {isBilingual ? (
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
-            <h1
-              style={{
-                fontSize: 32,
-                fontWeight: 800,
-                color: accent,
-                margin: 0,
-                letterSpacing: "-0.01em",
-                fontFamily: "'Playfair Display', Georgia, serif",
-                lineHeight: 1.1,
-              }}
-            >
-              {title.en}
-            </h1>
-            <h1
-              style={{
-                fontSize: 28,
-                fontWeight: 800,
-                color: accent,
-                margin: 0,
-                fontFamily: "'Cairo', sans-serif",
-                direction: "rtl",
-              }}
-            >
-              {title.ar}
-            </h1>
-          </div>
-        ) : (
-          <h1
+          <div
             style={{
-              fontSize: 36,
-              fontWeight: 800,
-              color: accent,
-              margin: 0,
-              letterSpacing: "-0.01em",
-              fontFamily: isRtl
-                ? "'Cairo', 'Segoe UI', Arial, sans-serif"
-                : "'Playfair Display', Georgia, serif",
-              lineHeight: 1.1,
+              width: "100%", height: "100%",
+              background: `repeating-linear-gradient(45deg, ${theme.colors.accentSoft} 0 10px, transparent 10px 22px)`,
+              display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 6,
             }}
           >
-            {t(title, lang)}
-          </h1>
+            <span style={{ fontSize: 36, opacity: 0.4 }}>🍽️</span>
+            <span style={{ ...typeStyle("eyebrow", theme), color: theme.colors.accent, opacity: 0.7 }}>
+              Add Hero Image
+            </span>
+          </div>
         )}
+      </div>
+      {theme.decorations.heroBottomStripe && (
+        <div style={{ height: 4, background: theme.colors.accent }} />
+      )}
+
+      {/* ── Title block ─────────────────────────────────────────────────── */}
+      <div style={{ padding: `${theme.spacing.blockGap}px ${theme.spacing.pageMarginX}px ${theme.spacing.innerGap}px` }}>
+        <h1
+          style={{
+            ...typeStyle("displayTitle", theme),
+            color: theme.colors.ink,
+            margin: 0,
+            fontFamily: fontFor("display", theme, isRtl),
+          }}
+        >
+          {pickLocale(title, lang)}
+        </h1>
         {subtitle && (
-          <p style={{ fontSize: 13, color: "#666", margin: "6px 0 0", fontStyle: "italic" }}>
-            {isBilingual ? `${subtitle.en}  ·  ${subtitle.ar}` : t(subtitle, lang)}
+          <p style={{ ...typeStyle("body", theme), color: theme.colors.inkMuted, margin: "6px 0 0", fontStyle: "italic" }}>
+            {pickLocale(subtitle, lang)}
           </p>
         )}
-        {/* Meta row */}
-        <div style={{ display: "flex", gap: 0, marginTop: 10, borderTop: `1px solid ${accentLight}`, borderBottom: `1px solid ${accentLight}`, padding: "7px 0" }}>
+        <div
+          style={{
+            display: "flex", marginTop: theme.spacing.innerGap,
+            borderTop: `1px solid ${theme.colors.divider}`,
+            borderBottom: `1px solid ${theme.colors.divider}`,
+            padding: "8px 0",
+          }}
+        >
           {[
             { label: isRtl ? "التحضير" : "Prep", value: prepTime },
             { label: isRtl ? "الطهي" : "Cook", value: cookTime },
@@ -164,74 +114,78 @@ export function ExtendedRecipe({ fields, previewLang }: ExtendedRecipeProps) {
           ].map(({ label, value }, i, arr) => (
             <React.Fragment key={label}>
               <div style={{ flex: 1, textAlign: "center" }}>
-                <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.08em", color: accent, fontWeight: 700 }}>{label}</div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: INK, marginTop: 2 }}>{value}</div>
+                <div style={{ ...typeStyle("eyebrow", theme), color: theme.colors.accent }}>{label}</div>
+                <div style={{ ...typeStyle("bodyStrong", theme), color: theme.colors.ink, marginTop: 2 }}>{value}</div>
               </div>
-              {i < arr.length - 1 && <div style={{ width: 1, background: accentLight, margin: "0 4px" }} />}
+              {i < arr.length - 1 && <div style={{ width: 1, background: theme.colors.divider, margin: "0 6px" }} />}
             </React.Fragment>
           ))}
         </div>
       </div>
 
-      {/* ── Main Body: Ingredients + Instructions ──────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1px 1fr", padding: "14px 0", minHeight: 240 }}>
-        {/* Left: Ingredients */}
-        <div style={{ padding: "0 18px 0 28px" }}>
-          <h2 style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: accent, marginBottom: 12, paddingBottom: 5, borderBottom: `1.5px solid ${accentLight}` }}>
-            {isRtl ? "المكونات" : "Ingredients"}
-          </h2>
+      {/* ── Two-column body ─────────────────────────────────────────────── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1px 1fr", padding: `${theme.spacing.innerGap}px 0`, minHeight: 280 }}>
+        <div style={{ padding: `0 ${theme.spacing.blockGap}px 0 ${theme.spacing.pageMarginX}px` }}>
+          <SectionTitle text={isRtl ? "المكونات" : "Ingredients"} theme={theme} />
           {ingredients.map((ing) => (
-            <div key={ing.id} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 8 }}>
+            <div key={ing.id} style={{ display: "flex", alignItems: "flex-start", gap: 9, marginBottom: 8 }}>
               <span style={{ fontSize: 17, lineHeight: 1, minWidth: 22, textAlign: "center" }}>{ing.icon}</span>
-              <div style={{ flex: 1, fontSize: 11, lineHeight: 1.4 }}>
-                <span style={{ fontWeight: 600 }}>
-                  {isBilingual ? `${ing.label.en} / ${ing.label.ar}` : t(ing.label, lang)}
-                </span>
-                {ing.amount && <span style={{ color: "#666" }}>: {ing.amount}</span>}
+              <div style={{ flex: 1, ...typeStyle("body", theme) }}>
+                <span style={{ fontWeight: 600 }}>{pickLocale(ing.label, lang)}</span>
+                {ing.amount && <span style={{ color: theme.colors.inkMuted }}>: {ing.amount}</span>}
               </div>
             </div>
           ))}
         </div>
 
-        {/* Divider */}
-        <div style={{ background: accentLight }} />
+        <div style={{ background: theme.colors.divider }} />
 
-        {/* Right: Instructions */}
-        <div style={{ padding: "0 28px 0 18px" }}>
-          <h2 style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: accent, marginBottom: 12, paddingBottom: 5, borderBottom: `1.5px solid ${accentLight}` }}>
-            {isRtl ? "طريقة التحضير" : "Instructions"}
-          </h2>
+        <div style={{ padding: `0 ${theme.spacing.pageMarginX}px 0 ${theme.spacing.blockGap}px` }}>
+          <SectionTitle text={isRtl ? "طريقة التحضير" : "Instructions"} theme={theme} />
           {instructions.map((step, i) => (
-            <div key={step.id} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 10 }}>
-              <div style={{ minWidth: 20, height: 20, borderRadius: "50%", backgroundColor: accent, color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, fontWeight: 800, marginTop: 1, flexShrink: 0 }}>
-                {i + 1}
-              </div>
-              <p style={{ fontSize: 11, lineHeight: 1.5, margin: 0, flex: 1 }}>
-                {isBilingual ? `${step.text.en} / ${step.text.ar}` : t(step.text, lang)}
-              </p>
+            <div key={step.id} style={{ display: "flex", alignItems: "flex-start", gap: 9, marginBottom: 10 }}>
+              <StepNumberCircle n={i + 1} theme={theme} size={20} variant={stepVariant} />
+              <p style={{ ...typeStyle("body", theme), margin: 0, flex: 1 }}>{pickLocale(step.text, lang)}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ── Extra Sections — full-width with dividers ───────────────────── */}
+      {/* ── Extra sections — full-width with dividers ───────────────────── */}
       {sections.length > 0 && (
-        <div style={{ borderTop: `2px solid ${accentLight}`, padding: "12px 28px 0" }}>
+        <div style={{ borderTop: `${theme.strokes.imageFrame}px solid ${theme.colors.divider}`, padding: `${theme.spacing.innerGap}px ${theme.spacing.pageMarginX}px 0` }}>
           {sections.map((section) => (
-            <div key={section.id} style={{ marginBottom: 16 }}>
-              <h3 style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: accent, marginBottom: 10, paddingBottom: 5, borderBottom: `1px solid ${accentLight}` }}>
-                {isBilingual ? `${section.title.en}  ·  ${section.title.ar}` : t(section.title, lang)}
+            <div key={section.id} style={{ marginBottom: theme.spacing.blockGap }}>
+              <h3
+                style={{
+                  ...typeStyle("eyebrow", theme),
+                  color: theme.colors.accent,
+                  margin: "0 0 8px",
+                  paddingBottom: 4,
+                  borderBottom: `1px solid ${theme.colors.divider}`,
+                }}
+              >
+                {pickLocale(section.title, lang)}
               </h3>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                 {(section.items as Array<{ id: string; icon: string; label?: { en: string; ar: string }; text?: { en: string; ar: string }; amount?: string }>).map((item) => (
-                  <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 6, background: accentLight + "55", borderRadius: 6, padding: "4px 10px", fontSize: 11 }}>
+                  <div
+                    key={item.id}
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: 6,
+                      background: theme.colors.accentSoft,
+                      borderRadius: theme.radii.badge,
+                      padding: "4px 10px",
+                      ...typeStyle("caption", theme),
+                    }}
+                  >
                     <span>{item.icon}</span>
                     <span>
                       {item.label
-                        ? `${isBilingual ? `${item.label.en} / ${item.label.ar}` : t(item.label, lang)}${item.amount ? `: ${item.amount}` : ""}`
+                        ? `${pickLocale(item.label, lang)}${item.amount ? `: ${item.amount}` : ""}`
                         : item.text
-                        ? isBilingual ? `${item.text.en} / ${item.text.ar}` : t(item.text, lang)
-                        : ""}
+                          ? pickLocale(item.text, lang)
+                          : ""}
                     </span>
                   </div>
                 ))}
@@ -245,20 +199,17 @@ export function ExtendedRecipe({ fields, previewLang }: ExtendedRecipeProps) {
       <div
         style={{
           marginTop: "auto",
-          backgroundColor: accent,
-          padding: "12px 28px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          background: theme.colors.accent,
+          color: theme.colors.onAccent,
+          padding: `${theme.spacing.innerGap}px ${theme.spacing.pageMarginX}px`,
+          display: "flex", alignItems: "center", justifyContent: "space-between",
         }}
       >
-        <span style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>
-          {isBilingual ? `${tagline.en}  ·  ${tagline.ar}` : t(tagline, lang)}
+        <span style={{ ...typeStyle("cta", theme), color: theme.colors.onAccent, opacity: 0.9 }}>
+          {pickLocale(tagline, lang)}
         </span>
-        <div style={{ background: "rgba(255,255,255,0.2)", color: "white", borderRadius: 20, padding: "5px 16px", fontSize: 11, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-          {isBilingual ? badgeText.en : t(badgeText, lang)}
-        </div>
+        {theme.decorations.badgeStamp && <EnjoyStamp theme={theme} lang={lang} />}
       </div>
-    </div>
+    </PageRoot>
   );
 }

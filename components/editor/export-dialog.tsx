@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Download, X, FileImage, FileText, Code2 } from "lucide-react";
+import { Download, X, FileImage, FileText, Code2, FileJson, Upload } from "lucide-react";
 import { useEditorStore } from "@/lib/store/editor";
 import { A4_PORTRAIT, A4_LANDSCAPE } from "@/lib/data/templates";
 import { useToast } from "@/components/ui/toast";
@@ -11,7 +11,7 @@ interface ExportDialogProps {
   onClose: () => void;
 }
 
-type ExportFormat = "png" | "pdf" | "html";
+type ExportFormat = "png" | "pdf" | "html" | "json";
 
 const TEMPLATE_DIMS: Record<string, { width: number; height: number }> = {
   "recipe-card": A4_PORTRAIT,
@@ -90,6 +90,30 @@ async function exportPdf(
   doc.save(`${filename}.pdf`);
 }
 
+function exportJson(doc: FactoryDocument, filename: string): void {
+  // Whole-document JSON: includes templateType, fields, and any themeId /
+  // themeOverride. A user can re-import this on a fresh document to clone the
+  // design + content.
+  const payload = JSON.stringify(
+    {
+      version: 1,
+      kind: "egnite-document",
+      document: doc,
+    },
+    null,
+    2,
+  );
+  const blob = new Blob([payload], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const anchor = globalThis.document.createElement("a") as HTMLAnchorElement;
+  anchor.download = `${filename}.json`;
+  anchor.href = url;
+  globalThis.document.body.appendChild(anchor);
+  anchor.click();
+  globalThis.document.body.removeChild(anchor);
+  URL.revokeObjectURL(url);
+}
+
 function exportHtml(doc: FactoryDocument, element: HTMLElement, filename: string): void {
   const lang = doc.fields && (doc.fields as { language?: string }).language === "ar" ? "ar" : "en";
   const html = `<!DOCTYPE html>
@@ -125,9 +149,33 @@ ${element.outerHTML}
 }
 
 export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
-  const { document, setExporting } = useEditorStore();
+  const { document, setExporting, setDocument } = useEditorStore();
   const [progress, setProgress] = useState<ExportFormat | null>(null);
+  const importRef = React.useRef<HTMLInputElement>(null);
   const toast = useToast();
+
+  const importJson = async (file: File) => {
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text) as { document?: FactoryDocument };
+      const incoming = parsed.document;
+      if (!incoming || !incoming.fields) {
+        toast.error("Invalid document JSON — missing fields");
+        return;
+      }
+      // Preserve the current document's id + name so we don't replace it on disk.
+      if (!document) return;
+      setDocument({
+        ...document,
+        templateType: incoming.templateType ?? document.templateType,
+        fields: { ...document.fields, ...incoming.fields },
+      });
+      toast.success("Imported document JSON — review and save");
+      onClose();
+    } catch {
+      toast.error("Could not parse JSON");
+    }
+  };
 
   // Escape to close (don't close mid-export)
   useEffect(() => {
@@ -152,6 +200,7 @@ export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
       if (fmt === "png") await exportPng(el, safeName);
       else if (fmt === "pdf") await exportPdf(el, safeName, dims);
       else if (fmt === "html") exportHtml(document as FactoryDocument, el, safeName);
+      else if (fmt === "json") exportJson(document as FactoryDocument, safeName);
       toast.success(`Exported as ${fmt.toUpperCase()}`);
     } catch (err) {
       console.error("Export error:", err);
@@ -180,6 +229,12 @@ export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
       icon: <Code2 size={22} />,
       label: "HTML File",
       desc: "Standalone HTML with embedded fonts — editable in browser",
+    },
+    {
+      id: "json",
+      icon: <FileJson size={22} />,
+      label: "Document JSON",
+      desc: "Full content + theme overrides — re-importable as a design file",
     },
   ];
 
@@ -237,6 +292,31 @@ export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
               )}
             </button>
           ))}
+        </div>
+
+        {/* Import row */}
+        <div className="px-6 pb-3">
+          <button
+            type="button"
+            disabled={!!progress}
+            onClick={() => importRef.current?.click()}
+            className="w-full flex items-center gap-3 p-3 rounded-xl border-2 border-dashed border-gold-light hover:border-gold hover:bg-cream transition-all text-start disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <Upload size={18} className="text-gold shrink-0" />
+            <div className="flex-1">
+              <div className="font-semibold text-xs text-ink">Import design (JSON)</div>
+              <div className="text-[11px] text-ink-muted mt-0.5">
+                Replace fields + theme overrides from a .json file
+              </div>
+            </div>
+          </button>
+          <input
+            ref={importRef}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(e) => e.target.files?.[0] && importJson(e.target.files[0])}
+          />
         </div>
 
         <div className="px-6 pb-5 text-center">
