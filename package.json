@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "seed": "pnpm dlx tsx scripts/seed.ts"
+    "seed": "pnpm dlx tsx scripts/seed.ts",
+    "migrate": "pnpm dlx tsx scripts/migrate.ts",
+    "test": "echo \"No tests configured yet\" && exit 0"
   },
   "dependencies": {
     "clsx": "^2.1.1",

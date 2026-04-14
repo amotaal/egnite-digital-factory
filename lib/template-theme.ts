@@ -331,20 +331,32 @@ export const EGNITE_BEVERAGE_CARD: TemplateTheme = {
   name: "Egnite Beverage Card",
   colors: {
     ...EGNITE_INFOGRAPHIC.colors,
+    background: COLORS.cream,
     backgroundTexture: TEXTURES.bubbles,
-    accent: COLORS.charcoal,
-    accentSoft: COLORS.peachSoft,
-    accentStrong: COLORS.charcoalDark,
+    surface: COLORS.surface,
+    surfaceAlt: COLORS.goldFill,
+    // The beverage preset paints its top-banner + footer in charcoal and uses
+    // gold as the inline accent for tables and tri-dose cells.
+    accent: COLORS.gold,
+    accentSoft: COLORS.goldFill,
+    accentStrong: COLORS.goldDark,
+    accentFill: COLORS.goldFill,
     accentHeaderFill: COLORS.goldHeaderFill,
     divider: COLORS.goldDivider,
+    footerBg: COLORS.charcoal,
+    footerInk: "#FFFFFF",
+    footerAccent: COLORS.gold,
+    onAccent: "#FFFFFF",
+    onDark: "#FFFFFF",
   },
   decorations: {
     ...EGNITE_INFOGRAPHIC.decorations,
-    heroFrameStyle: "shadow",
+    heroFrameStyle: "none",
     stepFill: "accent",
     stepShape: "circle",
     titleFlankingRule: false,
     sectionHeaderUnderline: true,
+    ingredientCard: false,
   },
 };
 

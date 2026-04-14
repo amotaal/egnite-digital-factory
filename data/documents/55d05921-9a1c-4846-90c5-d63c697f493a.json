@@ -166,10 +166,11 @@
     "products": [
       "Coconut"
     ],
-    "primaryColor": "#B78D4B",
-    "backgroundColor": "#FCFAF4"
+    "primaryColor": "",
+    "backgroundColor": "",
+    "themeId": "egnite-recipe-card"
   },
   "createdAt": "2026-04-13T09:27:58.292Z",
-  "updatedAt": "2026-04-13T09:27:58.292Z",
+  "updatedAt": "2026-04-14T11:41:51.405Z",
   "createdBy": "1"
 }

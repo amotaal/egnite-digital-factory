@@ -1,0 +1,249 @@
+{
+  "id": "373001b1-ef6a-4acb-ad96-ddac1fd05b90",
+  "name": "Sample — Extended Recipe (Strawberry Shortcake)",
+  "templateType": "extended-recipe",
+  "fields": {
+    "language": "en",
+    "logoText": "EGNITE",
+    "heroImage": "",
+    "title": {
+      "en": "Strawberry Short Cake Cups",
+      "ar": "كؤوس كيك الفراولة"
+    },
+    "subtitle": {
+      "en": "Layered cups with vanilla sponge, strawberry compote and whipped cream.",
+      "ar": "كؤوس متعددة الطبقات من كيك الفانيليا وكومبوت الفراولة والكريمة المخفوقة."
+    },
+    "prepTime": "15 mins",
+    "cookTime": "30 mins",
+    "servings": "12 pieces",
+    "difficulty": "Medium",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "🧈",
+        "label": {
+          "en": "Butter",
+          "ar": "زبدة"
+        },
+        "amount": "100g"
+      },
+      {
+        "id": "i2",
+        "icon": "🍚",
+        "label": {
+          "en": "Sugar",
+          "ar": "سكر"
+        },
+        "amount": "150g"
+      },
+      {
+        "id": "i3",
+        "icon": "🌾",
+        "label": {
+          "en": "Flour",
+          "ar": "دقيق"
+        },
+        "amount": "200g"
+      },
+      {
+        "id": "i4",
+        "icon": "🥚",
+        "label": {
+          "en": "Eggs",
+          "ar": "بيض"
+        },
+        "amount": "2 large"
+      },
+      {
+        "id": "i5",
+        "icon": "🧪",
+        "label": {
+          "en": "Egnite Essence",
+          "ar": "جوهر إيغنايت"
+        },
+        "amount": "¼ tsp (1.25g)"
+      }
+    ],
+    "instructions": [
+      {
+        "id": "s1",
+        "icon": "🥣",
+        "text": {
+          "en": "Cream together butter and sugar until light and fluffy.",
+          "ar": "اخفق الزبدة والسكر حتى يصبح خفيفاً وهشاً."
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🥚",
+        "text": {
+          "en": "Add eggs one at a time, beating well after each.",
+          "ar": "أضف البيض واحدة تلو الأخرى مع الخفق الجيد."
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🧪",
+        "text": {
+          "en": "Add Egnite Essence and mix until combined.",
+          "ar": "أضف جوهر إيغنايت وامزج حتى يتجانس."
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "🌾",
+        "text": {
+          "en": "Fold in flour until just combined — do not over-mix.",
+          "ar": "أضف الدقيق برفق حتى يتجانس، لا تمزج كثيراً."
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🫙",
+        "text": {
+          "en": "Bake at 180°C for 20–25 minutes until golden.",
+          "ar": "اخبز على 180°م لمدة 20-25 دقيقة حتى يصبح ذهبياً."
+        }
+      },
+      {
+        "id": "s6",
+        "icon": "❄️",
+        "text": {
+          "en": "Let cool completely before glazing.",
+          "ar": "اتركها تبرد تماماً قبل التزيين."
+        }
+      },
+      {
+        "id": "s7",
+        "icon": "✨",
+        "text": {
+          "en": "Dust with powdered sugar and serve.",
+          "ar": "رشّها بالسكر الناعم وقدّمها."
+        }
+      }
+    ],
+    "sideNote": {
+      "en": "For closer cuts, use your knife under hot water and wipe dry before slicing.",
+      "ar": "للحصول على قطع أنظف، استخدم سكيناً دافئاً ونشّفه قبل التقطيع."
+    },
+    "sections": [
+      {
+        "id": "ext-sec-1",
+        "title": {
+          "en": "Chocolate Coating",
+          "ar": "طبقة الشوكولاتة"
+        },
+        "type": "sub-recipe",
+        "items": [
+          {
+            "id": "e1",
+            "icon": "🍫",
+            "label": {
+              "en": "Dark Chocolate",
+              "ar": "شوكولاتة داكنة"
+            },
+            "amount": "200g"
+          },
+          {
+            "id": "e2",
+            "icon": "🧈",
+            "label": {
+              "en": "Coconut Oil",
+              "ar": "زيت جوز الهند"
+            },
+            "amount": "1 tbsp"
+          }
+        ],
+        "steps": [
+          {
+            "id": "es1",
+            "icon": "🫕",
+            "text": {
+              "en": "Melt chocolate and coconut oil together.",
+              "ar": "اذوب الشوكولاتة مع زيت جوز الهند."
+            }
+          },
+          {
+            "id": "es2",
+            "icon": "🥄",
+            "text": {
+              "en": "Pour over the cooled cake base.",
+              "ar": "اسكبها فوق قاعدة الكيك الباردة."
+            }
+          }
+        ]
+      },
+      {
+        "id": "ext-sec-2",
+        "title": {
+          "en": "Vanilla Frosting",
+          "ar": "كريمة الفانيليا"
+        },
+        "type": "sub-recipe",
+        "items": [
+          {
+            "id": "e3",
+            "icon": "🧈",
+            "label": {
+              "en": "Butter (softened)",
+              "ar": "زبدة مليّنة"
+            },
+            "amount": "125g"
+          },
+          {
+            "id": "e4",
+            "icon": "🍚",
+            "label": {
+              "en": "Icing Sugar",
+              "ar": "سكر ناعم"
+            },
+            "amount": "250g"
+          },
+          {
+            "id": "e5",
+            "icon": "🧪",
+            "label": {
+              "en": "Vanilla Essence",
+              "ar": "جوهر الفانيليا"
+            },
+            "amount": "¼ tsp"
+          }
+        ],
+        "steps": [
+          {
+            "id": "es3",
+            "icon": "🥣",
+            "text": {
+              "en": "Beat butter until pale.",
+              "ar": "اخفق الزبدة حتى تصبح شاحبة."
+            }
+          },
+          {
+            "id": "es4",
+            "icon": "❄️",
+            "text": {
+              "en": "Sift in icing sugar and essence, whip to stiff peaks.",
+              "ar": "أضف السكر الناعم والجوهر واخفق حتى التماسك."
+            }
+          }
+        ]
+      }
+    ],
+    "badgeText": {
+      "en": "ENJOY EVERY BITE !",
+      "ar": "استمتع بكل قضمة"
+    },
+    "tagline": {
+      "en": "Creativity with Confidence",
+      "ar": "ابدع بثقة"
+    },
+    "products": [],
+    "primaryColor": "",
+    "backgroundColor": "",
+    "themeId": "egnite-extended-recipe"
+  },
+  "createdBy": "1",
+  "createdAt": "2026-04-14T11:41:58.311Z",
+  "updatedAt": "2026-04-14T11:41:58.314Z"
+}

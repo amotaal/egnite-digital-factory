@@ -1,0 +1,132 @@
+{
+  "id": "2f8d8021-4cf7-44e1-a105-f7fb9df4d8ca",
+  "name": "Sample — Biscuit Filling (Infographic)",
+  "templateType": "infographic-card",
+  "fields": {
+    "language": "en",
+    "title": {
+      "en": "Biscuit Filling",
+      "ar": "حشوة البسكويت"
+    },
+    "prepTime": "11 minutes",
+    "heroImage": "",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "🧈",
+        "label": {
+          "en": "Butter: 1 stick (100g)",
+          "ar": "زبدة: عود واحد (100غ)"
+        },
+        "amount": ""
+      },
+      {
+        "id": "i2",
+        "icon": "🍯",
+        "label": {
+          "en": "Ghee (samneh): ½ cup (100g)",
+          "ar": "سمنة: ½ كوب (100غ)"
+        },
+        "amount": ""
+      },
+      {
+        "id": "i3",
+        "icon": "🍚",
+        "label": {
+          "en": "Powder Sugar: 2 cups (290g)",
+          "ar": "سكر ناعم: كوبان (290غ)"
+        },
+        "amount": ""
+      },
+      {
+        "id": "i4",
+        "icon": "💧",
+        "label": {
+          "en": "Water: 5 tsp (25g)",
+          "ar": "ماء: 5 ملاعق صغيرة (25غ)"
+        },
+        "amount": ""
+      },
+      {
+        "id": "i5",
+        "icon": "🧪",
+        "label": {
+          "en": "Flavor (Essence): ¼ tsp (1.25g)",
+          "ar": "جوهر: ¼ ملعقة صغيرة (1.25غ)"
+        },
+        "amount": ""
+      },
+      {
+        "id": "i6",
+        "icon": "⚖️",
+        "label": {
+          "en": "Total weight: 516.25g",
+          "ar": "الوزن الإجمالي: 516.25غ"
+        },
+        "amount": ""
+      }
+    ],
+    "dosageEssence": {
+      "icon": "🧪",
+      "amount": "1.25g (¼ tsp)",
+      "range": "0.25% – 0.30%"
+    },
+    "dosageEmulsion": {
+      "icon": "🧴",
+      "amount": "1.75g (½ tsp)",
+      "range": "0.35% – 0.50%"
+    },
+    "instructions": [
+      {
+        "id": "s1",
+        "icon": "🥣",
+        "text": {
+          "en": "Mix butter, ghee, and water",
+          "ar": "امزج الزبدة والسمنة والماء"
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🧂",
+        "text": {
+          "en": "Gradually add powdered sugar",
+          "ar": "أضف السكر الناعم تدريجياً"
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🧪",
+        "text": {
+          "en": "Add Egnite Essence and color drops",
+          "ar": "أضف جوهر إيغنايت وقطرات اللون"
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "🧑‍🍳",
+        "text": {
+          "en": "Mix for 1–2 minutes",
+          "ar": "امزج لمدة 1-2 دقيقة"
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🥄",
+        "text": {
+          "en": "Use as needed",
+          "ar": "استخدم حسب الحاجة"
+        }
+      }
+    ],
+    "footerTagline": {
+      "en": "Creativity with Confidence",
+      "ar": "ابدع بثقة"
+    },
+    "primaryColor": "",
+    "backgroundColor": "",
+    "themeId": "egnite-infographic"
+  },
+  "createdBy": "1",
+  "createdAt": "2026-04-14T11:41:58.311Z",
+  "updatedAt": "2026-04-14T11:41:58.312Z"
+}

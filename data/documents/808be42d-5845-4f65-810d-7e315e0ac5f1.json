@@ -129,10 +129,11 @@
       "Bubble Gum",
       "Pink Color"
     ],
-    "primaryColor": "#B78D4B",
-    "backgroundColor": "#FCFAF4"
+    "primaryColor": "",
+    "backgroundColor": "",
+    "themeId": "egnite-recipe-card"
   },
   "createdAt": "2026-04-13T09:27:58.299Z",
-  "updatedAt": "2026-04-13T09:27:58.299Z",
+  "updatedAt": "2026-04-14T11:41:51.410Z",
   "createdBy": "1"
 }

@@ -24,70 +24,155 @@ const TEMPLATE_DIMS: Record<string, { width: number; height: number }> = {
 async function waitForImages(el: HTMLElement): Promise<void> {
   const imgs = Array.from(el.querySelectorAll("img")) as HTMLImageElement[];
   await Promise.all(
-    imgs.map(
-      (img) =>
-        img.complete
-          ? Promise.resolve()
-          : new Promise<void>((resolve) => {
-              img.onload = () => resolve();
-              img.onerror = () => resolve(); // don't block on broken images
-            })
-    )
+    imgs.map((img) => {
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+      return new Promise<void>((resolve) => {
+        img.onload = () => resolve();
+        img.onerror = () => resolve(); // don't block on broken images
+      });
+    }),
   );
+}
+
+/**
+ * Inline every <img src="http(s)://…"> in the element as a base64 data URL so
+ * html-to-image can read pixels without CORS tainting the canvas. Returns a
+ * list of restore callbacks so the caller can reset the DOM after capture.
+ */
+async function inlineImages(el: HTMLElement): Promise<Array<() => void>> {
+  const imgs = Array.from(el.querySelectorAll("img")) as HTMLImageElement[];
+  const restorers: Array<() => void> = [];
+
+  await Promise.all(
+    imgs.map(async (img) => {
+      const src = img.getAttribute("src");
+      if (!src || src.startsWith("data:")) return;
+      try {
+        const res = await fetch(src, { mode: "cors", cache: "force-cache" });
+        if (!res.ok) return;
+        const blob = await res.blob();
+        const dataUrl: string = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+        const originalSrc = img.src;
+        img.src = dataUrl;
+        // Wait for the new src to decode before capture continues.
+        await img.decode().catch(() => undefined);
+        restorers.push(() => {
+          img.src = originalSrc;
+        });
+      } catch {
+        /* leave img alone — worst-case it renders blank */
+      }
+    }),
+  );
+
+  return restorers;
+}
+
+/** Two rAFs + fonts.ready — guarantees the DOM is painted and fonts are live. */
+async function waitForPaint(): Promise<void> {
+  if (typeof globalThis.document !== "undefined") {
+    try {
+      await (globalThis.document as Document & { fonts?: { ready?: Promise<FontFace[]> } }).fonts?.ready;
+    } catch {
+      /* ignore */
+    }
+  }
+  await new Promise<void>((r) => requestAnimationFrame(() => r()));
+  await new Promise<void>((r) => requestAnimationFrame(() => r()));
+}
+
+async function prepareElementForExport(element: HTMLElement) {
+  await waitForImages(element);
+  const restorers = await inlineImages(element);
+  await waitForPaint();
+  return () => restorers.forEach((fn) => fn());
 }
 
 async function exportPng(
   element: HTMLElement,
   filename: string,
-  pixelRatio = 3
+  dims: { width: number; height: number },
+  pixelRatio = 2,
 ): Promise<void> {
-  await waitForImages(element);
-  const { toPng } = await import("html-to-image");
-  const dataUrl = await toPng(element, {
-    pixelRatio,
-    quality: 1,
-    cacheBust: true,
-    // skipFonts avoids the CORS SecurityError thrown when html-to-image tries
-    // to read cross-origin Google Fonts stylesheet rules.  Fonts are already
-    // rendered by the browser so the exported PNG looks correct.
-    skipFonts: true,
-  });
-  const link = globalThis.document.createElement("a");
-  link.download = `${filename}.png`;
-  link.href = dataUrl;
-  globalThis.document.body.appendChild(link);
-  link.click();
-  globalThis.document.body.removeChild(link);
+  const restore = await prepareElementForExport(element);
+  try {
+    const { toPng } = await import("html-to-image");
+    const dataUrl = await toPng(element, {
+      pixelRatio,
+      quality: 1,
+      cacheBust: true,
+      width: dims.width,
+      height: dims.height,
+      // skipFonts avoids the CORS SecurityError thrown when html-to-image
+      // tries to read cross-origin Google Fonts stylesheet rules. Fonts are
+      // already rendered by the browser so the exported PNG looks correct.
+      skipFonts: true,
+      style: { transform: "none", margin: "0", inset: "auto" },
+    });
+    if (!dataUrl || dataUrl.length < 1024) {
+      throw new Error("Empty PNG output");
+    }
+    triggerDownload(dataUrl, `${filename}.png`);
+  } finally {
+    restore();
+  }
 }
 
 async function exportPdf(
   element: HTMLElement,
   filename: string,
-  dims: { width: number; height: number }
+  dims: { width: number; height: number },
 ): Promise<void> {
-  await waitForImages(element);
-  const { toPng } = await import("html-to-image");
-  const { jsPDF } = await import("jspdf");
+  const restore = await prepareElementForExport(element);
+  try {
+    const { toJpeg } = await import("html-to-image");
+    const { jsPDF } = await import("jspdf");
 
-  const dataUrl = await toPng(element, {
-    pixelRatio: 3,
-    quality: 1,
-    cacheBust: true,
-    skipFonts: true,
-  });
+    // JPEG at 0.92 quality keeps PDFs under 3MB (was 30MB with raw PNG).
+    const dataUrl = await toJpeg(element, {
+      pixelRatio: 2,
+      quality: 0.92,
+      cacheBust: true,
+      width: dims.width,
+      height: dims.height,
+      backgroundColor: "#ffffff",
+      skipFonts: true,
+      style: { transform: "none", margin: "0", inset: "auto" },
+    });
+    if (!dataUrl || dataUrl.length < 1024) {
+      throw new Error("Empty JPEG output for PDF");
+    }
 
-  // A4 in mm: 210 × 297 (portrait) or 297 × 210 (landscape)
-  const isLandscape = dims.width > dims.height;
-  const doc = new jsPDF({
-    orientation: isLandscape ? "landscape" : "portrait",
-    unit: "mm",
-    format: "a4",
-  });
+    // A4 in mm: 210 × 297 (portrait) or 297 × 210 (landscape)
+    const isLandscape = dims.width > dims.height;
+    const doc = new jsPDF({
+      orientation: isLandscape ? "landscape" : "portrait",
+      unit: "mm",
+      format: "a4",
+      compress: true,
+    });
 
-  const pageW = isLandscape ? 297 : 210;
-  const pageH = isLandscape ? 210 : 297;
-  doc.addImage(dataUrl, "PNG", 0, 0, pageW, pageH);
-  doc.save(`${filename}.pdf`);
+    const pageW = isLandscape ? 297 : 210;
+    const pageH = isLandscape ? 210 : 297;
+    doc.addImage(dataUrl, "JPEG", 0, 0, pageW, pageH, undefined, "FAST");
+    doc.save(`${filename}.pdf`);
+  } finally {
+    restore();
+  }
+}
+
+function triggerDownload(href: string, filename: string): void {
+  const link = globalThis.document.createElement("a");
+  link.download = filename;
+  link.href = href;
+  globalThis.document.body.appendChild(link);
+  link.click();
+  globalThis.document.body.removeChild(link);
 }
 
 function exportJson(doc: FactoryDocument, filename: string): void {
@@ -114,38 +199,54 @@ function exportJson(doc: FactoryDocument, filename: string): void {
   URL.revokeObjectURL(url);
 }
 
-function exportHtml(doc: FactoryDocument, element: HTMLElement, filename: string): void {
-  const lang = doc.fields && (doc.fields as { language?: string }).language === "ar" ? "ar" : "en";
-  const html = `<!DOCTYPE html>
-<html lang="${lang}">
+async function exportHtml(
+  doc: FactoryDocument,
+  element: HTMLElement,
+  filename: string,
+): Promise<void> {
+  const restore = await prepareElementForExport(element);
+  try {
+    const lang =
+      doc.fields && (doc.fields as { language?: string }).language === "ar" ? "ar" : "en";
+    // Clone so we don't mutate the live export node and we can strip the
+    // offscreen `position: fixed; left: -99999px` that the renderer uses.
+    const clone = element.firstElementChild?.cloneNode(true) as HTMLElement | null;
+    const markup = clone ? clone.outerHTML : element.innerHTML;
+    const html = `<!DOCTYPE html>
+<html lang="${lang}" dir="${lang === "ar" ? "rtl" : "ltr"}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${doc.name} — Egnite Digital Factory</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #e8e8e8; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px; font-family: 'Inter', sans-serif; }
-    .template-root { box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+    html, body { background: #e8e8e8; min-height: 100vh; }
+    body { display: flex; justify-content: center; align-items: flex-start; padding: 20px; font-family: 'Inter', sans-serif; }
+    .template-root { box-shadow: 0 8px 32px rgba(0,0,0,0.15); margin: 0 auto; }
     [dir="rtl"] { font-family: 'Cairo', sans-serif; }
+    img { max-width: 100%; display: block; }
   </style>
 </head>
 <body>
-${element.outerHTML}
+${markup}
 </body>
 </html>`;
 
-  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const anchor = globalThis.document.createElement("a") as HTMLAnchorElement;
-  anchor.download = `${filename}.html`;
-  anchor.href = url;
-  // Must be in DOM for Firefox compatibility
-  globalThis.document.body.appendChild(anchor);
-  anchor.click();
-  globalThis.document.body.removeChild(anchor);
-  URL.revokeObjectURL(url);
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = globalThis.document.createElement("a") as HTMLAnchorElement;
+    anchor.download = `${filename}.html`;
+    anchor.href = url;
+    globalThis.document.body.appendChild(anchor);
+    anchor.click();
+    globalThis.document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+  } finally {
+    restore();
+  }
 }
 
 export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
@@ -197,9 +298,9 @@ export function ExportDialog({ exportRef, onClose }: ExportDialogProps) {
     setProgress(fmt);
     setExporting(true);
     try {
-      if (fmt === "png") await exportPng(el, safeName);
+      if (fmt === "png") await exportPng(el, safeName, dims);
       else if (fmt === "pdf") await exportPdf(el, safeName, dims);
-      else if (fmt === "html") exportHtml(document as FactoryDocument, el, safeName);
+      else if (fmt === "html") await exportHtml(document as FactoryDocument, el, safeName);
       else if (fmt === "json") exportJson(document as FactoryDocument, safeName);
       toast.success(`Exported as ${fmt.toUpperCase()}`);
     } catch (err) {
