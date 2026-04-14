@@ -23,7 +23,7 @@ export const RECIPE_CARD_SPEC: TemplateSpec = {
     ar: "بطاقة A4 عمودية بصورة رئيسية ومكونات وتعليمات خطوة بخطوة وأقسام اختيارية. مثالية للمخبوزات والحلويات.",
   },
   page: { ...PAGE.a4Portrait, format: "A4", outerBorder: true },
-  defaultThemeId: "egnite-classic",
+  defaultThemeId: "egnite-recipe-card",
   regions: [
     {
       type: "header",
@@ -83,7 +83,7 @@ export const INFOGRAPHIC_CARD_SPEC: TemplateSpec = {
     ar: "بطاقة A4 أفقية بتخطيط ثلاثة أعمدة: مكونات بأيقونات، صورة رئيسية مع جدول الجرعة، وتعليمات. مثالية لحشوات البسكويت والفروستنج.",
   },
   page: { ...PAGE.a4Landscape, format: "A4", outerBorder: true },
-  defaultThemeId: "egnite-classic",
+  defaultThemeId: "egnite-infographic",
   regions: [
     {
       type: "title",
@@ -141,7 +141,7 @@ export const BEVERAGE_CARD_SPEC: TemplateSpec = {
     ar: "بطاقة A4 أفقية بترويسة داكنة وجدول مكونات وجرعات وخطوات تحضير أفقية. مثالية للمشروبات الغازية والشراب.",
   },
   page: { ...PAGE.a4Landscape, format: "A4", outerBorder: true },
-  defaultThemeId: "egnite-bold",
+  defaultThemeId: "egnite-beverage-card",
   regions: [
     {
       type: "header",
@@ -192,7 +192,7 @@ export const EXTENDED_RECIPE_SPEC: TemplateSpec = {
     ar: "بطاقة A4 عمودية بصورة رئيسية أكبر وأقسام كاملة العرض للوصفات الفرعية (طبقات، حشوات). مثالية للحلويات متعددة المكونات.",
   },
   page: { ...PAGE.a4Portrait, format: "A4", outerBorder: true },
-  defaultThemeId: "egnite-editorial",
+  defaultThemeId: "egnite-extended-recipe",
   regions: [
     {
       type: "header",
