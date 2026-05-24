@@ -10,7 +10,7 @@ import {
   type LabelerJobMeta,
   type LabelerOutputFormat,
 } from "../types";
-import { parseFlavors, MAX_FLAVORS } from "./parse-flavors";
+import { parseFlavors } from "./parse-flavors";
 import { runGeneration } from "./generate";
 
 const MAX_BOTTLE_BYTES = 10 * 1024 * 1024;
@@ -151,5 +151,3 @@ function clamp(n: number, min: number, max: number): number {
   if (Number.isNaN(n)) return min;
   return Math.min(max, Math.max(min, n));
 }
-
-export { MAX_FLAVORS };
