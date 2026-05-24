@@ -12,42 +12,33 @@ export function ConfigPanel({ config, onChange }: ConfigPanelProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <Range
-        label="Horizontal position"
-        suffix="%"
-        min={0}
-        max={100}
-        step={0.5}
-        value={config.xPercent}
-        onChange={(v) => set("xPercent", v)}
-      />
-      <Range
-        label="Vertical position"
-        suffix="%"
-        min={0}
-        max={100}
-        step={0.5}
-        value={config.yPercent}
-        onChange={(v) => set("yPercent", v)}
-      />
-      <Range
-        label="Max width"
-        suffix="%"
-        min={5}
-        max={100}
-        step={1}
-        value={config.maxWidthPercent}
-        onChange={(v) => set("maxWidthPercent", v)}
-      />
-      <Range
-        label="Font size"
-        suffix="px"
-        min={6}
-        max={400}
-        step={1}
-        value={config.fontSize}
-        onChange={(v) => set("fontSize", v)}
-      />
+      <div className="grid grid-cols-2 gap-2 -mx-1">
+        <Toggle
+          label="Auto-fit size"
+          hint="Longest flavor sets the size — every label matches."
+          checked={config.autoFit}
+          onChange={(v) => set("autoFit", v)}
+        />
+        <Toggle
+          label="One word per line"
+          hint='"Blueberry Passion" → 2 lines.'
+          checked={config.oneWordPerLine}
+          onChange={(v) => set("oneWordPerLine", v)}
+        />
+      </div>
+
+      {!config.autoFit && (
+        <Range
+          label="Font size"
+          suffix="px"
+          min={6}
+          max={400}
+          step={1}
+          value={config.fontSize}
+          onChange={(v) => set("fontSize", v)}
+        />
+      )}
+
       <Range
         label="Letter spacing"
         suffix="px"
@@ -103,15 +94,11 @@ export function ConfigPanel({ config, onChange }: ConfigPanelProps) {
         </div>
       </div>
 
-      <label className="flex items-center gap-2 text-sm">
-        <input
-          type="checkbox"
-          checked={config.uppercase}
-          onChange={(e) => set("uppercase", e.target.checked)}
-          className="size-4 rounded border-gold-light accent-gold"
-        />
-        <span className="text-ink">Uppercase text</span>
-      </label>
+      <Toggle
+        label="Uppercase text"
+        checked={config.uppercase}
+        onChange={(v) => set("uppercase", v)}
+      />
     </div>
   );
 }
@@ -146,5 +133,29 @@ function Range({ label, suffix, min, max, step, value, onChange }: RangeProps) {
         className="w-full accent-gold"
       />
     </div>
+  );
+}
+
+interface ToggleProps {
+  label: string;
+  hint?: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}
+
+function Toggle({ label, hint, checked, onChange }: ToggleProps) {
+  return (
+    <label className="flex items-start gap-2 text-sm cursor-pointer px-1 py-1.5 rounded-lg hover:bg-cream-dark/40">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="size-4 mt-0.5 rounded border-gold-light accent-gold"
+      />
+      <span className="flex flex-col gap-0.5">
+        <span className="text-ink font-medium leading-tight">{label}</span>
+        {hint && <span className="text-[11px] text-ink-muted leading-tight">{hint}</span>}
+      </span>
+    </label>
   );
 }

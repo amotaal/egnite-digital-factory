@@ -1,11 +1,11 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-// Force this page to render only on the client — uses File, FontFace, EventSource.
 import { Download, Loader2, Sparkles, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import {
   DEFAULT_LABELER_CONFIG,
+  type LabelBox,
   type LabelerConfig,
   type LabelerOutputFormat,
 } from "../types";
@@ -15,8 +15,10 @@ import {
 } from "../server/actions";
 import { ConfigPanel } from "./config-panel";
 import { PreviewCanvas } from "./preview-canvas";
+import { MultiPreview } from "./multi-preview";
 import { FlavorsInput } from "./flavors-input";
 import { Dropzone } from "./dropzone";
+import { FontHint } from "./font-hint";
 
 interface LabelerStudioProps {
   essenceFlavors: string[];
@@ -121,6 +123,10 @@ export function LabelerStudio({ essenceFlavors }: LabelerStudioProps) {
     setJob(null);
   }, []);
 
+  const onBoxChange = useCallback((labelBox: LabelBox) => {
+    setConfig((prev) => ({ ...prev, labelBox }));
+  }, []);
+
   const startJob = useCallback(async () => {
     if (!bottle || !font) return;
     setPhase("submitting");
@@ -223,13 +229,16 @@ export function LabelerStudio({ essenceFlavors }: LabelerStudioProps) {
               file={bottle}
               onFile={setBottle}
             />
-            <Dropzone
-              label="Font file"
-              hint=".ttf, .otf, .woff, .woff2 · up to 5MB"
-              accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2"
-              file={font}
-              onFile={handleFontChange}
-            />
+            <div className="flex flex-col gap-2">
+              <Dropzone
+                label="Font file"
+                hint=".ttf, .otf, .woff, .woff2 · up to 5MB"
+                accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2"
+                file={font}
+                onFile={handleFontChange}
+              />
+              <FontHint />
+            </div>
           </div>
         </section>
 
@@ -257,20 +266,41 @@ export function LabelerStudio({ essenceFlavors }: LabelerStudioProps) {
         </section>
 
         <section className="bg-white border border-gold-light/60 rounded-2xl p-5">
-          <h2 className="font-bold text-ink text-base mb-4 flex items-center gap-2">
+          <h2 className="font-bold text-ink text-base mb-1 flex items-center gap-2">
             <span className="size-1.5 rounded-full bg-gold" />
             Preview
             <span className="text-xs text-ink-muted font-normal">
-              first flavor — “{previewFlavor}”
+              — drag the gold box to set the label area
             </span>
           </h2>
+          <p className="text-xs text-ink-muted mb-4">
+            Showing &ldquo;{previewFlavor}&rdquo;. Auto-fit sizes every label by the
+            longest flavor in the list — adjust the box until the worst case fits.
+          </p>
           <PreviewCanvas
             imageUrl={bottlePreviewUrl}
             text={previewFlavor}
             fontFamily={fontFamily}
             config={config}
+            allFlavors={flavorLines.length > 0 ? flavorLines : [previewFlavor]}
+            onBoxChange={onBoxChange}
           />
         </section>
+
+        {flavorLines.length > 1 && (
+          <section className="bg-white border border-gold-light/60 rounded-2xl p-5">
+            <h2 className="font-bold text-ink text-base mb-3 flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-gold" />
+              Worst-case previews
+            </h2>
+            <MultiPreview
+              imageUrl={bottlePreviewUrl}
+              fontFamily={fontFamily}
+              config={config}
+              flavors={flavorLines}
+            />
+          </section>
+        )}
       </div>
 
       {/* Right: config + generate */}
@@ -321,7 +351,7 @@ export function LabelerStudio({ essenceFlavors }: LabelerStudioProps) {
               disabled={!canSubmit}
             >
               <Upload size={16} />
-              Generate labels
+              Generate {flavorLines.length > 0 ? `${flavorLines.length} label${flavorLines.length === 1 ? "" : "s"}` : "labels"}
             </Button>
           )}
 
