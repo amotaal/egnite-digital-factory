@@ -33,17 +33,22 @@ export function EditorShell({ initialDocument }: EditorShellProps) {
     lang, setLang, setSaving, markSaved,
   } = useEditorStore();
 
-  // Load document on mount and sync name input
+  // Load document on mount and whenever the route hands us a different one
   useEffect(() => {
     setDocument(initialDocument);
-    setNameInput(initialDocument.name);
   }, [initialDocument, setDocument]);
 
-  // Re-sync name when doc id changes
-  useEffect(() => {
-    if (document) setNameInput(document.name);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [document?.id]);
+  // Re-sync the name input when the active document changes. Tracking the
+  // previous id during render avoids calling setState inside an effect (which
+  // would cascade renders) per React's prop-derived-state guidance.
+  const [prevDocId, setPrevDocId] = useState<string | undefined>(
+    initialDocument.id,
+  );
+  const activeDocId = document?.id ?? initialDocument.id;
+  if (activeDocId !== prevDocId) {
+    setPrevDocId(activeDocId);
+    setNameInput(document?.name ?? initialDocument.name);
+  }
 
   // Collapse sidebars + switch to overlay mode on narrow screens
   useEffect(() => {

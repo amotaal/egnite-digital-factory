@@ -13,6 +13,9 @@
 # testing
 /coverage
 
+# Labeler / batch job working dirs (ephemeral)
+/data/jobs
+
 # next.js
 /.next/
 /out/

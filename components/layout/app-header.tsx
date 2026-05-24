@@ -1,6 +1,6 @@
 "use client";
 import { useRouter, usePathname } from "next/navigation";
-import { LogOut, LayoutDashboard, Sparkles, FolderOpen } from "lucide-react";
+import { LogOut, LayoutDashboard, Sparkles, FolderOpen, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { User } from "@/lib/types";
 
@@ -51,6 +51,16 @@ export function AppHeader({ user }: AppHeaderProps) {
       >
         <LayoutDashboard size={16} />
         Dashboard
+      </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => router.push("/labeler")}
+        className={`gap-1.5 ${isActive("/labeler") ? "bg-cream-dark text-ink" : ""}`}
+        aria-current={isActive("/labeler") ? "page" : undefined}
+      >
+        <Tag size={16} />
+        <span className="hidden sm:inline">Labeler</span>
       </Button>
       <Button
         variant="ghost"
