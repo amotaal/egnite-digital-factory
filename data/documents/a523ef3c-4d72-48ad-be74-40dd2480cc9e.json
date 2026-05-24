@@ -1,0 +1,136 @@
+{
+  "name": "Untitled Beverage Guide",
+  "templateType": "beverage-card",
+  "fields": {
+    "language": "en",
+    "title": {
+      "en": "Beverage Name",
+      "ar": "اسم المشروب"
+    },
+    "subtitle": {
+      "en": "Preparation Guide",
+      "ar": "دليل التحضير"
+    },
+    "heroImage": "",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "💧",
+        "label": {
+          "en": "Carbonated Water",
+          "ar": "ماء غازي"
+        },
+        "amount": "330ml"
+      },
+      {
+        "id": "i2",
+        "icon": "🍚",
+        "label": {
+          "en": "Sugar Syrup",
+          "ar": "شراب سكر"
+        },
+        "amount": "40ml"
+      },
+      {
+        "id": "i3",
+        "icon": "🧊",
+        "label": {
+          "en": "Ice",
+          "ar": "جليد"
+        },
+        "amount": "as needed"
+      },
+      {
+        "id": "i4",
+        "icon": "🧪",
+        "label": {
+          "en": "Egnite Essence",
+          "ar": "جوهر إيغنايت"
+        },
+        "amount": "¼ tsp (1.25g)"
+      }
+    ],
+    "dosage": {
+      "icon": "🧪",
+      "amount": "1.25g per liter",
+      "range": "0.10% – 0.15%"
+    },
+    "steps": [
+      {
+        "id": "s1",
+        "icon": "🧊",
+        "text": {
+          "en": "Fill glass with ice",
+          "ar": "املأ الكأس بالجليد"
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🍚",
+        "text": {
+          "en": "Add sugar syrup",
+          "ar": "أضف شراب السكر"
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🧪",
+        "text": {
+          "en": "Add Egnite Essence",
+          "ar": "أضف جوهر إيغنايت"
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "💧",
+        "text": {
+          "en": "Top with carbonated water and stir gently",
+          "ar": "أكمل بالماء الغازي وحرّك برفق"
+        }
+      }
+    ],
+    "storageNote": {
+      "en": "Store essence in a cool, dry place away from direct sunlight. Best before 2 years from production date.",
+      "ar": "احفظ الجوهر في مكان بارد وجاف بعيداً عن ضوء الشمس المباشر. الأفضل قبل سنتين من تاريخ الإنتاج."
+    },
+    "footerTagline": {
+      "en": "Creativity with Confidence",
+      "ar": "إبداع بثقة"
+    },
+    "primaryColor": "",
+    "backgroundColor": "",
+    "themeId": "egnite-beverage-card",
+    "headerPill": {
+      "en": "CARBONATED",
+      "ar": "غازي"
+    },
+    "dosageStarting": {
+      "label": {
+        "en": "Starting Dose",
+        "ar": "جرعة الانطلاق"
+      },
+      "value": "1.0g",
+      "icon": "🟢"
+    },
+    "dosageQuick": {
+      "label": {
+        "en": "Quick Dose",
+        "ar": "جرعة سريعة"
+      },
+      "value": "0.5g",
+      "icon": "⚡"
+    },
+    "dosageRange": {
+      "label": {
+        "en": "Dosage Range",
+        "ar": "نطاق الجرعة"
+      },
+      "value": "0.04% – 0.08%",
+      "icon": "📏"
+    }
+  },
+  "createdBy": "1",
+  "id": "a523ef3c-4d72-48ad-be74-40dd2480cc9e",
+  "createdAt": "2026-04-13T10:07:22.416Z",
+  "updatedAt": "2026-04-15T05:35:57.112Z"
+}

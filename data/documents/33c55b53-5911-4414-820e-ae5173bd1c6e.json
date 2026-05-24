@@ -1,0 +1,123 @@
+{
+  "name": "Untitled Infographic Card",
+  "templateType": "infographic-card",
+  "fields": {
+    "language": "en",
+    "title": {
+      "en": "Recipe Name",
+      "ar": "اسم الوصفة"
+    },
+    "prepTime": "11 minutes",
+    "heroImage": "",
+    "ingredients": [
+      {
+        "id": "i1",
+        "icon": "🧈",
+        "label": {
+          "en": "Butter: 1 stick",
+          "ar": "زبدة: عود واحد"
+        },
+        "amount": "100g"
+      },
+      {
+        "id": "i2",
+        "icon": "🍯",
+        "label": {
+          "en": "Ghee (samneh)",
+          "ar": "سمنة"
+        },
+        "amount": "½ cup (100g)"
+      },
+      {
+        "id": "i3",
+        "icon": "🍚",
+        "label": {
+          "en": "Powder Sugar",
+          "ar": "سكر ناعم"
+        },
+        "amount": "2 cups (290g)"
+      },
+      {
+        "id": "i4",
+        "icon": "🥛",
+        "label": {
+          "en": "Water",
+          "ar": "ماء"
+        },
+        "amount": "5 tsp (25g)"
+      },
+      {
+        "id": "i5",
+        "icon": "🧪",
+        "label": {
+          "en": "Egnite Essence",
+          "ar": "جوهر إيغنايت"
+        },
+        "amount": "¼ tsp (1.25g)"
+      }
+    ],
+    "dosageEssence": {
+      "icon": "🧪",
+      "amount": "1.25g (¼ tsp)",
+      "range": "0.25% – 0.30%"
+    },
+    "dosageEmulsion": {
+      "icon": "🧴",
+      "amount": "1.75g (½ tsp)",
+      "range": "0.35% – 0.50%"
+    },
+    "instructions": [
+      {
+        "id": "s1",
+        "icon": "🥣",
+        "text": {
+          "en": "Mix butter, ghee, and water",
+          "ar": "امزج الزبدة والسمنة والماء"
+        }
+      },
+      {
+        "id": "s2",
+        "icon": "🧂",
+        "text": {
+          "en": "Gradually add powdered sugar",
+          "ar": "أضف السكر الناعم تدريجياً"
+        }
+      },
+      {
+        "id": "s3",
+        "icon": "🧪",
+        "text": {
+          "en": "Add Egnite Essence and color drops",
+          "ar": "أضف جوهر إيغنايت وقطرات اللون"
+        }
+      },
+      {
+        "id": "s4",
+        "icon": "🧑‍🍳",
+        "text": {
+          "en": "Mix for 1–2 minutes",
+          "ar": "امزج لمدة 1-2 دقيقة"
+        }
+      },
+      {
+        "id": "s5",
+        "icon": "🥄",
+        "text": {
+          "en": "Use as needed",
+          "ar": "استخدم حسب الحاجة"
+        }
+      }
+    ],
+    "footerTagline": {
+      "en": "Creativity with Confidence",
+      "ar": "إبداع بثقة"
+    },
+    "primaryColor": "",
+    "backgroundColor": "",
+    "themeId": "egnite-infographic"
+  },
+  "createdBy": "1",
+  "id": "33c55b53-5911-4414-820e-ae5173bd1c6e",
+  "createdAt": "2026-04-13T10:07:46.998Z",
+  "updatedAt": "2026-04-15T05:35:56.999Z"
+}
