@@ -5,7 +5,9 @@ import { cookies } from "next/headers";
 import { resolveSession, SESSION_COOKIE } from "@/lib/auth";
 import { createJob, deleteJob, getJob } from "@/lib/jobs";
 import {
+  DEFAULT_LABEL_BOX,
   DEFAULT_LABELER_CONFIG,
+  type LabelBox,
   type LabelerConfig,
   type LabelerJobMeta,
   type LabelerOutputFormat,
@@ -129,9 +131,12 @@ export async function confirmLabelerDownload(jobId: string): Promise<{ ok: boole
 
 function mergeConfig(partial: Partial<LabelerConfig>): LabelerConfig {
   const merged: LabelerConfig = { ...DEFAULT_LABELER_CONFIG, ...partial };
-  merged.xPercent = clamp(Number(merged.xPercent), 0, 100);
-  merged.yPercent = clamp(Number(merged.yPercent), 0, 100);
-  merged.maxWidthPercent = clamp(Number(merged.maxWidthPercent), 5, 100);
+  const box: LabelBox = { ...DEFAULT_LABEL_BOX, ...(merged.labelBox ?? {}) };
+  box.xPercent = clamp(Number(box.xPercent), 0, 100);
+  box.yPercent = clamp(Number(box.yPercent), 0, 100);
+  box.widthPercent = clamp(Number(box.widthPercent), 1, 100);
+  box.heightPercent = clamp(Number(box.heightPercent), 1, 100);
+  merged.labelBox = box;
   merged.fontSize = clamp(Number(merged.fontSize), 6, 1024);
   merged.letterSpacing = clamp(Number(merged.letterSpacing), -50, 200);
   if (merged.fontWeight !== "bold" && merged.fontWeight !== "normal") {
@@ -144,6 +149,8 @@ function mergeConfig(partial: Partial<LabelerConfig>): LabelerConfig {
     merged.color = "#1a1a1a";
   }
   merged.uppercase = Boolean(merged.uppercase);
+  merged.autoFit = Boolean(merged.autoFit);
+  merged.oneWordPerLine = Boolean(merged.oneWordPerLine);
   return merged;
 }
 

@@ -5,7 +5,7 @@ import sharp from "sharp";
 import { jsPDF } from "jspdf";
 import { updateJob, getJob } from "@/lib/jobs";
 import type { LabelerFlavor, LabelerJobMeta, LabelerOutputFormat } from "../types";
-import { composite, loadFont, readBottle, renderLabelSvg } from "./render";
+import { composite, computeFitSize, loadFont, readBottle, renderLabelSvg } from "./render";
 
 export interface GenerateArgs {
   jobId: string;
@@ -27,10 +27,21 @@ export async function runGeneration({ jobId, flavors }: GenerateArgs): Promise<v
     await fs.mkdir(outDir, { recursive: true });
     const manifest: Array<{ flavor: string; slug: string; files: string[] }> = [];
 
+    // Compute one shared font size so every bottle in the batch looks
+    // visually consistent — the longest flavor sets the ceiling.
+    const fitSize = job.meta.config.autoFit
+      ? computeFitSize(
+          flavors.map((f) => f.text),
+          font,
+          bottleMeta,
+          job.meta.config,
+        )
+      : job.meta.config.fontSize;
+
     for (const flavor of flavors) {
       const files: string[] = [];
       try {
-        const svg = renderLabelSvg(flavor.text, bottleMeta, font, job.meta.config);
+        const svg = renderLabelSvg(flavor.text, bottleMeta, font, job.meta.config, fitSize);
         const pipeline = await composite(bottle, svg);
         const baseBuf = await pipeline.png().toBuffer();
 
